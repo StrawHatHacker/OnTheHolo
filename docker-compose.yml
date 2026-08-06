@@ -1,0 +1,42 @@
+services:
+  postgres:
+    image: postgres:18.4-alpine3.24
+    container_name: database
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_DB: "${POSTGRES_DB_NAME}"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+
+  redis:
+    image: redis:8.10.0-alpine3.23
+    container_name: cache
+    restart: unless-stopped
+    command: redis-server --save "" --loglevel warning --maxmemory 256mb --maxmemory-policy allkeys-lru --requirepass "${REDIS_PASSWORD}"
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  web:
+    container_name: web
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    env_file:
+      - .env                  # Injects root .env directly into container environment variables
+    depends_on:
+      - postgres
+      - redis
+    profiles:
+      - prod
+
+volumes:
+  postgres_data:
+  redis_data:
