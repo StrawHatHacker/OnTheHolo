@@ -80,11 +80,11 @@
 </Button>
 
 <div
-	class="absolute top-[50%] left-[50%] flex max-h-[90vh] w-max max-w-[99vw] -translate-x-1/2 -translate-y-1/2 flex-col gap-6 overflow-y-auto lg:h-150 lg:flex-row"
+	class="absolute top-[50%] left-[50%] flex max-h-[90vh] min-w-max max-w-[99vw] -translate-x-1/2 -translate-y-1/2 flex-col gap-6 overflow-y-auto h-150 lg:flex-row"
 >
 	<!-- LEFT SIDE -->
 	<div class="flex h-full min-h-0 w-full flex-col gap-4">
-		<div class="rounded-lg bg-black/40 p-6 text-white shadow-2xl backdrop-blur-xl">
+		<div class="rounded-lg bg-card/90 p-6 text-white shadow-2xl backdrop-blur-sm">
 			<h2 class="mb-2 text-xl font-black tracking-wide">Features</h2>
 
 			<ul class="text-md flex flex-col gap-2 font-medium">
@@ -103,7 +103,7 @@
 			</ul>
 		</div>
 		<ScrollArea
-			class="min-h-0 flex-1 rounded-lg bg-black/40 p-6 text-white shadow-2xl backdrop-blur-xl"
+			class="min-h-0 flex-1 rounded-lg bg-card/90 p-6 text-white shadow-2xl backdrop-blur-sm"
 		>
 			<h2 class="mb-4 text-xl font-black tracking-wide">News</h2>
 
@@ -118,7 +118,7 @@
 
 	<!-- RIGHT SIDE -->
 	<div
-		class="flex h-full w-full flex-col justify-between rounded-lg bg-black/50 px-6 py-8 text-white shadow-lg backdrop-blur-2xl"
+		class="flex h-full w-full flex-col justify-between rounded-lg bg-card/90 px-6 py-8 text-white shadow-lg backdrop-blur-sm"
 	>
 		<div class="relative mb-4 flex flex-col items-center">
 			<div
@@ -132,13 +132,13 @@
 			</h1>
 		</div>
 		{#if data.lastUser}
-			<div class="mb-2 flex items-center justify-between rounded-md bg-secondary/30 py-1 pr-1 pl-2">
+			<div class="mb-2 flex items-center justify-between rounded-md bg-muted py-1 pr-1 pl-2">
 				<div class="flex flex-col">
 					<span class="text-xs font-bold text-muted-foreground">Last login as:</span>
 					<span class="font-medium">{data.lastUser?.username}</span>
 				</div>
 				<div>
-					<Button variant="secondary" size="lg" disabled={loading} onclick={() => goto('/app')}>
+					<Button variant="ghost" size="sm" disabled={loading} onclick={() => goto('/app')}>
 						Continue
 						<ChevronRightIcon class="h-4 w-4" />
 					</Button>
@@ -147,12 +147,12 @@
 		{/if}
 		<form class="flex w-full flex-col gap-2" onsubmit={onLogin}>
 			<div class="flex w-full flex-col gap-0">
-				<Label for="username" class="text-base">Username</Label>
+				<Label for="email" class="text-base">Email</Label>
 
 				<Input
-					id="username"
-					type="text"
-					placeholder="Vincent, Valerie etc."
+					id="email"
+					type="email"
+					placeholder="vincent@holo.com"
 					class="bg-black/30!"
 					bind:value={email}
 					disabled={loading}
@@ -186,7 +186,13 @@
 			<div class="h-px flex-1 bg-muted-foreground"></div>
 		</div>
 
-		<Button variant="secondary" size="lg" class="w-full" disabled={loading}>
+		<Button
+			variant="secondary"
+			size="lg"
+			class="w-full"
+			disabled={loading}
+			onclick={() => goto('/register')}
+		>
 			Create an account
 		</Button>
 	</div>

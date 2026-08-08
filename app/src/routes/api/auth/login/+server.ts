@@ -22,7 +22,7 @@ export const POST = async ({ request, cookies }) => {
         const body = validatePostBody(await request.json());
 
         const [user] = await UserQueries.getUserByEmail(body.email);
-        if (!user) throw new CError(401, ERROR_MAP.wrongCredentials);
+        if (!user) throw new CError(400, ERROR_MAP.wrongCredentials);
 
         if (user.status === USER_STATUS.DELETED)
             throw new CError(403, ERROR_MAP.accountDeleted);
@@ -30,7 +30,7 @@ export const POST = async ({ request, cookies }) => {
             throw new CError(403, ERROR_MAP.accountBanned);
 
         if (Auth.hashPassword(body.password, user.salt) !== user.password)
-            throw new CError(401, ERROR_MAP.wrongCredentials);
+            throw new CError(400, ERROR_MAP.wrongCredentials);
 
         const token = await Auth.createPrivateKey({
             sub: user.id + '',

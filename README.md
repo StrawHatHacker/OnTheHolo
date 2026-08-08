@@ -26,3 +26,11 @@
 > sudo docker compose --profile prod up -d --build
 
 `--profile prod` will also run the sveltekit app
+
+## What to do after deploying
+
+1. Make the anchor tags in `register-form.svelte` point to your terms of service and privacy policy.
+
+## TODO
+
+- Add ratelimits
