@@ -25,6 +25,7 @@
 
 	const onLogin = async () => {
 		try {
+			if (!email || !password) return;
 			loading = true;
 
 			await genericRequest('/api/auth/login', {
@@ -44,39 +45,43 @@
 	};
 </script>
 
-<main class="relative h-screen w-screen overflow-hidden bg-black">
-	{#if prefersReducedMotion}
-		<img
-			src="/vapowave-bg.jpg"
-			alt="vaporwave background"
-			class="absolute inset-0 h-full w-full object-cover"
-		/>
+{#if prefersReducedMotion}
+	<img
+		src="/vapowave-bg.jpg"
+		alt="vaporwave background"
+		class="absolute inset-0 h-full w-full object-cover"
+	/>
+{:else}
+	<video
+		src="/vapowave-bg.mp4"
+		autoplay
+		loop
+		muted
+		class="absolute inset-0 h-full w-full object-cover"
+	></video>
+{/if}
+<!-- Background overlay -->
+<div
+	class="pointer-events-none fixed inset-0 bg-linear-to-r from-black/80 via-transparent to-black/80"
+></div>
+
+<!-- Reduced motion -->
+<Button
+	class="absolute bottom-5 left-5 z-30 rounded-full lg:fixed"
+	onclick={() => (prefersReducedMotion = !prefersReducedMotion)}
+>
+	{#if !prefersReducedMotion}
+		<PlayOffIcon />
 	{:else}
-		<video
-			src="/vapowave-bg.mp4"
-			autoplay
-			loop
-			muted
-			class="absolute inset-0 h-full w-full object-cover"
-		></video>
+		<PlayIcon />
 	{/if}
+</Button>
 
-	<!-- Background overlay -->
-	<div class="absolute inset-0 bg-linear-to-r from-black/80 via-transparent to-black/80"></div>
-
-	<Button
-		class="absolute bottom-5 left-5 z-20 rounded-full"
-		onclick={() => (prefersReducedMotion = !prefersReducedMotion)}
-	>
-		{#if !prefersReducedMotion}
-			<PlayOffIcon />
-		{:else}
-			<PlayIcon />
-		{/if}
-	</Button>
-
-	<!-- Left information -->
-	<section class="absolute top-10 left-10 flex w-100 flex-col gap-6">
+<div
+	class="absolute top-[50%] left-[50%] flex lg:h-150 max-h-[90vh] w-max max-w-[99vw] -translate-x-1/2 -translate-y-1/2 flex-col gap-6 lg:flex-row overflow-y-auto"
+>
+	<!-- LEFT SIDE -->
+	<div class="flex h-full min-h-0 w-full flex-col gap-4">
 		<div class="rounded-xl bg-black/40 p-6 text-white shadow-2xl backdrop-blur-xl">
 			<h2 class="mb-2 text-xl font-bold tracking-wide">Features</h2>
 
@@ -90,15 +95,16 @@
 					<CheckIcon class="mr-2 inline h-4 w-4" />
 					<span>Easy to customize</span>
 				</li>
-				
+
 				<li>
 					<CheckIcon class="mr-2 inline h-4 w-4" />
 					<span>Easy to self-host</span>
 				</li>
 			</ul>
 		</div>
-
-		<ScrollArea class="h-52 rounded-xl bg-black/40 p-6 text-white shadow-2xl backdrop-blur-xl">
+		<ScrollArea
+			class="min-h-0 flex-1 rounded-xl bg-black/40 p-6 text-white shadow-2xl backdrop-blur-xl"
+		>
 			<h2 class="mb-4 text-xl font-bold tracking-wide">News</h2>
 
 			<div class="flex flex-col gap-2">
@@ -108,61 +114,66 @@
 				</div>
 			</div>
 		</ScrollArea>
-	</section>
+	</div>
 
-	<!-- Login -->
-	<section
-		class="absolute right-0 flex h-full w-full max-w-120 flex-col justify-between bg-black/40 text-white shadow-2xl backdrop-blur-2xl"
+	<!-- RIGHT SIDE -->
+	<div
+		class="flex h-full w-full flex-col justify-between rounded-xl bg-black/50 px-6 py-8 text-white shadow-lg backdrop-blur-2xl"
 	>
-		<div class="flex flex-1 flex-col items-center justify-center gap-5 px-12">
-			<div class="relative mb-6 flex flex-col items-center">
-				<div
-					class="absolute h-42 w-42 rounded-full bg-linear-to-b from-pink-600 via-orange-400 to-white opacity-50 blur-2xl"
-				></div>
+		<div class="relative mb-6 flex flex-col items-center">
+			<div
+				class="absolute h-42 w-42 rounded-full bg-linear-to-b from-pink-600 via-orange-400 to-white opacity-50 blur-2xl"
+			></div>
 
-				<img src="/logo.png" alt="on the holo logo" class="relative h-36 w-36" />
+			<img src="/logo.png" alt="on the holo logo" class="relative h-28 w-28 sm:h-36 sm:w-36" />
 
-				<h1 class="mt-4 text-center font-heading text-xl tracking-wide text-balance">
-					{PUBLIC_TITLE}
-				</h1>
+			<h1 class="mt-4 text-center font-heading text-xl tracking-wide text-balance">
+				{PUBLIC_TITLE}
+			</h1>
+		</div>
+		<form class="flex w-full flex-col gap-4" onsubmit={onLogin}>
+			<div class="flex w-full flex-col gap-0">
+				<Label for="username" class="text-base">Username</Label>
+
+				<Input
+					id="username"
+					type="text"
+					placeholder="Vincent, Valerie etc."
+					class="bg-black/30!"
+					bind:value={email}
+					disabled={loading}
+				/>
 			</div>
 
-			<form class="flex w-full flex-col gap-4" onsubmit={onLogin}>
-				<div class="flex w-full flex-col gap-1">
-					<Label for="username">Username</Label>
-					<Input id="username" type="text" placeholder="Vincent, Valerie etc." bind:value={email} />
+			<div class="flex w-full flex-col">
+				<div class="flex items-baseline justify-between gap-2">
+					<Label for="password" class="text-base">Password</Label>
+
+					<span class="cursor-pointer text-sm text-muted-foreground hover:text-white">
+						Forgot password?
+					</span>
 				</div>
 
-				<div class="flex w-full flex-col">
-					<div class="flex items-baseline justify-between">
-						<Label for="password">Password</Label>
-						<span class="cursor-pointer text-sm text-muted-foreground hover:text-white">
-							Forgot password?
-						</span>
-					</div>
-
-					<Input
-						id="password"
-						type="password"
-						placeholder="01111001 01101111 01110101 00100000 01101100 01101111 01110011 01110100 00100000 01110100 01101000 01100101 00100000 01100111 01100001 01101101 01100101"
-						bind:value={password}
-					/>
-				</div>
-
-				<Button class="w-full font-semibold" size="lg" type="submit">Login</Button>
-			</form>
-
-			<div class="flex w-full items-center gap-4">
-				<div class="h-px flex-1 bg-muted-foreground"></div>
-				<span class="text-md text-muted-foreground">or</span>
-				<div class="h-px flex-1 bg-muted-foreground"></div>
+				<Input
+					id="password"
+					type="password"
+					placeholder="01111001 01101111 01110101 00100000 01101100 01101111 01110011 01110100"
+					class="bg-black/30!"
+					bind:value={password}
+					disabled={loading}
+				/>
 			</div>
 
-			<Button variant="secondary" size="lg" class="w-full">Create an account</Button>
+			<Button class="w-full font-semibold" size="lg" type="submit" disabled={loading}>Login</Button>
+		</form>
+		<div class="flex w-full items-center gap-4">
+			<div class="h-px flex-1 bg-muted-foreground"></div>
+			<span class="text-md text-muted-foreground">or</span>
+			<div class="h-px flex-1 bg-muted-foreground"></div>
 		</div>
 
-		<div class="pb-2 text-center text-xs tracking-wide text-muted-foreground">
-			Made by StrawHatHacker aka Skillers3
-		</div>
-	</section>
-</main>
+		<Button variant="secondary" size="lg" class="w-full" disabled={loading}>
+			Create an account
+		</Button>
+	</div>
+</div>
