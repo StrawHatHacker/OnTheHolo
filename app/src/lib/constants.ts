@@ -12,3 +12,5 @@ export const USER_PRIVILEGE_STATUS = {
     NORMAL: 1,
     ADMIN: 2,
 }
+
+export const MAX_TOKEN_AGE_DAYS = 7;

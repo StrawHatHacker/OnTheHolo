@@ -17,17 +17,26 @@ export class SessionQueries {
             user_id: userId,
             token,
             created_at: new Date().toISOString(),
-            last_refreshed_at: new Date().toISOString()
         });
     }
 
-    static async getSession(token: string) {
+    static async deleteSession(userId: number, token: string) {
+        return await db.delete(sessionTable)
+            .where(
+                and(
+                    eq(sessionTable.user_id, userId),
+                    eq(sessionTable.token, token))
+            );
+    }
+
+    static async getSession(token?: string) {
+        if (!token) return null;
+
         return (await db
             .select({
                 session: {
                     id: sessionTable.id,
                     createdAt: sessionTable.created_at,
-                    lastRefreshedAt: sessionTable.last_refreshed_at,
                 },
                 user: safeUserFields,
             })

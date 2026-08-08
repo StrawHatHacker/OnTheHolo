@@ -32,9 +32,12 @@ export const POST = async ({ request, cookies }) => {
         if (Auth.hashPassword(body.password, user.salt) !== user.password)
             throw new CError(401, ERROR_MAP.wrongCredentials);
 
-        const token = Auth.createToken();
+        const token = await Auth.createPrivateKey({
+            sub: user.id + '',
+            username: user.username,
+        });
 
-        cookies.set(COOKIE_MAP.SESSION, token, createCookieSettings(30));
+        cookies.set(COOKIE_MAP.SESSION, token, createCookieSettings());
 
         await SessionQueries.createSession(user.id, token);
 

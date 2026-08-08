@@ -2,6 +2,7 @@ import { error, redirect } from "@sveltejs/kit";
 import { clsx, type ClassValue } from "clsx";
 import { toast } from "svelte-sonner";
 import { twMerge } from "tailwind-merge";
+import { MAX_TOKEN_AGE_DAYS } from "./constants";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -24,13 +25,13 @@ export class CError {
     }
 }
 
-export const createCookieSettings = (maxAgeDays: number) => {
+export const createCookieSettings = () => {
     return {
         path: '/', // The cookie is accessible across the entire site
         httpOnly: true, // Crucial: Prevents client-side JavaScript access (mitigates XSS)
         sameSite: 'strict' as const, // Crucial: Provides protection against CSRF
         secure: process.env.NODE_ENV === 'production', // Use 'secure' only in production (requires HTTPS)
-        maxAge: 60 * 60 * 24 * maxAgeDays,
+        maxAge: 60 * 60 * 24 * MAX_TOKEN_AGE_DAYS,
     };
 }
 

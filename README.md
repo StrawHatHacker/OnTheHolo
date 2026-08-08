@@ -1,11 +1,28 @@
-Simple and secure messaging for you and your friends, so the EU cannot spy on you.
+# On The Holo
+
+##### Customizable, self-hostable and secure messaging for you and your friends, so the government cannot spy on you.
 
 ## Development
 
+1. Get Paseto public and private keys. Store them at `.env` in their respective fields.
+> cd app/ && node generateKeys.js
+
+2. Fill the .env variables
+
+3. Start docker for db and redis
 > sudo docker compose up -d
 
+4. Start the development server
 > npm run dev
 
 ## Production
 
+1. Get Paseto public and private keys. Store them at `.env` in their respective fields.
+> cd app/ && node generateKeys.js
+
+2. Fill the .env variables
+
+3. Start docker
 > sudo docker compose --profile prod up -d --build
+
+`--profile prod` will also run the sveltekit app

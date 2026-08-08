@@ -17,5 +17,4 @@ export const sessionTable = pgTable("sessions", {
     user_id: integer().notNull().references(() => usersTable.id),
     token: text().notNull(),
     created_at: text().notNull(),
-    last_refreshed_at: text().notNull(),
 });
