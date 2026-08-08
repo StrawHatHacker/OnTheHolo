@@ -13,7 +13,10 @@ export default defineConfig({
 				runes: ({ filename }) =>
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
-			adapter: adapter()
+			adapter: adapter(),
+			env: {
+				dir: '..'
+			}
 		})
 	],
 	// Tell Vite to look one directory up for .env files
