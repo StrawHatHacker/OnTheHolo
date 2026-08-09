@@ -11,14 +11,14 @@ export default defineConfig({
 			compilerOptions: {
 				// Force runes mode for the project, except for libraries. Can be removed in svelte 6.
 				runes: ({ filename }) =>
-					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
+					filename.split(/[/\\]/).includes('node_modules') ? undefined : true,
 			},
 			adapter: adapter(),
 			env: {
-				dir: '..'
-			}
-		})
+				dir: '..',
+			},
+		}),
 	],
 	// Tell Vite to look one directory up for .env files
-	envDir: path.resolve(import.meta.dirname, '..')
+	envDir: path.resolve(import.meta.dirname, '..'),
 });

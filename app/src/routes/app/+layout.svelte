@@ -9,9 +9,9 @@
 
 	onMount(() => {
 		authTokenRefreshTimer = setInterval(
-			async() => {
+			async () => {
 				await genericRequest('/api/auth/refreshToken', { method: 'GET', credentials: 'include' });
-                await invalidateAll();
+				await invalidateAll();
 			},
 			1000 * 60 * 10 // 10 minutes
 		);

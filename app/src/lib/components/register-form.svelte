@@ -27,7 +27,7 @@
 			if (!email || !password || !username) return;
 			await genericRequest('/api/auth/register', {
 				method: 'POST',
-				body: JSON.stringify({ email, password, username })
+				body: JSON.stringify({ email, password, username }),
 			});
 
 			toast.success('Account created. Please login.');

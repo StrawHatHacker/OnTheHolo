@@ -1,5 +1,5 @@
 <script lang="ts">
-	import RegisterForm from "$lib/components/register-form.svelte";
+	import RegisterForm from '$lib/components/register-form.svelte';
 </script>
 
 <div class="flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">

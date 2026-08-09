@@ -10,7 +10,8 @@
 	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
 	import { PUBLIC_TITLE } from '$env/static/public';
 	import { genericRequest, handleRequestError } from '$lib/utils';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
+	import { toast } from 'svelte-sonner';
 
 	// State
 	let { data } = $props();
@@ -34,12 +35,30 @@
 				method: 'POST',
 				body: JSON.stringify({
 					email: email,
-					password: password
-				})
+					password: password,
+				}),
 			});
 
 			goto('/app');
 		} catch (e) {
+			handleRequestError(e);
+		} finally {
+			loading = false;
+		}
+	};
+
+	const continueAsLastLoggedInUser = async () => {
+		try {
+			loading = false;
+
+			await genericRequest('/api/auth/refreshToken', { method: 'GET', credentials: 'include' });
+
+			goto('/app');
+		} catch (e) {
+			toast.error(
+				'Failed to continue as last logged in user. Login with your email and password instead.'
+			);
+			invalidateAll();
 			handleRequestError(e);
 		} finally {
 			loading = false;
@@ -80,7 +99,7 @@
 </Button>
 
 <div
-	class="absolute top-[50%] left-[50%] flex max-h-[90vh] min-w-max max-w-[99vw] -translate-x-1/2 -translate-y-1/2 flex-col gap-6 overflow-y-auto h-150 lg:flex-row"
+	class="absolute top-[50%] left-[50%] flex h-auto max-h-[90vh] max-w-[99vw] min-w-max -translate-x-1/2 -translate-y-1/2 flex-col gap-6 overflow-y-auto lg:h-150 lg:flex-row"
 >
 	<!-- LEFT SIDE -->
 	<div class="flex h-full min-h-0 w-full flex-col gap-4">
@@ -138,7 +157,7 @@
 					<span class="font-medium">{data.lastUser?.username}</span>
 				</div>
 				<div>
-					<Button variant="ghost" size="sm" disabled={loading} onclick={() => goto('/app')}>
+					<Button variant="ghost" size="sm" disabled={loading} onclick={continueAsLastLoggedInUser}>
 						Continue
 						<ChevronRightIcon class="h-4 w-4" />
 					</Button>
@@ -178,7 +197,9 @@
 				/>
 			</div>
 
-			<Button class="w-full font-semibold" size="lg" type="submit" disabled={loading}>Login</Button>
+			<Button class="mt-1 w-full font-semibold" size="lg" type="submit" disabled={loading}>
+				Login
+			</Button>
 		</form>
 		<div class="flex w-full items-center gap-4">
 			<div class="h-px flex-1 bg-muted-foreground"></div>

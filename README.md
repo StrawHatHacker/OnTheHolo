@@ -10,7 +10,7 @@
 2. Fill the .env variables
 
 3. Start docker for db and redis
-> sudo docker compose up -d
+> sudo docker compose -p holo up -d
 
 4. Start the development server
 > npm run dev
@@ -23,7 +23,7 @@
 2. Fill the .env variables
 
 3. Start docker
-> sudo docker compose --profile prod up -d --build
+> sudo docker compose -p holo --profile prod up -d --build
 
 `--profile prod` will also run the sveltekit app
 
