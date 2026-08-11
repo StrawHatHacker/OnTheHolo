@@ -2,7 +2,7 @@ import { error, redirect } from '@sveltejs/kit';
 import { clsx, type ClassValue } from 'clsx';
 import { toast } from 'svelte-sonner';
 import { twMerge } from 'tailwind-merge';
-import { MAX_TOKEN_AGE_DAYS } from './constants';
+import { MAX_TOKEN_AGE_DAYS, TERMINAL_COLORS } from './constants';
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -67,3 +67,31 @@ export const handleRequestError = (e: unknown) => {
 	else if (e instanceof Error) toast.error('Unexpected error');
 	else console.error(e);
 };
+
+export const report = {
+	info: (msg: string) =>
+		console.log(`${TERMINAL_COLORS.cyan}---\nℹ ${msg}\n---${TERMINAL_COLORS.reset}`),
+	success: (msg: string) =>
+		console.log(`${TERMINAL_COLORS.green}---\n✓ ${msg}\n---${TERMINAL_COLORS.reset}`),
+	warn: (msg: string) =>
+		console.log(`${TERMINAL_COLORS.yellow}---\n⚠ ${msg}\n---${TERMINAL_COLORS.reset}`),
+	error: (msg: string) =>
+		console.log(`${TERMINAL_COLORS.red}---\n✗ ${msg}\n---${TERMINAL_COLORS.reset}`),
+};
+
+export class DateHelper {
+	static toReadable(date: Date | string) {
+		let d: Date;
+
+		if (typeof date === 'string') d = new Date(date);
+		else d = date;
+
+		return new Date(d).toLocaleString(undefined, {
+			year: 'numeric',
+			month: 'long',
+			day: 'numeric',
+			hour: 'numeric',
+			minute: 'numeric',
+		});
+	}
+}

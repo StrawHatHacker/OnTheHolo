@@ -99,7 +99,7 @@
 </Button>
 
 <div
-	class="absolute top-[50%] left-[50%] flex h-auto max-h-[90vh] max-w-[99vw] min-w-max -translate-x-1/2 -translate-y-1/2 flex-col gap-6 overflow-y-auto lg:h-150 lg:flex-row"
+	class="absolute top-[50%] left-[50%] flex h-auto max-h-[90vh] max-w-[99vw] lg:min-w-200 -translate-x-1/2 -translate-y-1/2 flex-col gap-6 overflow-y-auto lg:h-150 lg:flex-row"
 >
 	<!-- LEFT SIDE -->
 	<div class="flex h-full min-h-0 w-full flex-col gap-4">

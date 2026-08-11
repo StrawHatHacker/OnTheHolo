@@ -1,3 +1,17 @@
+// ONLY IMPORT TYPES FROM $lib/server/*
+import type { categoriesTable, channelsTable, messagesTable, usersTable } from "$lib/server/db/schema";
+
+export type User = Omit<typeof usersTable.$inferSelect, 'password' | 'salt'>;
+export type Messages = typeof messagesTable.$inferSelect;
+export type Channel = typeof channelsTable.$inferSelect;
+export type Category = typeof categoriesTable.$inferSelect;
+export type ChannelWithMessages = Channel & {
+	messages: Messages[];
+}
+export type CategoryWithChannels = Category & {
+	channels: ChannelWithMessages[];
+};
+
 export type GlobalLocals = {
 	lastUser: {
 		username: string;

@@ -15,10 +15,11 @@ export default defineConfig({
 			},
 			adapter: adapter(),
 			env: {
+				// Tell sveltekit to look one directory up for .env file
 				dir: '..',
 			},
 		}),
 	],
-	// Tell Vite to look one directory up for .env files
+	// Tell Vite to look one directory up for .env file
 	envDir: path.resolve(import.meta.dirname, '..'),
 });

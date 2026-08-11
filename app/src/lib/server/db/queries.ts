@@ -1,10 +1,8 @@
 import { USER_PRIVILEGE_STATUS, USER_STATUS } from '$lib/constants';
-import type { NewUser } from '$lib/types';
-import { db } from '.';
-import { sessionTable, usersTable } from './schema';
-import { eq, and, getColumns } from 'drizzle-orm';
-
-const { password: _, ...safeUserFields } = getColumns(usersTable);
+import type { CategoryWithChannels, NewUser } from '$lib/types';
+import { db } from '$lib/server/db';
+import { categoriesTable, channelsTable, messagesTable, safeUserFields, sessionsTable, usersTable } from '$lib/server/db/schema';
+import { eq, and } from 'drizzle-orm';
 
 export class UserQueries {
 	static async getUserByEmail(email: string) {
@@ -27,11 +25,15 @@ export class UserQueries {
 			updated_at: new Date().toISOString(),
 		});
 	}
+
+	static async getUsers() {
+		return await db.select(safeUserFields).from(usersTable).where(eq(usersTable.status, USER_STATUS.ACTIVE));
+	}
 }
 
 export class SessionQueries {
 	static async createSession(userId: number, token: string) {
-		return await db.insert(sessionTable).values({
+		return await db.insert(sessionsTable).values({
 			user_id: userId,
 			token,
 			created_at: new Date().toISOString(),
@@ -40,8 +42,8 @@ export class SessionQueries {
 
 	static async deleteSession(userId: number, token: string) {
 		return await db
-			.delete(sessionTable)
-			.where(and(eq(sessionTable.user_id, userId), eq(sessionTable.token, token)));
+			.delete(sessionsTable)
+			.where(and(eq(sessionsTable.user_id, userId), eq(sessionsTable.token, token)));
 	}
 
 	static async getSession(token?: string) {
@@ -52,19 +54,86 @@ export class SessionQueries {
 				await db
 					.select({
 						session: {
-							id: sessionTable.id,
-							createdAt: sessionTable.created_at,
+							id: sessionsTable.id,
+							createdAt: sessionsTable.created_at,
 						},
 						user: safeUserFields,
 					})
-					.from(sessionTable)
+					.from(sessionsTable)
 					.innerJoin(
 						usersTable,
-						and(eq(sessionTable.user_id, usersTable.id), eq(usersTable.status, USER_STATUS.ACTIVE))
+						and(eq(sessionsTable.user_id, usersTable.id), eq(usersTable.status, USER_STATUS.ACTIVE))
 					)
-					.where(eq(sessionTable.token, token))
+					.where(eq(sessionsTable.token, token))
 					.limit(1)
 			)?.[0] || null
 		);
+	}
+}
+
+export class ChannelQueries {
+	static async getCategories(): Promise<CategoryWithChannels[]> {
+		const rows = await db
+			.select({
+				category: categoriesTable,
+				channel: channelsTable,
+				message: messagesTable,
+			})
+			.from(categoriesTable)
+			.leftJoin(
+				channelsTable,
+				eq(
+					categoriesTable.id,
+					channelsTable.category_id
+				)
+			)
+			.leftJoin(
+				messagesTable,
+				eq(
+					channelsTable.id,
+					messagesTable.channel_id
+				)
+			);
+
+		const categories = new Map<number, CategoryWithChannels>();
+
+		for (const row of rows) {
+			let category = categories.get(row.category.id);
+
+			if (!category) {
+				category = {
+					...row.category,
+					channels: [],
+				};
+
+				categories.set(category.id, category);
+			}
+
+			if (!row.channel) continue;
+
+
+			let channel = category.channels.find(
+				(channel) => channel.id === row.channel!.id
+			);
+
+			if (!channel) {
+				channel = {
+					...row.channel,
+					messages: [],
+				};
+
+				category.channels.push(channel);
+			}
+
+			if (row.message) {
+				channel.messages.push(row.message);
+			}
+		}
+
+		return [...categories.values()];
+	}
+
+	static async getChannels() {
+		return await db.select().from(channelsTable);
 	}
 }

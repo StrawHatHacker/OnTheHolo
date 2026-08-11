@@ -1,20 +1,15 @@
 import { SvelteMap } from 'svelte/reactivity';
-
-export interface User {
-	id: string;
-	username: string;
-	email: string;
-}
+import type { Channel, CategoryWithChannels, User, ChannelWithMessages } from '$lib/types';
 
 export class UserCollection extends SvelteMap<string, User> {
-	find(callback: (user: User) => boolean): User | undefined {
+	find(callback: (user: User) => boolean): User | null {
 		for (const user of this.values()) {
 			if (callback(user)) {
 				return user;
 			}
 		}
 
-		return undefined;
+		return null;
 	}
 
 	filter(callback: (user: User) => boolean): UserCollection {
@@ -29,11 +24,63 @@ export class UserCollection extends SvelteMap<string, User> {
 		return collection;
 	}
 
-	first(): User | undefined {
-		return this.values().next().value;
+	first(): User | null {
+		return this.values().next().value || null;
 	}
 
-	last(): User | undefined {
-		return [...this.values()].at(-1);
+	last(): User | null {
+		return [...this.values()].at(-1) || null;
+	}
+}
+
+export class CategoryCollection extends SvelteMap<
+	string,
+	CategoryWithChannels
+> {
+	constructor(categories: CategoryWithChannels[] = []) {
+		super(
+			categories.map((category) => [
+				String(category.id),
+				category,
+			])
+		);
+	}
+
+	findCategory(
+		callback: (category: CategoryWithChannels) => boolean
+	): CategoryWithChannels | null {
+		for (const category of this.values()) {
+			if (callback(category)) {
+				return category;
+			}
+		}
+
+		return null;
+	}
+
+	findChannel(
+		callback: (channel: ChannelWithMessages) => boolean
+	): ChannelWithMessages | null {
+		for (const category of this.values()) {
+			for (const channel of category.channels) {
+				if (callback(channel)) {
+					return channel;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	first(): CategoryWithChannels | null {
+		return this.values().next().value ?? null;
+	}
+
+	firstChannel(): ChannelWithMessages | null {
+		return this.first()?.channels[0] ?? null;
+	}
+
+	last(): CategoryWithChannels | null {
+		return [...this.values()].at(-1) ?? null;
 	}
 }

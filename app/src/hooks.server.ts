@@ -4,17 +4,27 @@ import { db } from '$lib/server/db';
 import { usersTable } from '$lib/server/db/schema';
 import type { ServerInit } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
-import { ADMIN_EMAIL, ADMIN_PASSWORD, ADMIN_SALT, ADMIN_USERNAME } from '$env/static/private';
+import { ADMIN_EMAIL, ADMIN_PASSWORD, ADMIN_SALT, ADMIN_USERNAME, SECRET_PASETO_KEY } from '$env/static/private';
+import { PUBLIC_PASETO_KEY } from '$env/static/public';
+import { report } from '$lib/utils';
 
 export const init: ServerInit = async () => {
+	// Check if PASETO keys are generated
+	if (!PUBLIC_PASETO_KEY || !SECRET_PASETO_KEY) {
+		report.error('PASETO keys are not generated. Refer to README.md');
+		process.exit(1);
+	}
+
+	// Check if the database is connected and initialize it
 	try {
 		// Drizzle does not support raw SQL execution for connection checks,
 		// but we can perform a simple query to verify the DB is responding.
 		await db.select().from(usersTable).limit(1);
-		console.info('✅ Database connection successful!');
-	} catch (error) {
-		console.error('❌ Database connection failed:', error);
-		throw new Error('Failed to connect to the database.');
+		report.success('Database connection successful');
+	} catch (e) {
+		report.error('Database connection failed: ' + (e instanceof Error ? e.message : JSON.stringify(e)));
+		report.error('You probably forgot to initialize the database with drizzle. Refer to README.md');
+		process.exit(1);
 	}
 
 	const [adminUser] = await db
@@ -34,6 +44,6 @@ export const init: ServerInit = async () => {
 			created_at: new Date().toISOString(),
 			updated_at: new Date().toISOString(),
 		});
-		console.info('✅ Admin user created!');
+		report.success('Admin user created');
 	}
 };
