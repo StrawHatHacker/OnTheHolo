@@ -1,5 +1,5 @@
 import { USER_PRIVILEGE_STATUS, USER_STATUS } from '$lib/constants';
-import type { CategoryWithChannels, NewUser } from '$lib/types';
+import type { AddMessageData, CategoryWithChannels, NewUser } from '$lib/types';
 import { db } from '$lib/server/db';
 import { categoriesTable, channelsTable, messagesTable, safeUserFields, sessionsTable, usersTable } from '$lib/server/db/schema';
 import { eq, and } from 'drizzle-orm';
@@ -120,6 +120,7 @@ export class ChannelQueries {
 				channel = {
 					...row.channel,
 					messages: [],
+					typedMessage: '',
 				};
 
 				category.channels.push(channel);
@@ -135,5 +136,16 @@ export class ChannelQueries {
 
 	static async getChannels() {
 		return await db.select().from(channelsTable);
+	}
+}
+
+export class MessageQueries {
+	static async addMessage(data: AddMessageData) {
+		return await db.insert(messagesTable).values({
+			channel_id: data.channel_id,
+			user_id: data.user_id,
+			content: data.content,
+			created_at: new Date().toISOString(),
+		});
 	}
 }

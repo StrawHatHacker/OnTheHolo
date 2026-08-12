@@ -1,25 +1,27 @@
 // Constants is our main source of truth
 
 export const COOKIE_MAP = {
-	SESSION: 'ss_id',
+  SESSION: 'ss_id',
 } as const;
 
 export const USER_STATUS = {
-	ACTIVE: 1,
-	DELETED: 2,
-	BANNED: 3,
+  ACTIVE: 1,
+  DELETED: 2,
+  BANNED: 3,
 } as const;
 
 export const USER_PRIVILEGE_STATUS = {
-	NORMAL: 1,
-	ADMIN: 2,
+  NORMAL: 1,
+  ADMIN: 2,
 } as const;
 
 export const CHANNEL_TYPE = {
   text: 1,
   voice: 2,
   news: 3,
-}
+} as const;
+export type ChannelTypeKeys = keyof typeof CHANNEL_TYPE;
+export type ChannelTypeValues = typeof CHANNEL_TYPE[ChannelTypeKeys];
 
 export const MAX_TOKEN_AGE_DAYS = 7 as const;
 

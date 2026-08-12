@@ -2,7 +2,8 @@ import { error, redirect } from '@sveltejs/kit';
 import { clsx, type ClassValue } from 'clsx';
 import { toast } from 'svelte-sonner';
 import { twMerge } from 'tailwind-merge';
-import { MAX_TOKEN_AGE_DAYS, TERMINAL_COLORS } from './constants';
+import { MAX_TOKEN_AGE_DAYS, TERMINAL_COLORS, type ChannelTypeValues } from '$lib/constants';
+import { AppState } from '$lib/stores.svelte';
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -93,5 +94,12 @@ export class DateHelper {
 			hour: 'numeric',
 			minute: 'numeric',
 		});
+	}
+}
+
+export class AppHelper {
+	static openCreateChannelDialog(channelType: ChannelTypeValues, forCategoryId: number) {
+		AppState.isCreateChannelDialogOpen = true;
+		AppState.createChannelDialogOptions = { channelType, forCategoryId };
 	}
 }

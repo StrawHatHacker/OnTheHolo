@@ -1,19 +1,27 @@
 <script lang="ts">
 	import { Categories, AppState, Users } from '$lib/stores.svelte';
-	import { handleRequestError } from '$lib/utils.js';
-	import { CHANNEL_TYPE, USER_PRIVILEGE_STATUS, USER_STATUS } from '$lib/constants.js';
+	import { genericRequest, handleRequestError } from '$lib/utils.js';
+	import {
+		CHANNEL_TYPE,
+		USER_PRIVILEGE_STATUS,
+		USER_STATUS,
+		type ChannelTypeValues,
+	} from '$lib/constants.js';
 	import { fade } from 'svelte/transition';
 	import PageLoading from '$lib/components/page-loading.svelte';
 	import TopBar from '$lib/components/app/top-bar.svelte';
 	import ServerNav from '$lib/components/app/server-nav.svelte';
 	import ChatArea from '$lib/components/app/chat-area.svelte';
 	import MemberList from '$lib/components/app/member-list.svelte';
+	import type { NewMessagePayload } from '$lib/types.js';
+	import CreateChannelDialog from '$lib/components/dialogs/create-channel-dialog.svelte';
 
 	let { data } = $props();
 
 	// State
 	let pageStatus = $state<'init' | 'loading' | 'ready'>('loading');
 	let bottomChatDiv = $state<HTMLDivElement>();
+	let newMessage = $state('');
 
 	$effect(() => {
 		initAppData();
@@ -64,6 +72,7 @@
 						type: CHANNEL_TYPE.text,
 						name: 'General',
 						category_id: 1,
+						typedMessage: '',
 						messages: [
 							{
 								id: 1,
@@ -87,6 +96,7 @@
 						type: CHANNEL_TYPE.text,
 						name: 'Memes',
 						category_id: 1,
+						typedMessage: '',
 						messages: [],
 					},
 				],
@@ -103,7 +113,6 @@
 				behavior: 'smooth',
 			});
 		} catch (e) {
-			console.error(e);
 			handleRequestError(e);
 		} finally {
 			pageStatus = 'ready';
@@ -112,6 +121,28 @@
 
 	const selectChannel = (channelId: number) => {
 		AppState.currentChannelId = channelId;
+	};
+
+	const sendMessage = async () => {
+		try {
+			const channel = Categories.findChannel((c) => c.id === AppState.currentChannelId);
+			if (!channel) return;
+
+			const p: NewMessagePayload = {
+				channel_id: channel.id,
+				content: newMessage,
+			};
+
+			await genericRequest('/api/message', { method: 'POST', body: JSON.stringify(p) });
+
+			newMessage = '';
+
+			bottomChatDiv?.scrollIntoView({
+				behavior: 'smooth',
+			});
+		} catch (e) {
+			handleRequestError(e);
+		}
 	};
 </script>
 
@@ -124,9 +155,11 @@
 		<main class="flex min-h-0 w-full flex-1 items-stretch">
 			<ServerNav {selectChannel} />
 
-			<ChatArea bind:bottomChatDiv />
+			<ChatArea bind:bottomChatDiv bind:newMessage {sendMessage} />
 
 			<MemberList />
 		</main>
 	</div>
 {/if}
+
+<CreateChannelDialog />

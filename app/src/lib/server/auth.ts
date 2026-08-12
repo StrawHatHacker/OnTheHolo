@@ -3,6 +3,11 @@ import { SECRET_PASETO_KEY } from '$env/static/private';
 import { PUBLIC_PASETO_KEY } from '$env/static/public';
 import crypto from 'node:crypto';
 import { V4 } from 'paseto';
+import type { Cookies } from '@sveltejs/kit';
+import { COOKIE_MAP } from '$lib/constants';
+import { CError } from '$lib/utils';
+import { ERROR_MAP } from '$lib/errors';
+import { SessionQueries } from '$lib/server/db/queries';
 
 export class Auth {
 	static hashPassword = (password: string, salt: string) => {
@@ -21,5 +26,17 @@ export class Auth {
 
 	static async verifyPrivateKey(token: string): Promise<PasetoVerifiedPayload> {
 		return await V4.verify(token, PUBLIC_PASETO_KEY);
+	}
+
+	static async verifySession(cookies: Cookies) {
+		const sessionCookie = cookies.get(COOKIE_MAP.SESSION);
+		if (!sessionCookie) throw new CError(401, ERROR_MAP.invalidSession);
+
+		this.verifyPrivateKey(sessionCookie);
+
+		const session = await SessionQueries.getSession(sessionCookie);
+		if (!session) throw new CError(401, ERROR_MAP.invalidSession);
+
+		return session;
 	}
 }

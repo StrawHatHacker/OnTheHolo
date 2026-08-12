@@ -6,7 +6,23 @@
 	import { AppState, Categories } from '$lib/stores.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 
-	let { bottomChatDiv = $bindable() }: { bottomChatDiv?: HTMLDivElement } = $props();
+	let {
+		bottomChatDiv = $bindable(),
+		newMessage = $bindable(),
+		sendMessage,
+	}: {
+		bottomChatDiv?: HTMLDivElement;
+		newMessage: string;
+		sendMessage: () => void;
+	} = $props();
+
+	const handleKeydown = (e: KeyboardEvent) => {
+		console.log(e.key);
+		if (e.key === 'Enter' && !e.shiftKey) {
+			e.preventDefault();
+			sendMessage();
+		}
+	};
 </script>
 
 <section aria-label="chat-area" class="flex h-full min-w-0 flex-1 flex-col pt-2">
@@ -32,16 +48,24 @@
 		</div>
 	</ScrollArea>
 
-	<div class="shrink-0 border-t border-border p-2">
-		<div class="flex items-center gap-2">
+	<div class="shrink-0 border-t-2 border-border p-2">
+		<form
+			onsubmit={(e) => {
+				e.preventDefault();
+				sendMessage();
+			}}
+			class="flex items-center gap-2"
+		>
 			<Textarea
 				placeholder={`Message #${Categories.findChannel((c) => c.id === AppState.currentChannelId)?.name}`}
+				bind:value={newMessage}
+				onkeydown={handleKeydown}
 			/>
 
-			<Button size="icon">
+			<Button size="icon" type="submit">
 				<SendIcon />
 				<span class="sr-only">Send message</span>
 			</Button>
-		</div>
+		</form>
 	</div>
 </section>

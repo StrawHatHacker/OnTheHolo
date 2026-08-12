@@ -54,6 +54,20 @@
 
 1. Make the anchor tags in `register-form.svelte` point to your terms of service and privacy policy.
 
+## Customizing
+
+Options coming soon
+
+## Code conventions & understanding
+
+- Global constant variables should be in `ROLE_DEFAULT_COLOR` format and always inside the `constants.ts` file.
+
+- Global state should be in `AppState` format and always inside the `stores.svelte.ts` file.
+
+- Database properties should be in `text_channel_id` format.
+
+- This piece of software comes with many utility functions, use them.
+
 ## TODO
 
 - Add ratelimits
