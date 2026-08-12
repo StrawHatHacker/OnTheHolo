@@ -103,7 +103,7 @@
 >
 	<!-- LEFT SIDE -->
 	<div class="flex h-full min-h-0 w-full flex-col gap-4">
-		<div class="rounded-lg bg-card/90 p-6 text-white shadow-2xl backdrop-blur-sm">
+		<div class="rounded-lg bg-black/80 p-6 text-white shadow-2xl backdrop-blur-sm">
 			<h2 class="mb-2 text-xl font-black tracking-wide">Features</h2>
 
 			<ul class="text-md flex flex-col gap-2 font-medium">
@@ -122,7 +122,7 @@
 			</ul>
 		</div>
 		<ScrollArea
-			class="min-h-0 flex-1 rounded-lg bg-card/90 p-6 text-white shadow-2xl backdrop-blur-sm"
+			class="min-h-0 flex-1 rounded-lg bg-black/80 p-6 text-white shadow-2xl backdrop-blur-sm"
 		>
 			<h2 class="mb-4 text-xl font-black tracking-wide">News</h2>
 
@@ -137,7 +137,7 @@
 
 	<!-- RIGHT SIDE -->
 	<div
-		class="flex h-full w-full flex-col justify-between rounded-lg bg-card/90 px-6 py-8 text-white shadow-lg backdrop-blur-sm"
+		class="flex h-full w-full flex-col justify-between rounded-lg bg-black/80 px-6 py-8 text-white shadow-lg backdrop-blur-sm"
 	>
 		<div class="relative mb-4 flex flex-col items-center">
 			<div
@@ -151,7 +151,7 @@
 			</h1>
 		</div>
 		{#if data.lastUser}
-			<div class="mb-2 flex items-center justify-between rounded-md bg-muted py-1 pr-1 pl-2">
+			<div class="mb-2 flex items-center justify-between rounded-md bg-black/70 py-1 pr-1 pl-2">
 				<div class="flex flex-col">
 					<span class="text-xs font-bold text-muted-foreground">Last login as:</span>
 					<span class="font-medium">{data.lastUser?.username}</span>
