@@ -16,6 +16,12 @@ export type WithoutChildren<T> = T extends { children?: any } ? Omit<T, 'childre
 export type WithoutChildrenOrChild<T> = WithoutChildren<WithoutChild<T>>;
 export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & { ref?: U | null };
 
+/**
+ * Helper class for throwing custom errors.
+ * That way we can distinguish between our error and random errors.
+ * We show these errors to the client.
+ * We don't want to return DB `Error`s to the client.
+ */
 export class CError {
 	status: number;
 	message: string;
@@ -36,11 +42,11 @@ export const createCookieSettings = () => {
 	};
 };
 
-export const genericRequest = async (
+export const genericRequest = async <T>(
 	url: string,
 	request: RequestInit,
 	fetchFn: typeof fetch = fetch
-) => {
+): Promise<T> => {
 	const isFormData = request.body instanceof FormData;
 	const headers: Record<string, string> = {
 		'Accept-Language': typeof navigator !== 'undefined' ? navigator.language : 'en',
@@ -60,7 +66,7 @@ export const genericRequest = async (
 		throw new CError(response.status, data.message);
 	}
 
-	return await response.json();
+	return await response.json() as T;
 };
 
 export const handleRequestError = (e: unknown) => {
@@ -98,8 +104,12 @@ export class DateHelper {
 }
 
 export class AppHelper {
-	static openCreateChannelDialog(channelType: ChannelTypeValues, forCategoryId: number) {
-		AppState.isCreateChannelDialogOpen = true;
-		AppState.createChannelDialogOptions = { channelType, forCategoryId };
+	static openAddCategoryDialog() {
+		AppState.isCreateCategoryDialogOpen = true;
+	}
+
+	static openAddChannelDialog(channelType: ChannelTypeValues, forCategoryId: number) {
+		AppState.isAddChannelDialogOpen = true;
+		AppState.addChannelDialogOptions = { channelType, forCategoryId };
 	}
 }

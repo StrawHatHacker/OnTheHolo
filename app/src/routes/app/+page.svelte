@@ -1,27 +1,20 @@
 <script lang="ts">
-	import { Categories, AppState, Users } from '$lib/stores.svelte';
+	import { Categories, AppState } from '$lib/stores.svelte';
 	import { genericRequest, handleRequestError } from '$lib/utils.js';
-	import {
-		CHANNEL_TYPE,
-		USER_PRIVILEGE_STATUS,
-		USER_STATUS,
-		type ChannelTypeValues,
-	} from '$lib/constants.js';
 	import { fade } from 'svelte/transition';
 	import PageLoading from '$lib/components/page-loading.svelte';
 	import TopBar from '$lib/components/app/top-bar.svelte';
 	import ServerNav from '$lib/components/app/server-nav.svelte';
 	import ChatArea from '$lib/components/app/chat-area.svelte';
 	import MemberList from '$lib/components/app/member-list.svelte';
-	import type { NewMessagePayload } from '$lib/types.js';
-	import CreateChannelDialog from '$lib/components/dialogs/create-channel-dialog.svelte';
+	import type { InitialServerData } from '$lib/types.js';
+	import AddChannelDialog from '$lib/components/dialogs/add-channel-dialog.svelte';
+	import AddCategoryDialog from '$lib/components/dialogs/add-category-dialog.svelte';
 
 	let { data } = $props();
 
 	// State
 	let pageStatus = $state<'init' | 'loading' | 'ready'>('loading');
-	let bottomChatDiv = $state<HTMLDivElement>();
-	let newMessage = $state('');
 
 	$effect(() => {
 		initAppData();
@@ -31,87 +24,22 @@
 		try {
 			pageStatus = 'init';
 
-			await new Promise((resolve) => setTimeout(resolve, 2000));
-			// Get users
-			Users.set('1', {
-				id: 1,
-				username: 'Panos',
-				email: 'panos@example.com',
-				status: USER_STATUS.ACTIVE,
-				priviledge_status: USER_PRIVILEGE_STATUS.NORMAL,
-				created_at: new Date().toISOString(),
-				updated_at: new Date().toISOString(),
+			const initialData = await genericRequest<InitialServerData>('/api/initialData', {
+				method: 'GET',
+				credentials: 'include',
 			});
-			Users.set('2', {
-				id: 2,
-				username: 'Teo',
-				email: 'teo@example.com',
-				status: USER_STATUS.ACTIVE,
-				priviledge_status: USER_PRIVILEGE_STATUS.NORMAL,
-				created_at: new Date().toISOString(),
-				updated_at: new Date().toISOString(),
-			});
-			Users.set('3', {
-				id: 3,
-				username: 'Titos',
-				email: 'titos@example.com',
-				status: USER_STATUS.ACTIVE,
-				priviledge_status: USER_PRIVILEGE_STATUS.NORMAL,
-				created_at: new Date().toISOString(),
-				updated_at: new Date().toISOString(),
-			});
-			// Get channels
-			Categories.set('1', {
-				id: 1,
-				name: 'General',
-				created_at: new Date().toISOString(),
-				channels: [
-					{
-						id: 1,
-						created_at: new Date().toISOString(),
-						type: CHANNEL_TYPE.text,
-						name: 'General',
-						category_id: 1,
-						typedMessage: '',
-						messages: [
-							{
-								id: 1,
-								created_at: new Date().toISOString(),
-								user_id: 1,
-								channel_id: 1,
-								content: 'Hello world!',
-							},
-							{
-								id: 2,
-								created_at: new Date().toISOString(),
-								user_id: 1,
-								channel_id: 1,
-								content: 'Testing testing',
-							},
-						],
-					},
-					{
-						id: 2,
-						created_at: new Date().toISOString(),
-						type: CHANNEL_TYPE.text,
-						name: 'Memes',
-						category_id: 1,
-						typedMessage: '',
-						messages: [],
-					},
-				],
-			});
+
+			// Initializes everything
+			Categories.init(initialData.categories);
 
 			let firstChannel = Categories?.firstChannel();
-			// Todo if there are no channels we have to show something
-			if (!firstChannel) return;
+			if (firstChannel) {
+				AppState.currentChannelId = firstChannel.id;
+			} else {
+				AppState.currentChannelId = null;
+			}
 
-			AppState.currentChannelId = firstChannel.id;
-
-			// Get messages
-			bottomChatDiv?.scrollIntoView({
-				behavior: 'smooth',
-			});
+			AppState.initialized = true;
 		} catch (e) {
 			handleRequestError(e);
 		} finally {
@@ -121,28 +49,6 @@
 
 	const selectChannel = (channelId: number) => {
 		AppState.currentChannelId = channelId;
-	};
-
-	const sendMessage = async () => {
-		try {
-			const channel = Categories.findChannel((c) => c.id === AppState.currentChannelId);
-			if (!channel) return;
-
-			const p: NewMessagePayload = {
-				channel_id: channel.id,
-				content: newMessage,
-			};
-
-			await genericRequest('/api/message', { method: 'POST', body: JSON.stringify(p) });
-
-			newMessage = '';
-
-			bottomChatDiv?.scrollIntoView({
-				behavior: 'smooth',
-			});
-		} catch (e) {
-			handleRequestError(e);
-		}
 	};
 </script>
 
@@ -155,11 +61,12 @@
 		<main class="flex min-h-0 w-full flex-1 items-stretch">
 			<ServerNav {selectChannel} />
 
-			<ChatArea bind:bottomChatDiv bind:newMessage {sendMessage} />
+			<ChatArea />
 
 			<MemberList />
 		</main>
 	</div>
 {/if}
 
-<CreateChannelDialog />
+<AddChannelDialog />
+<AddCategoryDialog />

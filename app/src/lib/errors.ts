@@ -7,6 +7,7 @@ export const ERROR_MAP = {
 	invalidPassword:
 		'Password must be at least 16 characters and include a number and a special character',
 	invalidUsername: 'Username must be at least 3 characters',
+	invalidChannelType: 'Invalid channel type',
 	channelNotFound: 'Channel not found',
 	categoryNotFound: 'Category not found',
 	messageLengthFailure: `Messages should less than ${PUBLIC_MAX_MESSAGE_LENGTH} characters`,

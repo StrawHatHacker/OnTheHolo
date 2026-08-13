@@ -1,17 +1,26 @@
-// ONLY IMPORT TYPES FROM $lib/server/*
-import type { categoriesTable, channelsTable, messagesTable, usersTable } from "$lib/server/db/schema";
-import type { ChannelTypeValues } from "$lib/constants";
+import type { MessageCollection, ChannelCollection } from '$lib/resources.svelte';
+import type { ChannelTypeValues } from './constants';
+import type { categoriesTable, channelsTable, messagesTable, usersTable } from './server/db/schema';
 
 export type User = Omit<typeof usersTable.$inferSelect, 'password' | 'salt'>;
-export type Messages = typeof messagesTable.$inferSelect;
+
+export type Message = typeof messagesTable.$inferSelect;
+
 export type Channel = typeof channelsTable.$inferSelect;
+
 export type Category = typeof categoriesTable.$inferSelect;
+
 export type ChannelWithMessages = Channel & {
-	messages: Messages[];
+	messages: Message[];
 	typedMessage: string;
-}
-export type CategoryWithChannels = Category & {
+};
+
+export type CategoryFull = Category & {
 	channels: ChannelWithMessages[];
+};
+
+export type InitialServerData = {
+	categories: CategoryFull[];
 };
 
 export type GlobalLocals = {
@@ -37,6 +46,26 @@ export type NewUser = {
 	salt: string;
 };
 
+export type NewCategoryPayload = {
+	name: string;
+}
+
+export type AddCategoryData = {
+	name: string;
+}
+
+export type NewChannelPayload = {
+	name: string;
+	channelType: ChannelTypeValues;
+	categoryId: number;
+}
+
+export type AddChannelData = {
+	name: string;
+	channelType: ChannelTypeValues;
+	categoryId: number;
+}
+
 export type NewMessagePayload = {
 	channelId: number;
 	content: string;
@@ -46,10 +75,4 @@ export type AddMessageData = {
 	channelId: number;
 	content: string;
 	userId: number;
-}
-
-export type NewChannelPayload = {
-	name: string;
-	channelType: ChannelTypeValues;
-	categoryId: number;
 }

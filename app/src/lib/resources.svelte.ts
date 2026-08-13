@@ -1,5 +1,32 @@
+/**
+ * - WOAH WHAT'S ALL THIS?
+ * - Calm down little bro, I tried making something similar to discord.js' Collection
+ * - It doesn't have circular references yet and it doesn't need to for now
+ */
+
 import { SvelteMap } from 'svelte/reactivity';
-import type { Channel, CategoryWithChannels, User, ChannelWithMessages } from '$lib/types';
+import type {
+	User,
+	Message,
+	Channel,
+	Category,
+	ChannelWithMessages,
+	CategoryFull,
+} from '$lib/types';
+import { AppState } from './stores.svelte';
+
+export type ResourceMessage = Message & {
+
+};
+
+export type ResourceChannel = Channel & {
+	messages: MessageCollection;
+	typedMessage: string;
+};
+
+export type ResourceCategory = Category & {
+	channels: ChannelCollection;
+};
 
 export class UserCollection extends SvelteMap<string, User> {
 	find(callback: (user: User) => boolean): User | null {
@@ -25,30 +52,126 @@ export class UserCollection extends SvelteMap<string, User> {
 	}
 
 	first(): User | null {
-		return this.values().next().value || null;
+		return this.values().next().value ?? null;
 	}
 
 	last(): User | null {
-		return [...this.values()].at(-1) || null;
+		return [...this.values()].at(-1) ?? null;
 	}
 }
 
-export class CategoryCollection extends SvelteMap<
-	string,
-	CategoryWithChannels
-> {
-	constructor(categories: CategoryWithChannels[] = []) {
+export class MessageCollection extends SvelteMap<string, ResourceMessage> {
+	constructor(messages: Message[] = []) {
+		super(messages.map((message) => [String(message.id), message]));
+	}
+
+	add(message: ResourceMessage) {
+		this.set(String(message.id), message);
+		return this.size;
+	}
+
+	remove(id: string) {
+		this.delete(id);
+		return this.size;
+	}
+
+	first(): ResourceMessage | null {
+		return this.values().next().value ?? null;
+	}
+
+	last(): ResourceMessage | null {
+		return [...this.values()].at(-1) ?? null;
+	}
+
+
+}
+
+export class ChannelCollection extends SvelteMap<string, ResourceChannel> {
+	constructor(channels: ChannelWithMessages[] = []) {
 		super(
-			categories.map((category) => [
-				String(category.id),
-				category,
+			channels.map((channel) => [
+				String(channel.id),
+				{
+					...channel,
+					messages: new MessageCollection(channel.messages),
+					typedMessage: channel.typedMessage,
+				},
 			])
 		);
 	}
 
+	add(channel: ResourceChannel) {
+		this.set(String(channel.id), channel);
+		return this.size;
+	}
+
+	remove(id: string) {
+		this.delete(id);
+		return this.size;
+	}
+
+	first(): ResourceChannel | null {
+		return this.values().next().value ?? null;
+	}
+
+	last(): ResourceChannel | null {
+		return [...this.values()].at(-1) ?? null;
+	}
+}
+
+export class CategoryCollection extends SvelteMap<string, ResourceCategory> {
+	constructor(categories: CategoryFull[] = []) {
+		super(
+			categories.map((category) => [
+				String(category.id),
+				{
+					...category,
+					channels: new ChannelCollection(category.channels),
+				},
+			])
+		);
+	}
+
+	init(categories: CategoryFull[]) {
+		for (const category of categories) {
+			this.addCategory(category);
+		}
+	}
+
+	add(category: ResourceCategory) {
+		this.set(String(category.id), category);
+		return this.size;
+	}
+
+	addCategory(category: CategoryFull) {
+		this.set(String(category.id), {
+			...category,
+			channels: new ChannelCollection(category.channels),
+		});
+
+		return this.size;
+	}
+
+	remove(id: string) {
+		this.delete(id);
+		return this.size;
+	}
+
+	getCurrentChannel(): ResourceChannel | null {
+		for (const category of this.values()) {
+			for (const channel of category.channels.values()) {
+				if (channel.id === AppState.currentChannelId) {
+					return channel;
+				}
+			}
+		}
+
+		return null;
+	}
+
 	findCategory(
-		callback: (category: CategoryWithChannels) => boolean
-	): CategoryWithChannels | null {
+		callback: (category: ResourceCategory) => boolean
+	): ResourceCategory | null {
 		for (const category of this.values()) {
 			if (callback(category)) {
 				return category;
@@ -59,10 +182,10 @@ export class CategoryCollection extends SvelteMap<
 	}
 
 	findChannel(
-		callback: (channel: ChannelWithMessages) => boolean
-	): ChannelWithMessages | null {
+		callback: (channel: ResourceChannel) => boolean
+	): ResourceChannel | null {
 		for (const category of this.values()) {
-			for (const channel of category.channels) {
+			for (const channel of category.channels.values()) {
 				if (callback(channel)) {
 					return channel;
 				}
@@ -72,15 +195,15 @@ export class CategoryCollection extends SvelteMap<
 		return null;
 	}
 
-	first(): CategoryWithChannels | null {
+	first(): ResourceCategory | null {
 		return this.values().next().value ?? null;
 	}
 
-	firstChannel(): ChannelWithMessages | null {
-		return this.first()?.channels[0] ?? null;
+	firstChannel(): ResourceChannel | null {
+		return this.first()?.channels.first() ?? null;
 	}
 
-	last(): CategoryWithChannels | null {
+	last(): ResourceCategory | null {
 		return [...this.values()].at(-1) ?? null;
 	}
 }

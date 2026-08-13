@@ -144,7 +144,7 @@
 				class="absolute h-30 w-30 rounded-full bg-linear-to-b from-pink-600 via-orange-400 to-white opacity-50 blur-xl"
 			></div>
 
-			<img src="/logo.png" alt="on the holo logo" class="relative h-30 w-30" />
+			<img src="/logo.png" alt="Holo logo" class="relative h-30 w-30" />
 
 			<h1 class="mt-4 text-center text-lg font-black tracking-wide text-balance">
 				{PUBLIC_TITLE}

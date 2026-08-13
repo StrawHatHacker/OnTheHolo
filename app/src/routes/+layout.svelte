@@ -8,7 +8,7 @@
 
 <svelte:head>
 	<link rel="icon" href="/logo.png" />
-	<title>On The Holo - Secure Chat</title>
+	<title>Holo - Secure Chat</title>
 </svelte:head>
 
 <ModeWatcher />

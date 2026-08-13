@@ -12,6 +12,6 @@
 <DialogPrimitive.Title
 	bind:ref
 	data-slot="dialog-title"
-	class={cn("leading-none text-xl font-medium", className)}
+	class={cn("leading-none text-xl font-medium flex items-center gap-2", className)}
 	{...restProps}
 />

@@ -22,56 +22,62 @@
 
 	<ScrollArea class="min-h-0 flex-1" orientation="vertical">
 		<div class="group flex flex-col">
-			{#each Categories as [_, category]}
-				<div class="flex items-end justify-between">
-					<h3 class="mt-4 text-sm font-bold text-muted-foreground">{category.name}</h3>
-					<DropdownMenu.Root>
-						<DropdownMenu.Trigger>
-							<Button size="icon-xs" variant="ghost" class="hidden group-hover:inline-flex">
-								<PlusIcon />
-							</Button>
-						</DropdownMenu.Trigger>
-						<DropdownMenu.Content class="w-56" align="start">
-							<DropdownMenu.Label>
-								<PlusIcon class="mr-1 inline size-3" />
-								Add a channel
-							</DropdownMenu.Label>
-							<DropdownMenu.Group>
-								<DropdownMenu.Item
-									onclick={() => AppHelper.openCreateChannelDialog(CHANNEL_TYPE.text, category.id)}
-								>
-									<MessageSquareIcon />
-									Text channel
-								</DropdownMenu.Item>
-								<DropdownMenu.Item
-									onclick={() => AppHelper.openCreateChannelDialog(CHANNEL_TYPE.voice, category.id)}
-								>
-									<Volume2Icon />
-									Voice channel
-								</DropdownMenu.Item>
-							</DropdownMenu.Group>
-							<DropdownMenu.Separator />
-							<DropdownMenu.Group>
-								<DropdownMenu.Item>
-									<ListPlusIcon />
-									Create a category
-								</DropdownMenu.Item>
-							</DropdownMenu.Group>
-						</DropdownMenu.Content>
-					</DropdownMenu.Root>
-				</div>
-				{#each category.channels as channel}
-					{@const currentClasses = AppState.currentChannelId === channel.id ? 'bg-muted' : ''}
-					<Button
-						class="w-full justify-start text-base font-bold text-foreground/80 {currentClasses}"
-						variant="ghost"
-						onclick={() => selectChannel(channel.id)}
-					>
-						<MessageSquareIcon class="inline size-4" />
-						{channel.name}
-					</Button>
+			{#if Categories.size === 0}
+				<Button class="mt-4 w-full" size="lg" onclick={() => AppHelper.openAddCategoryDialog()}>
+					Create your first category
+				</Button>
+			{:else}
+				{#each Categories as [_, category]}
+					<div class="flex items-end justify-between">
+						<h3 class="mt-4 text-sm font-bold text-muted-foreground">{category.name}</h3>
+						<DropdownMenu.Root>
+							<DropdownMenu.Trigger>
+								<Button size="icon-xs" variant="ghost" class="hidden group-hover:inline-flex">
+									<PlusIcon />
+								</Button>
+							</DropdownMenu.Trigger>
+							<DropdownMenu.Content class="w-56" align="start">
+								<DropdownMenu.Label>
+									<PlusIcon class="mr-1 inline size-3" />
+									Add a channel
+								</DropdownMenu.Label>
+								<DropdownMenu.Group>
+									<DropdownMenu.Item
+										onclick={() => AppHelper.openAddChannelDialog(CHANNEL_TYPE.text, category.id)}
+									>
+										<MessageSquareIcon />
+										Text channel
+									</DropdownMenu.Item>
+									<DropdownMenu.Item
+										onclick={() => AppHelper.openAddChannelDialog(CHANNEL_TYPE.voice, category.id)}
+									>
+										<Volume2Icon />
+										Voice channel
+									</DropdownMenu.Item>
+								</DropdownMenu.Group>
+								<DropdownMenu.Separator />
+								<DropdownMenu.Group>
+									<DropdownMenu.Item onclick={() => AppHelper.openAddCategoryDialog()}>
+										<ListPlusIcon />
+										Create a category
+									</DropdownMenu.Item>
+								</DropdownMenu.Group>
+							</DropdownMenu.Content>
+						</DropdownMenu.Root>
+					</div>
+					{#each category.channels.values() as channel}
+						{@const currentClasses = AppState.currentChannelId === channel.id ? 'bg-muted' : ''}
+						<Button
+							class="w-full justify-start text-base font-bold text-foreground/80 {currentClasses}"
+							variant="ghost"
+							onclick={() => selectChannel(channel.id)}
+						>
+							<MessageSquareIcon class="inline size-4" />
+							{channel.name}
+						</Button>
+					{/each}
 				{/each}
-			{/each}
+			{/if}
 		</div>
 	</ScrollArea>
 </aside>

@@ -28,6 +28,9 @@ export class Auth {
 		return await V4.verify(token, PUBLIC_PASETO_KEY);
 	}
 
+	/**
+	 * First verify the cookie, then check the db
+	 */
 	static async verifySession(cookies: Cookies) {
 		const sessionCookie = cookies.get(COOKIE_MAP.SESSION);
 		if (!sessionCookie) throw new CError(401, ERROR_MAP.invalidSession);

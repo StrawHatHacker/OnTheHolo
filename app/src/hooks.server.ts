@@ -23,7 +23,7 @@ export const init: ServerInit = async () => {
 		report.success('Database connection successful');
 	} catch (e) {
 		report.error('Database connection failed: ' + (e instanceof Error ? e.message : JSON.stringify(e)));
-		report.error('You probably forgot to initialize the database with drizzle. Refer to README.md');
+		report.error('You probably forgot to start docker or initialize the database with drizzle. Refer to README.md');
 		process.exit(1);
 	}
 

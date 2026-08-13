@@ -1,5 +1,5 @@
 import { USER_PRIVILEGE_STATUS, USER_STATUS } from '$lib/constants';
-import type { AddMessageData, CategoryWithChannels, NewUser } from '$lib/types';
+import type { AddCategoryData, AddChannelData, AddMessageData, CategoryFull, Message, NewUser } from '$lib/types';
 import { db } from '$lib/server/db';
 import { categoriesTable, channelsTable, messagesTable, safeUserFields, sessionsTable, usersTable } from '$lib/server/db/schema';
 import { eq, and } from 'drizzle-orm';
@@ -72,7 +72,7 @@ export class SessionQueries {
 }
 
 export class ChannelQueries {
-	static async getCategories(): Promise<CategoryWithChannels[]> {
+	static async getCategoryFull(): Promise<CategoryFull[]> {
 		const rows = await db
 			.select({
 				category: categoriesTable,
@@ -82,20 +82,14 @@ export class ChannelQueries {
 			.from(categoriesTable)
 			.leftJoin(
 				channelsTable,
-				eq(
-					categoriesTable.id,
-					channelsTable.category_id
-				)
+				eq(categoriesTable.id, channelsTable.category_id)
 			)
 			.leftJoin(
 				messagesTable,
-				eq(
-					channelsTable.id,
-					messagesTable.channel_id
-				)
+				eq(channelsTable.id, messagesTable.channel_id)
 			);
 
-		const categories = new Map<number, CategoryWithChannels>();
+		const categories = new Map<number, CategoryFull>();
 
 		for (const row of rows) {
 			let category = categories.get(row.category.id);
@@ -109,8 +103,9 @@ export class ChannelQueries {
 				categories.set(category.id, category);
 			}
 
-			if (!row.channel) continue;
-
+			if (!row.channel) {
+				continue;
+			}
 
 			let channel = category.channels.find(
 				(channel) => channel.id === row.channel!.id
@@ -134,18 +129,34 @@ export class ChannelQueries {
 		return [...categories.values()];
 	}
 
+	static async addCategory(data: AddCategoryData) {
+		return await db.insert(categoriesTable).values({
+			name: data.name,
+			created_at: new Date().toISOString(),
+		});
+	}
+
 	static async getChannels() {
 		return await db.select().from(channelsTable);
+	}
+
+	static async addChannel(data: AddChannelData) {
+		return await db.insert(channelsTable).values({
+			name: data.name,
+			type: data.channelType,
+			category_id: data.categoryId,
+			created_at: new Date().toISOString(),
+		});
 	}
 }
 
 export class MessageQueries {
-	static async addMessage(data: AddMessageData) {
-		return await db.insert(messagesTable).values({
-			channel_id: data.channel_id,
-			user_id: data.user_id,
+	static async addMessage(data: AddMessageData): Promise<Message> {
+		return (await db.insert(messagesTable).values({
+			channel_id: data.channelId,
+			user_id: data.userId,
 			content: data.content,
 			created_at: new Date().toISOString(),
-		});
+		}).returning())?.[0];
 	}
 }

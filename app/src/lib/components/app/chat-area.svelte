@@ -1,26 +1,61 @@
 <script lang="ts">
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
-	import { DateHelper } from '$lib/utils.js';
+	import { DateHelper, genericRequest, handleRequestError } from '$lib/utils.js';
 	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
 	import SendIcon from '@lucide/svelte/icons/send';
 	import { AppState, Categories } from '$lib/stores.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
+	import type { Message, NewMessagePayload } from '$lib/types';
 
-	let {
-		bottomChatDiv = $bindable(),
-		newMessage = $bindable(),
-		sendMessage,
-	}: {
-		bottomChatDiv?: HTMLDivElement;
-		newMessage: string;
-		sendMessage: () => void;
-	} = $props();
+	let newMessage = $state('');
+	let bottomChatDiv = $state<HTMLDivElement>();
+		let loading = $state(false);
+
+	$effect(() => {
+		// When the page is initialized or a channel is selected
+		if (AppState.initialized && AppState.currentChannelId) {
+			scrollDown();
+		}
+	});
+
+	const scrollDown = () => {
+		bottomChatDiv?.scrollIntoView({
+			behavior: 'instant',
+		});
+	};
 
 	const handleKeydown = (e: KeyboardEvent) => {
-		console.log(e.key);
 		if (e.key === 'Enter' && !e.shiftKey) {
 			e.preventDefault();
 			sendMessage();
+		}
+	};
+
+	const sendMessage = async () => {
+		try {
+			const channel = Categories.findChannel((c) => c.id === AppState.currentChannelId);
+			if (!channel) return;
+
+			loading = true;
+
+			const p: NewMessagePayload = {
+				channelId: channel.id,
+				content: newMessage,
+			};
+
+			const msg = await genericRequest<Message>('/api/message', {
+				method: 'POST',
+				body: JSON.stringify(p),
+			});
+
+			channel.messages.add(msg);
+
+			newMessage = '';
+			scrollDown();
+		} catch (e) {
+			handleRequestError(e);
+		} finally {
+			loading = false;
 		}
 	};
 </script>
@@ -28,7 +63,7 @@
 <section aria-label="chat-area" class="flex h-full min-w-0 flex-1 flex-col pt-2">
 	<ScrollArea class="min-h-0 flex-1" orientation="vertical">
 		<div class="flex flex-col gap-4">
-			{#each Categories.findChannel((c) => c.id === AppState.currentChannelId)?.messages as message}
+			{#each Categories.getCurrentChannel()?.messages.values() as message}
 				<div class="flex items-start gap-4 px-4">
 					<div class="mt-1 size-8 rounded-full bg-muted"></div>
 					<div class="flex flex-col">

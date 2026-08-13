@@ -1,4 +1,4 @@
-# On The Holo
+# Holo
 
 ##### Customizable, self-hostable and secure messaging for you and your friends, so the government cannot spy on you.
 
@@ -64,9 +64,12 @@ Options coming soon
 
 - Global state should be in `AppState` format and always inside the `stores.svelte.ts` file.
 
+- Component file names should be in the `header-navbar.svelte` format for consistency with the shadcn-svelte components. 
+
 - Database properties should be in `text_channel_id` format.
 
 - This piece of software comes with many utility functions, use them.
+
 
 ## TODO
 

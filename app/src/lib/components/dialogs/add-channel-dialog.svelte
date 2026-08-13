@@ -10,14 +10,15 @@
 	import { CError, genericRequest, handleRequestError } from '$lib/utils';
 	import type { NewChannelPayload } from '$lib/types';
 	import { ERROR_MAP } from '$lib/errors';
+	import { toast } from 'svelte-sonner';
 
 	// State
 	let loading = $state(false);
 	let newChannelName = $state('');
 
 	$effect(() => {
-		if (!AppState.isCreateChannelDialogOpen) {
-			AppState.createChannelDialogOptions = null;
+		if (!AppState.isAddChannelDialogOpen) {
+			AppState.addChannelDialogOptions = null;
 		}
 	});
 
@@ -27,34 +28,37 @@
 	let channelTypeString = $derived.by(() => {
 		return (
 			Object.entries(CHANNEL_TYPE).find(
-				([key, value]) => value === AppState.createChannelDialogOptions?.channelType
+				([key, value]) => value === AppState.addChannelDialogOptions?.channelType
 			)?.[0] || null
 		);
 	});
 	let Icon = $derived.by(() => {
-		if (AppState.createChannelDialogOptions?.channelType === CHANNEL_TYPE.text) {
+		if (AppState.addChannelDialogOptions?.channelType === CHANNEL_TYPE.text) {
 			return MessageSquareIcon;
-		} else if (AppState.createChannelDialogOptions?.channelType === CHANNEL_TYPE.voice) {
+		} else if (AppState.addChannelDialogOptions?.channelType === CHANNEL_TYPE.voice) {
 			return Volume2Icon;
 		}
 	});
 
 	const submitAddChannel = async () => {
 		try {
-			if (!AppState.createChannelDialogOptions) throw new CError(500, ERROR_MAP.generalError);
+			if (!AppState.addChannelDialogOptions) throw new CError(500, ERROR_MAP.generalError);
 
 			loading = true;
 
 			const payload: NewChannelPayload = {
 				name: newChannelName,
-				channelType: AppState.createChannelDialogOptions.channelType,
-				categoryId: AppState.createChannelDialogOptions.forCategoryId,
+				channelType: AppState.addChannelDialogOptions.channelType,
+				categoryId: AppState.addChannelDialogOptions.forCategoryId,
 			};
 
 			await genericRequest('/api/channel', {
 				method: 'POST',
 				body: JSON.stringify(payload),
 			});
+
+			AppState.isAddChannelDialogOpen = false;
+			toast.success('Channel created!');
 		} catch (e) {
 			handleRequestError(e);
 		} finally {
@@ -63,11 +67,11 @@
 	};
 </script>
 
-<Dialog.Root bind:open={AppState.isCreateChannelDialogOpen}>
+<Dialog.Root bind:open={AppState.isAddChannelDialogOpen}>
 	<Dialog.Content>
 		<Dialog.Header>
 			<Dialog.Title>
-				<Icon class="mr-1 inline size-5"></Icon>
+				<Icon class="size-5"></Icon>
 				Add a {channelTypeString} channel
 			</Dialog.Title>
 		</Dialog.Header>
