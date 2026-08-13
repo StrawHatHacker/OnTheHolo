@@ -37,7 +37,7 @@ export class Auth {
 
 		this.verifyPrivateKey(sessionCookie);
 
-		const session = await SessionQueries.getSession(sessionCookie);
+		const session = await SessionQueries.getSessionByToken(sessionCookie);
 		if (!session) throw new CError(401, ERROR_MAP.invalidSession);
 
 		return session;

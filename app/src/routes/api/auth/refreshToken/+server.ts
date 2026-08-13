@@ -10,7 +10,7 @@ export const GET = async ({ cookies }) => {
 		const sessionToken = cookies.get(COOKIE_MAP.SESSION);
 		if (!sessionToken) throw new CError(401, '');
 
-		const session = await SessionQueries.getSession(sessionToken);
+		const session = await SessionQueries.getSessionByToken(sessionToken);
 		if (!session) {
 			cookies.delete(COOKIE_MAP.SESSION, { path: '/' });
 			throw new CError(401, '');

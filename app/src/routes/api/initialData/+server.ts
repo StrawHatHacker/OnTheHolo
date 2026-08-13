@@ -7,7 +7,7 @@ import { ChannelQueries } from '$lib/server/db/queries';
 
 export const GET = async ({ request, cookies }) => {
 	try {
-		const session = await Auth.verifySession(cookies);
+		await Auth.verifySession(cookies);
 
 		let initData: InitialServerData = {
 			categories: await ChannelQueries.getCategoryFull()

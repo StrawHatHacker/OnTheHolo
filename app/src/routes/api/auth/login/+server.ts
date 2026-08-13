@@ -38,9 +38,10 @@ export const POST = async ({ request, cookies }) => {
 		cookies.set(COOKIE_MAP.SESSION, token, createCookieSettings());
 
 		await SessionQueries.createSession(user.id, token);
-
+		
 		return json({});
 	} catch (e) {
+		console.log(e);
 		if (e instanceof CError) throw error(e.status, e.message);
 		throw error(500, ERROR_MAP.generalError);
 	}

@@ -1,8 +1,9 @@
-import { USER_PRIVILEGE_STATUS, USER_STATUS } from '$lib/constants';
+import { MAX_TOKEN_AGE_DAYS, MAX_TOKEN_AGE_SECONDS, USER_PRIVILEGE_STATUS, USER_STATUS } from '$lib/constants';
 import type { AddCategoryData, AddChannelData, AddMessageData, CategoryFull, Message, NewUser } from '$lib/types';
 import { db } from '$lib/server/db';
 import { categoriesTable, channelsTable, messagesTable, safeUserFields, sessionsTable, usersTable } from '$lib/server/db/schema';
 import { eq, and } from 'drizzle-orm';
+import { redisClient } from '../redis';
 
 export class UserQueries {
 	static async getUserByEmail(email: string) {
@@ -33,11 +34,10 @@ export class UserQueries {
 
 export class SessionQueries {
 	static async createSession(userId: number, token: string) {
-		return await db.insert(sessionsTable).values({
-			user_id: userId,
-			token,
-			created_at: new Date().toISOString(),
+		await redisClient.hSet(`session:${token}`, {
+			userId: userId,
 		});
+		await redisClient.expire(`session:${token}`, MAX_TOKEN_AGE_SECONDS);
 	}
 
 	static async deleteSession(userId: number, token: string) {
@@ -46,7 +46,11 @@ export class SessionQueries {
 			.where(and(eq(sessionsTable.user_id, userId), eq(sessionsTable.token, token)));
 	}
 
-	static async getSession(token?: string) {
+	static async checkIfSessionExists(token: string) {
+		return await redisClient.hget(`session:${token}`);
+	}
+
+	static async getSessionByToken(token?: string) {
 		if (!token) return null;
 
 		return (
