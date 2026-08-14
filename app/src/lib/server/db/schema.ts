@@ -1,3 +1,5 @@
+// Relative path required here because of drizzle-orm
+import { USER_ACTIVITY_STATUS } from '../../constants';
 import { getColumns } from 'drizzle-orm';
 import { integer, pgTable, text } from 'drizzle-orm/pg-core';
 
@@ -9,6 +11,9 @@ export const usersTable = pgTable('users', {
 	salt: text().notNull(),
 	status: integer().notNull(),
 	privilege_status: integer().notNull(),
+	profile_image_url: text(),
+	activity_name: text(),
+	activity_status: integer().notNull().default(USER_ACTIVITY_STATUS.ONLINE),
 	created_at: text().notNull(),
 	updated_at: text().notNull(),
 });
@@ -26,6 +31,7 @@ export const sessionsTable = pgTable('sessions', {
 export const categoriesTable = pgTable('channel_categories', {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
 	name: text().notNull(),
+	order: integer().notNull(),
 	created_at: text().notNull(),
 })
 

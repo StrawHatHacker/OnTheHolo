@@ -43,6 +43,12 @@ export const Store = {
 				}))
 			);
 		},
+		add(category: CategoryFull) {
+			// New categories don't have channels
+			CategoryC.push({
+				...category,
+			});
+		},
 		get length() {
 			return CategoryC.length;
 		},
@@ -64,6 +70,9 @@ export const Store = {
 			}
 
 			return null;
+		},
+		add(categoryId: number, channel: ChannelWithMessages) {
+			CategoryC.find((c) => c.id === categoryId)?.channels.push(channel);
 		},
 		first() {
 			return CategoryC.at(0)?.channels.at(0) ?? null;

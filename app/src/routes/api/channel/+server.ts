@@ -1,10 +1,11 @@
 import { CError } from '$lib/utils';
 import { error, json } from '@sveltejs/kit';
 import { Auth } from '$lib/server/auth';
-import { ChannelQueries, MessageQueries, UserQueries } from '$lib/server/db/queries';
+import { ChannelQueries } from '$lib/server/db/queries';
 import { ERROR_MAP } from '$lib/errors';
 import { CHANNEL_TYPE } from '$lib/constants.js';
-import type { NewChannelPayload } from '$lib/types';
+import type { NewChannelPayload, SSEChannel } from '$lib/types';
+import { getAllSSEUsers, sendSSEToUsers } from '$lib/server/sse';
 
 const validatePostBody = (body: any) => {
 	const categoryIdNum = Number(body.categoryId);
@@ -30,10 +31,15 @@ export const POST = async ({ request, cookies }) => {
 		const session = await Auth.verifySession(cookies);
 		const body = validatePostBody(await request.json());
 
-		await ChannelQueries.addChannel({
+		const channel = await ChannelQueries.addChannel({
 			name: body.name,
 			channelType: body.channelType,
 			categoryId: body.categoryId,
+		});
+
+		sendSSEToUsers<SSEChannel>(getAllSSEUsers(), 'channel:create', {
+			categoryId: body.categoryId,
+			channel
 		});
 
 		return json({});

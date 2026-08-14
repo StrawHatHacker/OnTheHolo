@@ -17,6 +17,13 @@ export const USER_PRIVILEGE_STATUS = {
   ADMIN: 2,
 } as const;
 
+export const USER_ACTIVITY_STATUS = {
+  ONLINE: 1,
+  OFFLINE: 2,
+  AWAY: 3,
+  DO_NOT_DISTURB: 4
+}
+
 export const CHANNEL_TYPE = {
   text: 1,
   voice: 2,

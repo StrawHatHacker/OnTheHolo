@@ -1,5 +1,5 @@
-import { MAX_TOKEN_AGE_DAYS, MAX_TOKEN_AGE_SECONDS, USER_PRIVILEGE_STATUS, USER_STATUS } from '$lib/constants';
-import type { AddCategoryData, AddChannelData, AddMessageData, CategoryFull, Message, NewUser } from '$lib/types';
+import { USER_PRIVILEGE_STATUS, USER_STATUS } from '$lib/constants';
+import type { AddCategoryData, AddChannelData, AddMessageData, Category, CategoryFull, Channel, Message, NewUser } from '$lib/types';
 import { db } from '$lib/server/db';
 import { categoriesTable, channelsTable, messagesTable, safeUserFields, sessionsTable, usersTable } from '$lib/server/db/schema';
 import { eq, and } from 'drizzle-orm';
@@ -20,7 +20,7 @@ export class UserQueries {
 			password: newUser.password,
 			salt: newUser.salt,
 			status: USER_STATUS.ACTIVE,
-			priviledge_status: USER_PRIVILEGE_STATUS.NORMAL,
+			privilege_status: USER_PRIVILEGE_STATUS.NORMAL,
 			created_at: new Date().toISOString(),
 			updated_at: new Date().toISOString(),
 		});
@@ -129,24 +129,27 @@ export class ChannelQueries {
 		return [...categories.values()];
 	}
 
-	static async addCategory(data: AddCategoryData) {
-		return await db.insert(categoriesTable).values({
+	static async addCategory(data: AddCategoryData): Promise<Category> {
+		const categoryCount = await db.$count(categoriesTable);
+
+		return (await db.insert(categoriesTable).values({
 			name: data.name,
 			created_at: new Date().toISOString(),
-		});
+			order: categoryCount + 1,
+		}).returning())?.[0];
 	}
 
 	static async getChannels() {
 		return await db.select().from(channelsTable);
 	}
 
-	static async addChannel(data: AddChannelData) {
-		return await db.insert(channelsTable).values({
+	static async addChannel(data: AddChannelData): Promise<Channel> {
+		return (await db.insert(channelsTable).values({
 			name: data.name,
 			type: data.channelType,
 			category_id: data.categoryId,
 			created_at: new Date().toISOString(),
-		});
+		}).returning())?.[0];
 	}
 }
 

@@ -9,17 +9,26 @@
 	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
 	import { AppState, Store } from '$lib/stores.svelte';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import { AppHelper } from '$lib/utils';
+	import { AppHelper, getProfileImageUrl } from '$lib/utils';
 	import { CHANNEL_TYPE } from '$lib/constants';
+	import type { SessionWithUser } from '$lib/types';
 
-	let { selectChannel }: { selectChannel: (channelId: number) => void } = $props();
+	let {
+		selectChannel,
+		session,
+	}: {
+		selectChannel: (channelId: number) => void;
+		session: SessionWithUser;
+	} = $props();
 </script>
 
 <aside id="navogation" class="flex h-full max-w-60 min-w-60 flex-col border-r-2 border-border pt-2">
-	<Button class="w-full text-base font-bold" variant="outline" size="lg">
-		<UsersIcon />
-		Friends
-	</Button>
+	<div class="px-2">
+		<Button class="w-full text-base font-bold" variant="outline" size="lg">
+			<UsersIcon />
+			Friends
+		</Button>
+	</div>
 
 	<ScrollArea class="min-h-0 flex-1 px-2" orientation="vertical">
 		<div class="flex flex-col">
@@ -31,7 +40,7 @@
 				{#each Store.categories.getAll() as category}
 					<div class="group flex items-end justify-between">
 						<h3 class="mt-4 truncate text-sm font-bold text-muted-foreground">
-							{category.name}gregergegregergergegegerge
+							{category.name}
 						</h3>
 						<div class="flex items-center gap-1">
 							<Button size="icon-xs" variant="outline" class="hidden group-hover:flex">
@@ -92,5 +101,23 @@
 		</div>
 	</ScrollArea>
 
-	<div class="h-14 border-t-2 border-border"></div>
+	<div class="flex h-14 items-center gap-2 border-t-2 border-border px-2">
+		{#if session?.user.profile_image_url}
+			<img
+				src={getProfileImageUrl(session.user.profile_image_url)}
+				alt="profile"
+				class="mb-1 size-8 rounded-full bg-cover"
+			/>
+		{:else}
+			<div class="mb-1 size-8 rounded-full bg-muted"></div>
+		{/if}
+		<div class="flex flex-col items-start leading-none">
+			<h4 class="text-sm font-bold">{session?.user.username}</h4>
+			{#if session?.user.activity_name}
+				<span class="text-xs text-muted-foreground">{session?.user.activity_name}</span>
+			{:else}
+				<button class="text-xs text-muted-foreground hover:underline">Set status</button>
+			{/if}
+		</div>
+	</div>
 </aside>

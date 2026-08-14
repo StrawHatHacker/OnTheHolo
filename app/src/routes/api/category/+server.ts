@@ -3,7 +3,8 @@ import { error, json } from '@sveltejs/kit';
 import { Auth } from '$lib/server/auth';
 import { ChannelQueries } from '$lib/server/db/queries';
 import { ERROR_MAP } from '$lib/errors';
-import type { NewChannelPayload } from '$lib/types';
+import type { Category, CategoryFull, NewChannelPayload } from '$lib/types';
+import { getAllSSEUsers, sendSSEToUsers } from '$lib/server/sse';
 
 const validatePostBody = (body: any) => {
 	if (!body.name || !(typeof body.name === 'string') || body.name.length < 1)
@@ -22,9 +23,11 @@ export const POST = async ({ request, cookies }) => {
 		await Auth.verifySession(cookies);
 		const body = validatePostBody(await request.json());
 
-		await ChannelQueries.addCategory({
+		const category = await ChannelQueries.addCategory({
 			name: body.name,
 		});
+
+		sendSSEToUsers<Category>(getAllSSEUsers(), 'category:create', category);
 
 		return json({});
 	} catch (e) {

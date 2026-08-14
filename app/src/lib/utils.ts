@@ -78,13 +78,13 @@ export const handleRequestError = (e: unknown) => {
 
 export const report = {
 	info: (msg: string) =>
-		console.log(`${TERMINAL_COLORS.cyan}---\nℹ ${msg}\n---${TERMINAL_COLORS.reset}`),
+		console.log(`${TERMINAL_COLORS.cyan}${msg}${TERMINAL_COLORS.reset}`),
 	success: (msg: string) =>
-		console.log(`${TERMINAL_COLORS.green}---\n✓ ${msg}\n---${TERMINAL_COLORS.reset}`),
+		console.log(`${TERMINAL_COLORS.green}${msg}${TERMINAL_COLORS.reset}`),
 	warn: (msg: string) =>
-		console.log(`${TERMINAL_COLORS.yellow}---\n⚠ ${msg}\n---${TERMINAL_COLORS.reset}`),
+		console.log(`${TERMINAL_COLORS.yellow}${msg}${TERMINAL_COLORS.reset}`),
 	error: (msg: string) =>
-		console.log(`${TERMINAL_COLORS.red}---\n✗ ${msg}\n---${TERMINAL_COLORS.reset}`),
+		console.log(`${TERMINAL_COLORS.red}${msg}${TERMINAL_COLORS.reset}`),
 };
 
 export class DateHelper {
@@ -113,4 +113,8 @@ export class AppHelper {
 		AppState.isAddChannelDialogOpen = true;
 		AppState.addChannelDialogOptions = { channelType, forCategoryId };
 	}
+}
+
+export const getProfileImageUrl = (name: string) => {
+	return `/profile/${name}`;
 }

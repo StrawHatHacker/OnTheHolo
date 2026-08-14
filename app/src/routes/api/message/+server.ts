@@ -3,8 +3,9 @@ import { error, json } from '@sveltejs/kit';
 import { Auth } from '$lib/server/auth';
 import { MessageQueries } from '$lib/server/db/queries';
 import { ERROR_MAP } from '$lib/errors';
-import type { NewMessagePayload } from '$lib/types';
+import type { NewMessagePayload, SSEMessage } from '$lib/types';
 import { PUBLIC_MAX_MESSAGE_LENGTH } from '$env/static/public';
+import { getAllSSEUsers, sendSSEToUsers, } from '$lib/server/sse';
 
 const validatePostBody = (body: any) => {
 	const channelIdNum = Number(body.channelId);
@@ -30,6 +31,11 @@ export const POST = async ({ request, cookies }) => {
 			channelId: body.channelId,
 			content: body.content,
 			userId: session.user.id,
+		});
+
+		sendSSEToUsers<SSEMessage>(getAllSSEUsers(), 'message:create', {
+			channelId: body.channelId,
+			message: msg
 		});
 
 		return json(msg);

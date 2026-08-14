@@ -45,7 +45,7 @@
 3. Start docker
 
 ```
-  sudo docker compose -p holo --profile prod up -d --build
+  sudo docker compose -p holo --profile prod up -d
 ```
 
 `--profile prod` will also run the sveltekit app
@@ -75,3 +75,4 @@ Options coming soon
 
 - Add ratelimits
 - Add admin only actions
+- Set NODE_ENV=production in app/Dockerfile

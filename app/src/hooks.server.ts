@@ -40,7 +40,7 @@ export const init: ServerInit = async () => {
 			password: Auth.hashPassword(ADMIN_PASSWORD, ADMIN_SALT),
 			salt: ADMIN_SALT,
 			status: USER_STATUS.ACTIVE,
-			priviledge_status: USER_PRIVILEGE_STATUS.ADMIN,
+			privilege_status: USER_PRIVILEGE_STATUS.ADMIN,
 			created_at: new Date().toISOString(),
 			updated_at: new Date().toISOString(),
 		});
