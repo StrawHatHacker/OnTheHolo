@@ -1,4 +1,3 @@
-import type { MessageCollection, ChannelCollection } from '$lib/resources.svelte';
 import type { ChannelTypeValues } from './constants';
 import type { categoriesTable, channelsTable, messagesTable, usersTable } from './server/db/schema';
 
@@ -21,6 +20,7 @@ export type CategoryFull = Category & {
 
 export type InitialServerData = {
 	categories: CategoryFull[];
+	users: User[];
 };
 
 export type GlobalLocals = {

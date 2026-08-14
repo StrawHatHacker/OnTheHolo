@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Categories, AppState } from '$lib/stores.svelte';
+	import { Store, AppState, Users } from '$lib/stores.svelte';
 	import { genericRequest, handleRequestError } from '$lib/utils.js';
 	import { fade } from 'svelte/transition';
 	import PageLoading from '$lib/components/page-loading.svelte';
@@ -14,7 +14,7 @@
 	let { data } = $props();
 
 	// State
-	let pageStatus = $state<'init' | 'loading' | 'ready'>('loading');
+	let pageStatus = $state<'init' | 'loading' | 'ready'>('init');
 
 	$effect(() => {
 		initAppData();
@@ -29,15 +29,16 @@
 				credentials: 'include',
 			});
 
-			// Initializes everything
-			Categories.init(initialData.categories);
+			Store.categories.set(initialData.categories);
 
-			let firstChannel = Categories?.firstChannel();
+			let firstChannel = Store.channels.first();
 			if (firstChannel) {
 				AppState.currentChannelId = firstChannel.id;
 			} else {
 				AppState.currentChannelId = null;
 			}
+
+			Users.set(initialData.users);
 
 			AppState.initialized = true;
 		} catch (e) {

@@ -7,14 +7,8 @@ import { eq } from 'drizzle-orm';
 import { ADMIN_EMAIL, ADMIN_PASSWORD, ADMIN_SALT, ADMIN_USERNAME, SECRET_PASETO_KEY } from '$env/static/private';
 import { PUBLIC_PASETO_KEY } from '$env/static/public';
 import { report } from '$lib/utils';
-import { redisClient } from '$lib/server/redis';
 
 export const init: ServerInit = async () => {
-
-	if (!redisClient.isOpen) {
-		await redisClient.connect();
-	}
-
 	// Check if PASETO keys are generated
 	if (!PUBLIC_PASETO_KEY || !SECRET_PASETO_KEY) {
 		report.error('PASETO keys are not generated. Refer to README.md');

@@ -5,7 +5,6 @@ import { MessageQueries } from '$lib/server/db/queries';
 import { ERROR_MAP } from '$lib/errors';
 import type { NewMessagePayload } from '$lib/types';
 import { PUBLIC_MAX_MESSAGE_LENGTH } from '$env/static/public';
-import { redis } from '$lib/server/redis';
 
 const validatePostBody = (body: any) => {
 	const channelIdNum = Number(body.channelId);
@@ -32,13 +31,6 @@ export const POST = async ({ request, cookies }) => {
 			content: body.content,
 			userId: session.user.id,
 		});
-
-		await redis.hSet('user-session:123', {
-			name: 'John',
-			surname: 'Smith',
-			company: 'Redis',
-			age: 29
-		})
 
 		return json(msg);
 	} catch (e) {

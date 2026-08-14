@@ -3,7 +3,6 @@ import type { AddCategoryData, AddChannelData, AddMessageData, CategoryFull, Mes
 import { db } from '$lib/server/db';
 import { categoriesTable, channelsTable, messagesTable, safeUserFields, sessionsTable, usersTable } from '$lib/server/db/schema';
 import { eq, and } from 'drizzle-orm';
-import { redisClient } from '../redis';
 
 export class UserQueries {
 	static async getUserByEmail(email: string) {
@@ -34,20 +33,17 @@ export class UserQueries {
 
 export class SessionQueries {
 	static async createSession(userId: number, token: string) {
-		await redisClient.hSet(`session:${token}`, {
-			userId: userId,
+		return await db.insert(sessionsTable).values({
+			user_id: userId,
+			token,
+			created_at: new Date().toISOString(),
 		});
-		await redisClient.expire(`session:${token}`, MAX_TOKEN_AGE_SECONDS);
 	}
 
 	static async deleteSession(userId: number, token: string) {
 		return await db
 			.delete(sessionsTable)
 			.where(and(eq(sessionsTable.user_id, userId), eq(sessionsTable.token, token)));
-	}
-
-	static async checkIfSessionExists(token: string) {
-		return await redisClient.hget(`session:${token}`);
 	}
 
 	static async getSessionByToken(token?: string) {

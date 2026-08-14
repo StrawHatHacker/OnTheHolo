@@ -4,11 +4,11 @@
 	import SunIcon from '@lucide/svelte/icons/sun';
 	import MessageSquareIcon from '@lucide/svelte/icons/message-square';
 	import { toggleMode } from 'mode-watcher';
-	import { AppState, Categories } from '$lib/stores.svelte';
+	import { AppState, Store } from '$lib/stores.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 
 	let currentChannel = $derived.by(() => {
-		return Categories.findChannel((c) => c.id === AppState.currentChannelId);
+		return Store.channels.getCurrent();
 	});
 </script>
 
@@ -24,8 +24,7 @@
 		{#if currentChannel}
 			<MessageSquareIcon class="size-3.5" />
 			<h2 class="text font-bold">
-				<!-- TODO calculate this once, maybe in AppState -->
-				{Categories.findChannel((c) => c.id === AppState.currentChannelId)?.name}
+				{currentChannel.name}
 			</h2>
 		{/if}
 	</div>

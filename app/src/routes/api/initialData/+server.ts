@@ -3,14 +3,15 @@ import { error, json } from '@sveltejs/kit';
 import { Auth } from '$lib/server/auth';
 import { ERROR_MAP } from '$lib/errors';
 import type { InitialServerData } from '$lib/types';
-import { ChannelQueries } from '$lib/server/db/queries';
+import { ChannelQueries, UserQueries } from '$lib/server/db/queries';
 
 export const GET = async ({ request, cookies }) => {
 	try {
 		await Auth.verifySession(cookies);
 
 		let initData: InitialServerData = {
-			categories: await ChannelQueries.getCategoryFull()
+			categories: await ChannelQueries.getCategoryFull(),
+			users: await UserQueries.getUsers(),
 		};
 
 		return json(initData);

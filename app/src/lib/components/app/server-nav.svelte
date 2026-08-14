@@ -6,7 +6,7 @@
 	import ListPlusIcon from '@lucide/svelte/icons/list-plus';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
-	import { AppState, Categories } from '$lib/stores.svelte';
+	import { AppState, Store } from '$lib/stores.svelte';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { AppHelper } from '$lib/utils';
 	import { CHANNEL_TYPE } from '$lib/constants';
@@ -22,12 +22,12 @@
 
 	<ScrollArea class="min-h-0 flex-1" orientation="vertical">
 		<div class="group flex flex-col">
-			{#if Categories.size === 0}
+			{#if Store.categories.length === 0}
 				<Button class="mt-4 w-full" size="lg" onclick={() => AppHelper.openAddCategoryDialog()}>
 					Create your first category
 				</Button>
 			{:else}
-				{#each Categories as [_, category]}
+				{#each Store.categories.getAll() as category}
 					<div class="flex items-end justify-between">
 						<h3 class="mt-4 text-sm font-bold text-muted-foreground">{category.name}</h3>
 						<DropdownMenu.Root>
