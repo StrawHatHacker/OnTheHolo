@@ -19,6 +19,8 @@ services:
     build:
       context: ./app
       dockerfile: Dockerfile
+      secrets:
+        - env_file
     ports:
       - "5173:5173"
     env_file:
