@@ -5,7 +5,7 @@
 
 <section
 	aria-label="member-list"
-	class="flex h-full min-w-60 flex-col border-l-2 border-border px-2 pt-2"
+	class="flex h-full min-w-60 max-w-60 flex-col border-l-2 border-border px-2 pt-2"
 >
 	{#each Users.getAll() as user}
 		<Button class="w-full justify-start text-sm" variant="ghost" size="xl">

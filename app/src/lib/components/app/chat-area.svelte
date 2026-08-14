@@ -3,9 +3,12 @@
 	import { DateHelper, genericRequest, handleRequestError } from '$lib/utils.js';
 	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
 	import SendIcon from '@lucide/svelte/icons/send';
-	import { AppState, Store } from '$lib/stores.svelte';
+	import { AppState, Store, Users } from '$lib/stores.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import type { Message, NewMessagePayload } from '$lib/types';
+	import { Badge } from '$lib/components/ui/badge/index.js';
+	import { USER_PRIVILEGE_STATUS, USER_STATUS } from '$lib/constants';
+	import { SETTINGS } from '$lib/settings';
 
 	let newMessage = $state('');
 	let bottomChatDiv = $state<HTMLDivElement>();
@@ -64,16 +67,26 @@
 	<ScrollArea class="min-h-0 flex-1" orientation="vertical">
 		<div class="flex flex-col gap-4">
 			{#each Store.channels.getCurrent()?.messages as message}
+				{@const user = Users.find((u) => u.id === message.user_id)}
 				<div class="flex items-start gap-4 px-4">
 					<div class="mt-1 size-8 rounded-full bg-muted"></div>
 					<div class="flex flex-col">
 						<div class="flex items-center gap-2">
-							<h4 class="text-md font-bold">Username</h4>
+							<h4 class="text-md font-bold">{user?.username}</h4>
+							{#if user?.privilege_status === USER_PRIVILEGE_STATUS.ADMIN && SETTINGS.SHOW_ADMIN_BADGE_IN_CHAT}
+								<Badge>Admin</Badge>
+							{/if}
+							{#if user?.status === USER_STATUS.DELETED}
+								<Badge variant="destructive">Deleted</Badge>
+							{/if}
+							{#if user?.status === USER_STATUS.BANNED}
+								<Badge variant="destructive">Banned</Badge>
+							{/if}
 							<span class="text-xs text-muted-foreground">
 								{DateHelper.toReadable(message.created_at)}
 							</span>
 						</div>
-						<p class="">
+						<p>
 							{message.content}
 						</p>
 					</div>
@@ -83,21 +96,23 @@
 		</div>
 	</ScrollArea>
 
-	<div class="shrink-0 border-t-2 border-border p-2">
+	<div class="shrink-0 h-14 flex items-center w-full border-t-2 border-border p-2">
 		<form
 			onsubmit={(e) => {
 				e.preventDefault();
 				sendMessage();
 			}}
-			class="flex items-center gap-2"
+			class="flex items-center w-full gap-2"
 		>
 			<Textarea
 				placeholder={`Message #${Store.channels.getCurrent()?.name}`}
 				bind:value={newMessage}
 				onkeydown={handleKeydown}
+				disabled={loading}
+				class="flex-1 w-full"
 			/>
 
-			<Button size="icon" type="submit">
+			<Button size="icon" type="submit" disabled={loading}>
 				<SendIcon />
 				<span class="sr-only">Send message</span>
 			</Button>

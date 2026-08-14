@@ -1,5 +1,7 @@
 // Constants is our main source of truth
 
+import { SETTINGS } from "./settings";
+
 export const COOKIE_MAP = {
   SESSION: 'ss_id',
 } as const;
@@ -23,8 +25,7 @@ export const CHANNEL_TYPE = {
 export type ChannelTypeKeys = keyof typeof CHANNEL_TYPE;
 export type ChannelTypeValues = typeof CHANNEL_TYPE[ChannelTypeKeys];
 
-export const MAX_TOKEN_AGE_DAYS = 7 as const;
-export const MAX_TOKEN_AGE_SECONDS = MAX_TOKEN_AGE_DAYS * 24 * 60 * 60;
+export const MAX_TOKEN_AGE_SECONDS = SETTINGS.MAX_TOKEN_AGE_DAYS * 24 * 60 * 60;
 
 export const TERMINAL_COLORS = {
   reset: "\x1b[0m",

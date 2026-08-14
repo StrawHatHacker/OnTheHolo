@@ -2,8 +2,9 @@ import { error, redirect } from '@sveltejs/kit';
 import { clsx, type ClassValue } from 'clsx';
 import { toast } from 'svelte-sonner';
 import { twMerge } from 'tailwind-merge';
-import { MAX_TOKEN_AGE_DAYS, TERMINAL_COLORS, type ChannelTypeValues } from '$lib/constants';
+import { TERMINAL_COLORS, type ChannelTypeValues } from '$lib/constants';
 import { AppState } from '$lib/stores.svelte';
+import { SETTINGS } from './settings';
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -38,7 +39,7 @@ export const createCookieSettings = () => {
 		httpOnly: true, // Crucial: Prevents client-side JavaScript access (mitigates XSS)
 		sameSite: 'strict' as const, // Crucial: Provides protection against CSRF
 		secure: process.env.NODE_ENV === 'production', // Use 'secure' only in production (requires HTTPS)
-		maxAge: 60 * 60 * 24 * MAX_TOKEN_AGE_DAYS,
+		maxAge: 60 * 60 * 24 * SETTINGS.MAX_TOKEN_AGE_DAYS,
 	};
 };
 
