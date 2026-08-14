@@ -20,13 +20,13 @@ FROM node:22-alpine AS run
 WORKDIR /app
 
 ENV NODE_ENV=production
-ENV PORT=5173
+ENV PORT=3006
 ENV HOST=0.0.0.0
 
 COPY --from=build /app/build ./build
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/package.json ./package.json
 
-EXPOSE 5173
+EXPOSE 3006
 
 CMD ["node", "build/index.js"]
