@@ -22,7 +22,7 @@ services:
       secrets:
         - env_file
     ports:
-      - "localhost:3006:3006"
+      - "127.0.0.1:3006:3006"
     env_file:
       - .env # Injects root .env directly into container environment variables
     depends_on:
