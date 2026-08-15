@@ -24,6 +24,11 @@ export const USER_ACTIVITY_STATUS = {
   DO_NOT_DISTURB: 4
 }
 
+export const ENTITY_PREFIX = {
+  channel: '#',
+  user: '@'
+}
+
 export const CHANNEL_TYPE = {
   text: 1,
   voice: 2,

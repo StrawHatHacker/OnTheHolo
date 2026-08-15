@@ -1,10 +1,11 @@
-import { error, redirect } from '@sveltejs/kit';
+import { error, redirect, type Snapshot } from '@sveltejs/kit';
 import { clsx, type ClassValue } from 'clsx';
 import { toast } from 'svelte-sonner';
 import { twMerge } from 'tailwind-merge';
 import { TERMINAL_COLORS, type ChannelTypeValues } from '$lib/constants';
 import { AppState } from '$lib/stores.svelte';
-import { SETTINGS } from './settings';
+import { SETTINGS } from '$lib/settings';
+import type { CategoryFull, ChannelWithMessages } from '$lib/types';
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -104,14 +105,76 @@ export class DateHelper {
 	}
 }
 
+/**
+ * Store objects should be passed wrapped in $state.snapshot()
+ * to eliminate references to the original object
+ */
 export class AppHelper {
+	// ------ CATEGORIES ------
+
 	static openAddCategoryDialog() {
-		AppState.isCreateCategoryDialogOpen = true;
+		AppState.isAddCategoryDialogOpen = true;
+		console.log('openAddCategoryDialog');
 	}
+
+	static closeAddCategoryDialog() {
+		AppState.isAddCategoryDialogOpen = false;
+	}
+
+	static openEditCategoryDialog(category: CategoryFull) {
+		AppState.isEditCategoryDialogOpen = true;
+		// Removing channels->messages for performance, we don't need them
+		// Since category is a clone anyway
+		category = { ...category, channels: [] };
+		AppState.categoryToEdit = category;
+	}
+
+	static closeEditCategoryDialog() {
+		AppState.isEditCategoryDialogOpen = false;
+		AppState.categoryToEdit = null;
+	}
+
+	static openDeleteCategoryDialog(category: CategoryFull) {
+		AppState.isDeleteCategoryDialogOpen = true;
+		AppState.categoryToDelete = category;
+	}
+
+	static closeDeleteCategoryDialog() {
+		AppState.isDeleteCategoryDialogOpen = false;
+		AppState.categoryToDelete = null;
+	}
+
+	// ------ CHANNELS ------
 
 	static openAddChannelDialog(channelType: ChannelTypeValues, forCategoryId: number) {
 		AppState.isAddChannelDialogOpen = true;
 		AppState.addChannelDialogOptions = { channelType, forCategoryId };
+	}
+
+	static closeAddChannelDialog() {
+		AppState.isAddChannelDialogOpen = false;
+		AppState.addChannelDialogOptions = null;
+	}
+
+	static openEditChannelDialog(channel: ChannelWithMessages) {
+		AppState.isEditChannelDialogOpen = true;
+		AppState.channelToEdit = channel;
+	}
+
+	static closeEditChannelDialog() {
+		AppState.isEditChannelDialogOpen = false;
+		AppState.channelToEdit = null;
+	}
+
+	static openDeleteChannelDialog(channel: ChannelWithMessages) {
+		console.log(channel);
+		AppState.isDeleteChannelDialogOpen = true;
+		AppState.channelToDelete = channel;
+	}
+
+	static closeDeleteChannelDialog() {
+		AppState.isDeleteChannelDialogOpen = false;
+		AppState.channelToDelete = null;
 	}
 }
 

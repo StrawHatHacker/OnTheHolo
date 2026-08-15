@@ -5,12 +5,16 @@
 	import SquarePenIcon from '@lucide/svelte/icons/square-pen';
 	import Volume2Icon from '@lucide/svelte/icons/volume-2';
 	import ListPlusIcon from '@lucide/svelte/icons/list-plus';
+	import TrashIcon from '@lucide/svelte/icons/trash';
+	import CopyIcon from '@lucide/svelte/icons/copy';
+	import FingerprintPatternIcon from '@lucide/svelte/icons/fingerprint-pattern';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
 	import { AppState, Store } from '$lib/stores.svelte';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import * as ContextMenu from '$lib/components/ui/context-menu/index.js';
 	import { AppHelper, getProfileImageUrl } from '$lib/utils';
-	import { CHANNEL_TYPE } from '$lib/constants';
+	import { CHANNEL_TYPE, ENTITY_PREFIX } from '$lib/constants';
 	import type { SessionWithUser } from '$lib/types';
 
 	let {
@@ -34,7 +38,7 @@
 		<div class="flex flex-col">
 			{#if Store.categories.length === 0}
 				<Button class="mt-4 w-full" size="lg" onclick={() => AppHelper.openAddCategoryDialog()}>
-					Create your first category
+					Add your first category
 				</Button>
 			{:else}
 				{#each Store.categories.getAll() as category}
@@ -43,9 +47,34 @@
 							{category.name}
 						</h3>
 						<div class="flex items-center gap-1">
-							<Button size="icon-xs" variant="outline" class="hidden group-hover:flex">
-								<SquarePenIcon />
-							</Button>
+							<DropdownMenu.Root>
+								<DropdownMenu.Trigger class="m-0! p-0!">
+									<Button size="icon-xs" variant="outline" class="hidden group-hover:flex">
+										<SquarePenIcon />
+									</Button>
+								</DropdownMenu.Trigger>
+								<DropdownMenu.Content class="w-56" align="start">
+									<DropdownMenu.Label>
+										{category.name}
+									</DropdownMenu.Label>
+									<DropdownMenu.Group>
+										<DropdownMenu.Item
+											onclick={() => AppHelper.openEditCategoryDialog($state.snapshot(category))}
+										>
+											<SquarePenIcon />
+											Edit
+										</DropdownMenu.Item>
+										<DropdownMenu.Item
+											variant="destructive"
+											onclick={() => AppHelper.openDeleteCategoryDialog($state.snapshot(category))}
+										>
+											<TrashIcon />
+											Delete
+										</DropdownMenu.Item>
+									</DropdownMenu.Group>
+								</DropdownMenu.Content>
+							</DropdownMenu.Root>
+
 							<DropdownMenu.Root>
 								<DropdownMenu.Trigger class="m-0! p-0!">
 									<Button size="icon-xs" variant="outline" class="hidden group-hover:flex">
@@ -54,8 +83,7 @@
 								</DropdownMenu.Trigger>
 								<DropdownMenu.Content class="w-56" align="start">
 									<DropdownMenu.Label>
-										<PlusIcon class="mr-1 inline size-3" />
-										Add a channel
+										{category.name}
 									</DropdownMenu.Label>
 									<DropdownMenu.Group>
 										<DropdownMenu.Item
@@ -85,16 +113,59 @@
 					</div>
 					{#each category.channels.values() as channel}
 						{@const currentClasses = AppState.currentChannelId === channel.id ? 'bg-muted' : ''}
-						<Button
-							class=" w-full justify-start text-base font-bold text-foreground/80 {currentClasses}"
-							variant="ghost"
-							onclick={() => selectChannel(channel.id)}
-						>
-							<MessageSquareIcon class="inline size-4" />
-							<span class="min-w-0 truncate">
-								{channel.name}
-							</span>
-						</Button>
+						<ContextMenu.Root>
+							<ContextMenu.Trigger>
+								<Button
+									class=" w-full justify-start text-base font-bold text-foreground/80 {currentClasses}"
+									variant="ghost"
+									onclick={() => selectChannel(channel.id)}
+								>
+									<MessageSquareIcon class="inline size-4" />
+									<span class="min-w-0 truncate">
+										{channel.name}
+									</span>
+								</Button>
+							</ContextMenu.Trigger>
+							<ContextMenu.Content class="w-56" align="start">
+								<ContextMenu.Label>
+									<MessageSquareIcon class="mr-1 inline size-3" />
+									{channel.name}
+								</ContextMenu.Label>
+								<ContextMenu.Group>
+									<ContextMenu.Item
+										onclick={() => AppHelper.openEditChannelDialog($state.snapshot(channel))}
+									>
+										<SquarePenIcon />
+										Edit
+									</ContextMenu.Item>
+									<ContextMenu.Item
+										variant="destructive"
+										onclick={() => AppHelper.openDeleteChannelDialog($state.snapshot(channel))}
+									>
+										<TrashIcon />
+										Delete
+									</ContextMenu.Item>
+								</ContextMenu.Group>
+								<ContextMenu.Group class="flex">
+									<ContextMenu.Item
+										class="flex-1"
+										onclick={() => navigator.clipboard.writeText(String(channel.id))}
+									>
+										<CopyIcon />
+										Copy ID
+									</ContextMenu.Item>
+									<div class="mx-1 h-8 w-px bg-border"></div>
+									<ContextMenu.Item
+										class="flex-1"
+										onclick={() =>
+											navigator.clipboard.writeText(ENTITY_PREFIX.channel + channel.id)}
+									>
+										<FingerprintPatternIcon />
+										Copy Ref
+									</ContextMenu.Item>
+								</ContextMenu.Group>
+							</ContextMenu.Content>
+						</ContextMenu.Root>
 					{/each}
 				{/each}
 			{/if}

@@ -7,8 +7,8 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import Button from '../ui/button/button.svelte';
-	import { CError, genericRequest, handleRequestError } from '$lib/utils';
-	import type { NewChannelPayload } from '$lib/types';
+	import { AppHelper, CError, genericRequest, handleRequestError } from '$lib/utils';
+	import type { AddChannelPayload } from '$lib/types';
 	import { ERROR_MAP } from '$lib/errors';
 	import { toast } from 'svelte-sonner';
 
@@ -17,9 +17,7 @@
 	let newChannelName = $state('');
 
 	$effect(() => {
-		if (!AppState.isAddChannelDialogOpen) {
-			AppState.addChannelDialogOptions = null;
-		}
+		return () => AppHelper.closeAddChannelDialog();
 	});
 
 	/**
@@ -46,7 +44,7 @@
 
 			loading = true;
 
-			const payload: NewChannelPayload = {
+			const payload: AddChannelPayload = {
 				name: newChannelName,
 				channelType: AppState.addChannelDialogOptions.channelType,
 				categoryId: AppState.addChannelDialogOptions.forCategoryId,
@@ -57,8 +55,8 @@
 				body: JSON.stringify(payload),
 			});
 
-			AppState.isAddChannelDialogOpen = false;
-			toast.success('Channel created!');
+			toast.success('Channel added');
+			AppHelper.closeAddChannelDialog();
 		} catch (e) {
 			handleRequestError(e);
 		} finally {

@@ -1,7 +1,7 @@
 import { PUBLIC_MAX_MESSAGE_LENGTH } from "$env/static/public";
 
 export const ERROR_MAP = {
-	generalError: 'Something went wrong',
+	generalError: 'Something went wrong. Try again later',
 	invalidSession: 'Invalid session. Please log in again',
 	invalidEmail: 'Please enter a valid email address',
 	invalidPassword:

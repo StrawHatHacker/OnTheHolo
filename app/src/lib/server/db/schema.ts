@@ -43,6 +43,7 @@ export const channelsTable = pgTable('channels', {
 	name: text().notNull(),
 	type: integer().notNull(),
 	created_at: text().notNull(),
+	updated_at: text().notNull(),
 })
 
 export const messagesTable = pgTable('messages', {

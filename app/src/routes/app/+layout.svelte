@@ -1,7 +1,13 @@
 <script lang="ts">
 	import { invalidateAll } from '$app/navigation';
-	import { genericRequest } from '$lib/utils';
+	import AddCategoryDialog from '$lib/components/dialogs/add-category-dialog.svelte';
+	import AddChannelDialog from '$lib/components/dialogs/add-channel-dialog.svelte';
+	import DeleteChannelDialog from '$lib/components/dialogs/delete-channel-dialog.svelte';
+	import EditChannelDialog from '$lib/components/dialogs/edit-channel-dialog.svelte';
+	import EditCategoryDialog from '$lib/components/dialogs/edit-category-dialog.svelte';
+	import DeleteCategoryDialog from '$lib/components/dialogs/delete-category-dialog.svelte';
 	import { onMount } from 'svelte';
+	import { genericRequest } from '$lib/utils';
 
 	let { children } = $props();
 
@@ -23,3 +29,11 @@
 </script>
 
 {@render children()}
+
+<AddCategoryDialog />
+<EditCategoryDialog />
+<DeleteCategoryDialog />
+
+<AddChannelDialog />
+<EditChannelDialog />
+<DeleteChannelDialog />

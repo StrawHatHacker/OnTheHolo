@@ -45,9 +45,21 @@ export const Store = {
 		},
 		add(category: CategoryFull) {
 			// New categories don't have channels
-			CategoryC.push({
-				...category,
-			});
+			CategoryC.push(
+				category
+			);
+		},
+		replace(category: CategoryFull) {
+			const cat = CategoryC.find((c) => c.id === category.id);
+			if (!cat) return;
+			const index = CategoryC.indexOf(cat);
+			CategoryC[index] = category;
+		},
+		delete(categoryId: number) {
+			const cat = CategoryC.find((c) => c.id === categoryId);
+			if (!cat) return;
+			const index = CategoryC.indexOf(cat);
+			CategoryC.splice(index, 1);
 		},
 		get length() {
 			return CategoryC.length;
@@ -57,6 +69,9 @@ export const Store = {
 		},
 		find(callback: (category: CategoryFull) => boolean) {
 			return CategoryC.find(callback) ?? null;
+		},
+		findById(id: number) {
+			return this.find((category) => category.id === id);
 		},
 	},
 
@@ -71,8 +86,25 @@ export const Store = {
 
 			return null;
 		},
+		findById(id: number) {
+			return this.find((channel) => channel.id === id);
+		},
 		add(categoryId: number, channel: ChannelWithMessages) {
 			CategoryC.find((c) => c.id === categoryId)?.channels.push(channel);
+		},
+		replace(categoryId: number, channel: ChannelWithMessages) {
+			const cat = CategoryC.find((c) => c.id === categoryId);
+			if (!cat) return;
+			const index = cat.channels.findIndex((c) => c.id === channel.id);
+			if (index === -1) return;
+			cat.channels[index] = channel;
+		},
+		delete(categoryId: number, channelId: number) {
+			const cat = CategoryC.find((c) => c.id === categoryId);
+			if (!cat) return;
+			const index = cat.channels.findIndex((c) => c.id === channelId);
+			if (index === -1) return;
+			cat.channels.splice(index, 1);
 		},
 		first() {
 			return CategoryC.at(0)?.channels.at(0) ?? null;
@@ -90,15 +122,25 @@ export const Store = {
 };
 
 export const AppState = $state({
+	// General
 	initialized: false,
-
 	currentChannelId: null as number | null,
 
-	isCreateCategoryDialogOpen: false,
+	// Categoies
+	isAddCategoryDialogOpen: false,
+	isEditCategoryDialogOpen: false,
+	categoryToEdit: null as CategoryFull | null,
+	isDeleteCategoryDialogOpen: false,
+	categoryToDelete: null as CategoryFull | null,
 
+	// Channels
 	isAddChannelDialogOpen: false,
 	addChannelDialogOptions: null as {
 		channelType: ChannelTypeValues;
 		forCategoryId: number;
 	} | null,
+	isEditChannelDialogOpen: false,
+	channelToEdit: null as ChannelWithMessages | null,
+	isDeleteChannelDialogOpen: false,
+	channelToDelete: null as ChannelWithMessages | null,
 });

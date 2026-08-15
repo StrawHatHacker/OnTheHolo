@@ -5,26 +5,28 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import Button from '../ui/button/button.svelte';
-	import { CError, genericRequest, handleRequestError } from '$lib/utils';
-	import type { NewCategoryPayload } from '$lib/types';
-	import { ERROR_MAP } from '$lib/errors';
+	import { AppHelper, genericRequest, handleRequestError } from '$lib/utils';
+	import type { AddCategoryPayload } from '$lib/types';
 	import { toast } from 'svelte-sonner';
+	import { onMount } from 'svelte';
 
 	// State
 	let loading = $state(false);
 	let newCategoryName = $state('');
 
 	$effect(() => {
-		if (!AppState.isCreateCategoryDialogOpen) {
-			AppState.addChannelDialogOptions = null;
-		}
+		return () => AppHelper.closeAddCategoryDialog();
 	});
+
+	onMount(() => {
+		console.log('onMount');
+	})
 
 	const submitAddCategory = async () => {
 		try {
 			loading = true;
 
-			const payload: NewCategoryPayload = {
+			const payload: AddCategoryPayload = {
 				name: newCategoryName,
 			};
 
@@ -33,8 +35,8 @@
 				body: JSON.stringify(payload),
 			});
 
-			AppState.isCreateCategoryDialogOpen = false;
-			toast.success('Category created!');
+			toast.success('Category added');
+			AppHelper.closeAddCategoryDialog();
 		} catch (e) {
 			handleRequestError(e);
 		} finally {
@@ -43,7 +45,7 @@
 	};
 </script>
 
-<Dialog.Root bind:open={AppState.isCreateCategoryDialogOpen}>
+<Dialog.Root bind:open={AppState.isAddCategoryDialogOpen}>
 	<Dialog.Content>
 		<Dialog.Header>
 			<Dialog.Title>

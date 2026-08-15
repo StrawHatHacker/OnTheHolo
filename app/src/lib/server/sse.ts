@@ -1,7 +1,17 @@
 import type { SSEMessage } from "$lib/types";
 import { report } from "$lib/utils";
 
-type SSEEvent = 'message:create' | 'category:create' | 'channel:create';
+type SSEEvent =
+  // Messages
+  'message:create' |
+  // Categories
+  'category:create' |
+  'category:edit' |
+  'category:delete' |
+  // Channels
+  'channel:create' |
+  'channel:edit' |
+  'channel:delete';
 
 export type Connection = {
   send: (event: SSEEvent, data: unknown) => void;

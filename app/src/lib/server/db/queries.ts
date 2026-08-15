@@ -1,5 +1,5 @@
 import { USER_PRIVILEGE_STATUS, USER_STATUS } from '$lib/constants';
-import type { AddCategoryData, AddChannelData, AddMessageData, Category, CategoryFull, Channel, Message, NewUser } from '$lib/types';
+import type { AddCategoryData, AddChannelData, AddMessageData, Category, CategoryFull, Channel, DeleteCategoryData, EditCategoryData, EditChannelData, Message, NewUser } from '$lib/types';
 import { db } from '$lib/server/db';
 import { categoriesTable, channelsTable, messagesTable, safeUserFields, sessionsTable, usersTable } from '$lib/server/db/schema';
 import { eq, and } from 'drizzle-orm';
@@ -129,6 +129,17 @@ export class ChannelQueries {
 		return [...categories.values()];
 	}
 
+	static async getCategoryByChannelId(channelId: number) {
+		return (
+			await db
+				.select({ category: categoriesTable })
+				.from(channelsTable)
+				.innerJoin(categoriesTable, eq(channelsTable.category_id, categoriesTable.id))
+				.where(eq(channelsTable.id, channelId))
+				.limit(1)
+		)?.[0]?.category;
+	}
+
 	static async addCategory(data: AddCategoryData): Promise<Category> {
 		const categoryCount = await db.$count(categoriesTable);
 
@@ -137,6 +148,22 @@ export class ChannelQueries {
 			created_at: new Date().toISOString(),
 			order: categoryCount + 1,
 		}).returning())?.[0];
+	}
+
+	static async editCategory(data: EditCategoryData): Promise<Category> {
+		return (await db.update(categoriesTable).set({
+			name: data.name,
+		}).where(eq(categoriesTable.id, data.categoryId)).returning())?.[0];
+	}
+
+	static async deleteCategory(data: DeleteCategoryData) {
+		const categoryChannels = await db.select().from(channelsTable).where(eq(channelsTable.category_id, data.categoryId));
+
+		for (const channel of categoryChannels) {
+			await this.deleteChannel(channel.id);
+		}
+
+		return (await db.delete(categoriesTable).where(eq(categoriesTable.id, data.categoryId)).returning())?.[0];
 	}
 
 	static async getChannels() {
@@ -149,7 +176,24 @@ export class ChannelQueries {
 			type: data.channelType,
 			category_id: data.categoryId,
 			created_at: new Date().toISOString(),
+			updated_at: new Date().toISOString(),
 		}).returning())?.[0];
+	}
+
+	static async editChannel(data: EditChannelData): Promise<Channel> {
+		return (await db.update(channelsTable).set({
+			name: data.name,
+			updated_at: new Date().toISOString(),
+		}).where(eq(channelsTable.id, data.channelId)).returning())?.[0];
+	}
+
+	static async deleteChannel(channelId: number) {
+		// Delete all messages in the channel, because of foreign key constraint
+		await db.delete(messagesTable).where(eq(messagesTable.channel_id, channelId));
+
+		// TODO when media upload is added, we also need to delete all the media asynchronously
+
+		return (await db.delete(channelsTable).where(eq(channelsTable.id, channelId)).returning())?.[0];
 	}
 }
 

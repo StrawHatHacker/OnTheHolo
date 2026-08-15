@@ -49,7 +49,7 @@ export type NewUser = {
 	salt: string;
 };
 
-export type NewCategoryPayload = {
+export type AddCategoryPayload = {
 	name: string;
 }
 
@@ -57,7 +57,25 @@ export type AddCategoryData = {
 	name: string;
 }
 
-export type NewChannelPayload = {
+export type EditCategoryPayload = {
+	categoryId: number;
+	name: string;
+}
+
+export type EditCategoryData = {
+	categoryId: number;
+	name: string;
+}
+
+export type DeleteCategoryPayload = {
+	categoryId: number;
+}
+
+export type DeleteCategoryData = {
+	categoryId: number;
+}
+
+export type AddChannelPayload = {
 	name: string;
 	channelType: ChannelTypeValues;
 	categoryId: number;
@@ -67,6 +85,20 @@ export type AddChannelData = {
 	name: string;
 	channelType: ChannelTypeValues;
 	categoryId: number;
+}
+
+export type EditChannelPayload = {
+	channelId: number;
+	name: string;
+}
+
+export type EditChannelData = {
+	channelId: number;
+	name: string;
+}
+
+export type DeleteChannelPayload = {
+	channelId: number;
 }
 
 export type NewMessagePayload = {
