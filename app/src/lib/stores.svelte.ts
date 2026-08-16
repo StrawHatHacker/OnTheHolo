@@ -114,8 +114,26 @@ export const Store = {
 				channel => channel.id === AppState.currentChannelId
 			);
 		},
-		sendMessage(channel: ChannelWithMessages, message: Message) {
-			if (channel) channel.messages.push(message);
+		sendMessage(message: Message) {
+			const channel = this.findById(message.channel_id);
+			if (!channel) return;
+			channel.messages.push(message);
+		}
+	},
+	messages: {
+		edit(message: Message) {
+			const channel = Store.channels.findById(message.channel_id);
+			if (!channel) return;
+			const index = channel.messages.findIndex((m) => m.id === message.id);
+			if (index === -1) return;
+			channel.messages[index] = message;
+		},
+		delete(channelId: number, messageId: number) {
+			const channel = Store.channels.findById(channelId);
+			if (!channel) return;
+			const index = channel.messages.findIndex((m) => m.id === messageId);
+			if (index === -1) return;
+			channel.messages.splice(index, 1);
 		}
 	}
 

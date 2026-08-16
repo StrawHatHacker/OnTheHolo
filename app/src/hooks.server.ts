@@ -41,8 +41,8 @@ export const init: ServerInit = async () => {
 			salt: ADMIN_SALT,
 			status: USER_STATUS.ACTIVE,
 			privilege_status: USER_PRIVILEGE_STATUS.ADMIN,
-			created_at: new Date().toISOString(),
-			updated_at: new Date().toISOString(),
+			created_at: new Date(),
+			updated_at: new Date(),
 		});
 		report.success('Admin user created');
 	}

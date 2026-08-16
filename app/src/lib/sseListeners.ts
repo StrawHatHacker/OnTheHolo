@@ -3,12 +3,26 @@ import type { Category, CategoryFull, ChannelWithMessages, SSEChannel, SSEMessag
 
 export const registerSSEListeners = (source: EventSource) => {
   // ------ MESSAGES ------
+
   source.addEventListener('message:create', (event: MessageEvent) => {
     console.info('Received SSE: message:create');
     const data = JSON.parse(event.data) as SSEMessage;
-    const channel = Store.channels.find((channel) => channel.id === data.channelId);
-    if (!channel) return;
-    Store.channels.sendMessage(channel, data.message);
+
+    Store.channels.sendMessage(data.message);
+  });
+
+  source.addEventListener('message:edit', (event: MessageEvent) => {
+    console.info('Received SSE: message:edit');
+    const data = JSON.parse(event.data) as SSEMessage;
+
+    Store.messages.edit(data.message);
+  });
+
+  source.addEventListener('message:delete', (event: MessageEvent) => {
+    console.info('Received SSE: message:delete');
+    const data = JSON.parse(event.data) as SSEMessage;
+
+    Store.messages.delete(data.message.channel_id, data.message.id);
   });
 
   // ------ CATEGORIES ------

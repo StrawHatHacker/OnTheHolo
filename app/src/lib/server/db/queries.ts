@@ -1,10 +1,14 @@
 import { USER_PRIVILEGE_STATUS, USER_STATUS } from '$lib/constants';
-import type { AddCategoryData, AddChannelData, AddMessageData, Category, CategoryFull, Channel, DeleteCategoryData, EditCategoryData, EditChannelData, Message, NewUser } from '$lib/types';
+import type { AddCategoryData, AddChannelData, AddMessageData, Category, CategoryFull, Channel, DeleteCategoryData, DeleteMessageData, EditCategoryData, EditChannelData, EditMessageData, Message, NewUser } from '$lib/types';
 import { db } from '$lib/server/db';
 import { categoriesTable, channelsTable, messagesTable, safeUserFields, sessionsTable, usersTable } from '$lib/server/db/schema';
 import { eq, and } from 'drizzle-orm';
 
 export class UserQueries {
+	static async getUserById(id: number) {
+		return (await db.select().from(usersTable).where(eq(usersTable.id, id)).limit(1))?.[0];
+	}
+
 	static async getUserByEmail(email: string) {
 		return await db.select().from(usersTable).where(eq(usersTable.email, email)).limit(1);
 	}
@@ -21,8 +25,8 @@ export class UserQueries {
 			salt: newUser.salt,
 			status: USER_STATUS.ACTIVE,
 			privilege_status: USER_PRIVILEGE_STATUS.NORMAL,
-			created_at: new Date().toISOString(),
-			updated_at: new Date().toISOString(),
+			created_at: new Date(),
+			updated_at: new Date(),
 		});
 	}
 
@@ -36,7 +40,7 @@ export class SessionQueries {
 		return await db.insert(sessionsTable).values({
 			user_id: userId,
 			token,
-			created_at: new Date().toISOString(),
+			created_at: new Date(),
 		});
 	}
 
@@ -145,8 +149,9 @@ export class ChannelQueries {
 
 		return (await db.insert(categoriesTable).values({
 			name: data.name,
-			created_at: new Date().toISOString(),
 			order: categoryCount + 1,
+			created_at: new Date(),
+			updated_at: new Date(),
 		}).returning())?.[0];
 	}
 
@@ -175,15 +180,15 @@ export class ChannelQueries {
 			name: data.name,
 			type: data.channelType,
 			category_id: data.categoryId,
-			created_at: new Date().toISOString(),
-			updated_at: new Date().toISOString(),
+			created_at: new Date(),
+			updated_at: new Date(),
 		}).returning())?.[0];
 	}
 
 	static async editChannel(data: EditChannelData): Promise<Channel> {
 		return (await db.update(channelsTable).set({
 			name: data.name,
-			updated_at: new Date().toISOString(),
+			updated_at: new Date(),
 		}).where(eq(channelsTable.id, data.channelId)).returning())?.[0];
 	}
 
@@ -198,12 +203,56 @@ export class ChannelQueries {
 }
 
 export class MessageQueries {
+	static async getFullMessageById(channelId: number, messageId: number) {
+		return (await db
+			.select({
+				message: messagesTable,
+				channel: channelsTable,
+				category: categoriesTable,
+			})
+			.from(messagesTable)
+			.innerJoin(
+				channelsTable,
+				eq(messagesTable.channel_id, channelsTable.id)
+			).innerJoin(
+				categoriesTable,
+				eq(channelsTable.category_id, categoriesTable.id)
+			)
+			.where(
+				and(
+					eq(messagesTable.id, messageId),
+					eq(messagesTable.channel_id, channelId)
+				))
+			.limit(1))?.[0];
+	}
+
 	static async addMessage(data: AddMessageData): Promise<Message> {
 		return (await db.insert(messagesTable).values({
 			channel_id: data.channelId,
 			user_id: data.userId,
 			content: data.content,
-			created_at: new Date().toISOString(),
+			edited: false,
+			created_at: new Date(),
 		}).returning())?.[0];
+	}
+
+	static async editMessage(data: EditMessageData) {
+		return (await db.update(messagesTable).set({
+			content: data.content,
+			edited: true,
+		}).where(and(
+			eq(messagesTable.id, data.messageId),
+			eq(messagesTable.channel_id, data.channelId),
+			eq(messagesTable.user_id, data.userId))
+		).returning())?.[0];
+	}
+
+	static async deleteMessage(data: DeleteMessageData) {
+		return (await db.delete(messagesTable).where(
+			and(
+				eq(messagesTable.id, data.messageId),
+				eq(messagesTable.channel_id, data.channelId),
+				eq(messagesTable.user_id, data.userId))
+		).returning())?.[0];
 	}
 }

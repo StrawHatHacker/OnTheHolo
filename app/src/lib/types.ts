@@ -101,7 +101,7 @@ export type DeleteChannelPayload = {
 	channelId: number;
 }
 
-export type NewMessagePayload = {
+export type AddMessagePayload = {
 	channelId: number;
 	content: string;
 }
@@ -112,12 +112,36 @@ export type AddMessageData = {
 	userId: number;
 }
 
-export type SSEMessage = {
+export type EditMessagePayload = {
 	channelId: number;
+	messageId: number;
+	content: string;
+}
+
+export type EditMessageData = {
+	channelId: number;
+	messageId: number;
+	userId: number;
+	content: string;
+}
+
+export type DeleteMessagePayload = {
+	channelId: number;
+	messageId: number;
+}
+
+export type DeleteMessageData = {
+	messageId: number;
+	channelId: number;
+	userId: number;
+}
+
+export type SSEMessage = {
 	message: Message;
 }
 
 export type SSEChannel = {
+	// TODO channel already has category_id
 	categoryId: number;
 	channel: Channel;
 }

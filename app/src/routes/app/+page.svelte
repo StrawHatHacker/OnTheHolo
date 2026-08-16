@@ -5,7 +5,7 @@
 	import PageLoading from '$lib/components/page-loading.svelte';
 	import TopBar from '$lib/components/app/top-bar.svelte';
 	import ServerNav from '$lib/components/app/server-nav.svelte';
-	import ChatArea from '$lib/components/app/chat-area.svelte';
+	import ChatArea from '$lib/components/app/chatArea/chat-area.svelte';
 	import MemberList from '$lib/components/app/member-list.svelte';
 	import type {
 		Category,
@@ -72,7 +72,7 @@
 		<main class="flex min-h-0 w-full flex-1 items-stretch">
 			<ServerNav {selectChannel} session={data.session} />
 
-			<ChatArea />
+			<ChatArea session={data.session} />
 
 			<MemberList />
 		</main>

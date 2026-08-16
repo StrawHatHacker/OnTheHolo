@@ -10,6 +10,7 @@ export const ERROR_MAP = {
 	invalidChannelType: 'Invalid channel type',
 	channelNotFound: 'Channel not found',
 	categoryNotFound: 'Category not found',
+	messageNotFound: 'Message not found',
 	messageLengthFailure: `Messages should less than ${PUBLIC_MAX_MESSAGE_LENGTH} characters`,
 	usernameTaken: 'Username is already taken',
 	wrongCredentials: 'Incorrect email or password. Please try again',

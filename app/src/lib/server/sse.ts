@@ -4,6 +4,8 @@ import { report } from "$lib/utils";
 type SSEEvent =
   // Messages
   'message:create' |
+  'message:edit' |
+  'message:delete' |
   // Categories
   'category:create' |
   'category:edit' |
