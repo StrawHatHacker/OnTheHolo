@@ -17,6 +17,7 @@
 	import { AppHelper, getProfileImageUrl } from '$lib/utils';
 	import { CHANNEL_TYPE, ENTITY_PREFIX } from '$lib/constants';
 	import type { SessionWithUser } from '$lib/types';
+	import UserProfileCmenu from '$lib/components/menus/user-profile-cmenu.svelte';
 
 	let {
 		selectChannel,
@@ -173,24 +174,26 @@
 		</div>
 	</ScrollArea>
 
-	<button class="flex h-14 items-center gap-2 border-t-2 border-border px-2 hover:bg-muted">
-		{#if session?.user.profile_image}
-			<img
-				src={getProfileImageUrl(session.user.profile_image)}
-				alt="profile"
-				class="mb-1 size-8 shrink-0 rounded-full bg-cover"
-			/>
-		{:else}
-			<FaceSmileIcon class="size-8 shrink-0 rounded-full bg-muted"></FaceSmileIcon>
-		{/if}
-		<div class="flex flex-col items-start leading-none">
-			<h4 class="text-sm font-bold">{session?.user.username}</h4>
-			{#if session?.user.activity_name}
-				<span class="text-xs text-muted-foreground">{session?.user.activity_name}</span>
+	<UserProfileCmenu>
+		<button class="flex w-full h-14 items-center gap-2 border-t-2 border-border px-2 hover:bg-muted">
+			{#if session?.user.profile_image}
+				<img
+					src={getProfileImageUrl(session.user.profile_image)}
+					alt="profile"
+					class="mb-1 size-8 shrink-0 rounded-full bg-cover"
+				/>
 			{:else}
-				<!-- svelte-ignore node_invalid_placement_ssr -->
-				<button class="text-xs text-muted-foreground hover:underline">Set status</button>
+				<FaceSmileIcon class="size-8 shrink-0 rounded-full bg-muted"></FaceSmileIcon>
 			{/if}
-		</div>
-	</button>
+			<div class="flex flex-col items-start leading-none">
+				<h4 class="text-sm font-bold">{session?.user.username}</h4>
+				{#if session?.user.activity_name}
+					<span class="text-xs text-muted-foreground">{session?.user.activity_name}</span>
+				{:else}
+					<!-- svelte-ignore node_invalid_placement_ssr -->
+					<button class="text-xs text-muted-foreground hover:underline">Set status</button>
+				{/if}
+			</div>
+		</button>
+	</UserProfileCmenu>
 </aside>
