@@ -8,7 +8,6 @@
 	import { AppHelper, genericRequest, handleRequestError } from '$lib/utils';
 	import type { AddCategoryPayload } from '$lib/types';
 	import { toast } from 'svelte-sonner';
-	import { onMount } from 'svelte';
 
 	// State
 	let loading = $state(false);
@@ -17,10 +16,6 @@
 	$effect(() => {
 		return () => AppHelper.closeAddCategoryDialog();
 	});
-
-	onMount(() => {
-		console.log('onMount');
-	})
 
 	const submitAddCategory = async () => {
 		try {
@@ -37,12 +32,17 @@
 
 			toast.success('Category added');
 			AppHelper.closeAddCategoryDialog();
+			resetForm();
 		} catch (e) {
 			handleRequestError(e);
 		} finally {
 			loading = false;
 		}
 	};
+
+	const resetForm = () => {
+		newCategoryName = '';
+	}
 </script>
 
 <Dialog.Root bind:open={AppState.isAddCategoryDialogOpen}>

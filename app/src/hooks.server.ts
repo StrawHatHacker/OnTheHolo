@@ -1,18 +1,26 @@
-import { USER_PRIVILEGE_STATUS, USER_STATUS } from '$lib/constants';
+import { CHANNEL_TYPE, MEDIA_FOLDERS, USER_PRIVILEGE_STATUS, USER_STATUS } from '$lib/constants';
 import { Auth } from '$lib/server/auth';
 import { db } from '$lib/server/db';
-import { usersTable } from '$lib/server/db/schema';
+import { categoriesTable, channelsTable, usersTable } from '$lib/server/db/schema';
 import type { ServerInit } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 import { ADMIN_EMAIL, ADMIN_PASSWORD, ADMIN_SALT, ADMIN_USERNAME, SECRET_PASETO_KEY } from '$env/static/private';
 import { PUBLIC_PASETO_KEY } from '$env/static/public';
 import { report } from '$lib/utils';
+import { existsSync } from 'fs';
+import { mkdir } from 'fs/promises';
+import { ImageGen } from '$lib/server/utils';
 
 export const init: ServerInit = async () => {
 	// Check if PASETO keys are generated
 	if (!PUBLIC_PASETO_KEY || !SECRET_PASETO_KEY) {
 		report.error('PASETO keys are not generated. Refer to README.md');
 		process.exit(1);
+	}
+
+	if (!existsSync(MEDIA_FOLDERS.profileImages)) {
+		await mkdir('static/' + MEDIA_FOLDERS.profileImages, { recursive: true });
+		report.success('Profile images folder created');
 	}
 
 	// Check if the database is connected and initialize it
@@ -34,6 +42,8 @@ export const init: ServerInit = async () => {
 		.limit(1);
 
 	if (!adminUser) {
+		const filename = await ImageGen.profileImage(ADMIN_EMAIL);
+
 		await db.insert(usersTable).values({
 			username: ADMIN_USERNAME,
 			email: ADMIN_EMAIL,
@@ -41,9 +51,33 @@ export const init: ServerInit = async () => {
 			salt: ADMIN_SALT,
 			status: USER_STATUS.ACTIVE,
 			privilege_status: USER_PRIVILEGE_STATUS.ADMIN,
+			profile_image: filename,
 			created_at: new Date(),
 			updated_at: new Date(),
 		});
+
 		report.success('Admin user created');
 	}
+
+	const categories = await db.select().from(categoriesTable).limit(1);
+	if (categories.length === 0) {
+		const cat = await db.insert(categoriesTable).values({
+			name: 'General',
+			order: 1,
+			created_at: new Date(),
+			updated_at: new Date(),
+		}).returning();
+		report.success('Default category created');
+
+		await db.insert(channelsTable).values({
+			category_id: cat[0].id,
+			name: 'General',
+			type: CHANNEL_TYPE.text,
+			created_at: new Date(),
+			updated_at: new Date(),
+		});
+		report.success('Default channel created');
+	}
+
+	
 };

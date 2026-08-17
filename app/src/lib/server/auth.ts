@@ -14,8 +14,8 @@ export class Auth {
 		return crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex');
 	};
 
-	static generateSalt = () => {
-		return crypto.randomBytes(32).toString('hex');
+	static generateRandom = (length = 32) => {
+		return crypto.randomBytes(length).toString('hex');
 	};
 
 	static async createPrivateKey(user: PasetoSignPayload) {

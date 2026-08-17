@@ -57,12 +57,17 @@
 
 			toast.success('Channel added');
 			AppHelper.closeAddChannelDialog();
+			resetForm();
 		} catch (e) {
 			handleRequestError(e);
 		} finally {
 			loading = false;
 		}
 	};
+
+	const resetForm = () => {
+		newChannelName = '';
+	}
 </script>
 
 <Dialog.Root bind:open={AppState.isAddChannelDialogOpen}>

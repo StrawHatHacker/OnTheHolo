@@ -99,6 +99,10 @@
 			handleRequestError(e);
 		}
 	};
+
+	const addToContent = (str: string) => {
+		contentToAdd += ' ' + str + ' ';
+	};
 </script>
 
 <section aria-label="chat-area" class="flex h-full min-w-0 flex-1 flex-col pt-2">
@@ -112,7 +116,13 @@
 		<ScrollArea class="min-h-0 flex-1" orientation="vertical">
 			<div class="flex flex-col gap-2">
 				{#each Store.channels.getCurrent()?.messages as message}
-					<ChatAreaMessage {message} {session} {submitDeleteMessage} {submitEditMessage} />
+					<ChatAreaMessage
+						{message}
+						{session}
+						{submitDeleteMessage}
+						{submitEditMessage}
+						{addToContent}
+					/>
 				{/each}
 				<div bind:this={bottomChatDiv}></div>
 			</div>

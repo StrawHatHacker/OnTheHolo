@@ -37,6 +37,10 @@ export const CHANNEL_TYPE = {
 export type ChannelTypeKeys = keyof typeof CHANNEL_TYPE;
 export type ChannelTypeValues = typeof CHANNEL_TYPE[ChannelTypeKeys];
 
+export const MEDIA_FOLDERS = {
+  profileImages: 'profileImages',
+} as const;
+
 export const MAX_TOKEN_AGE_SECONDS = SETTINGS.MAX_TOKEN_AGE_DAYS * 24 * 60 * 60;
 
 export const TERMINAL_COLORS = {

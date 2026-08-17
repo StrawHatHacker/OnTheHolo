@@ -10,9 +10,9 @@
 >
 	{#each Users.getAll() as user}
 		<Button class="w-full justify-start text-sm" variant="ghost" size="xl">
-			{#if user.profile_image_url}
+			{#if user.profile_image}
 				<img
-					src={getProfileImageUrl(user.profile_image_url)}
+					src={getProfileImageUrl(user.profile_image)}
 					alt="profile"
 					class="size-8 rounded-full bg-cover"
 				/>

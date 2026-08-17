@@ -25,6 +25,7 @@ export class UserQueries {
 			salt: newUser.salt,
 			status: USER_STATUS.ACTIVE,
 			privilege_status: USER_PRIVILEGE_STATUS.NORMAL,
+			profile_image: newUser.profile_image,
 			created_at: new Date(),
 			updated_at: new Date(),
 		});

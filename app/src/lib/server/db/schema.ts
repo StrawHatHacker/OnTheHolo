@@ -11,7 +11,7 @@ export const usersTable = pgTable('users', {
 	salt: text().notNull(),
 	status: integer().notNull(),
 	privilege_status: integer().notNull(),
-	profile_image_url: text(),
+	profile_image: text().notNull(),
 	activity_name: varchar({ length: 255 }),
 	activity_status: integer().notNull().default(USER_ACTIVITY_STATUS.ONLINE),
 	created_at: timestamp().notNull(),

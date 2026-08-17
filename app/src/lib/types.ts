@@ -47,6 +47,7 @@ export type NewUser = {
 	email: string;
 	password: string;
 	salt: string;
+	profile_image: string;
 };
 
 export type AddCategoryPayload = {

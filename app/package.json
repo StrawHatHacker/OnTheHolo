@@ -58,8 +58,10 @@
 	"dependencies": {
 		"dotenv": "^17.4.2",
 		"drizzle-orm": "^1.0.0-rc.4",
+		"jdenticon": "^3.3.0",
 		"paseto": "^3.1.4",
-		"pg": "^8.22.0"
+		"pg": "^8.22.0",
+		"sharp": "^0.35.3"
 	},
 	"allowScripts": {
 		"esbuild@0.25.12": true,

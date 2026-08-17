@@ -2,7 +2,7 @@ import { error, redirect, type Snapshot } from '@sveltejs/kit';
 import { clsx, type ClassValue } from 'clsx';
 import { toast } from 'svelte-sonner';
 import { twMerge } from 'tailwind-merge';
-import { TERMINAL_COLORS, type ChannelTypeValues } from '$lib/constants';
+import { MEDIA_FOLDERS, TERMINAL_COLORS, type ChannelTypeValues } from '$lib/constants';
 import { AppState } from '$lib/stores.svelte';
 import { SETTINGS } from '$lib/settings';
 import type { CategoryFull, ChannelWithMessages } from '$lib/types';
@@ -178,6 +178,6 @@ export class AppHelper {
 	}
 }
 
-export const getProfileImageUrl = (name: string) => {
-	return `/profile/${name}`;
+export const getProfileImageUrl = (filename: string) => {
+	return `/${MEDIA_FOLDERS.profileImages}/${filename}`;
 }
