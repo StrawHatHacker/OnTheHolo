@@ -8,12 +8,7 @@
 	import ChatArea from '$lib/components/app/chatArea/chat-area.svelte';
 	import MemberList from '$lib/components/app/member-list.svelte';
 	import type {
-		Category,
-		CategoryFull,
-		ChannelWithMessages,
 		InitialServerData,
-		SSEChannel,
-		SSEMessage,
 	} from '$lib/types.js';
 	import { registerSSEListeners } from '$lib/sseListeners.js';
 
