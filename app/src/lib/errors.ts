@@ -1,4 +1,4 @@
-import { PUBLIC_MAX_MESSAGE_LENGTH } from "$env/static/public";
+import { SETTINGS } from "./settings";
 
 export const ERROR_MAP = {
 	generalError: 'Something went wrong. Try again later',
@@ -11,7 +11,7 @@ export const ERROR_MAP = {
 	channelNotFound: 'Channel not found',
 	categoryNotFound: 'Category not found',
 	messageNotFound: 'Message not found',
-	messageLengthFailure: `Messages should less than ${PUBLIC_MAX_MESSAGE_LENGTH} characters`,
+	messageLengthFailure: `Messages should less than ${SETTINGS.PUBLIC_MAX_MESSAGE_LENGTH} characters`,
 	usernameTaken: 'Username is already taken',
 	wrongCredentials: 'Incorrect email or password. Please try again',
 	accountDeleted: 'Your account has been deleted',

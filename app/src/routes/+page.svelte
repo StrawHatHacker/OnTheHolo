@@ -8,10 +8,10 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
-	import { PUBLIC_TITLE } from '$env/static/public';
 	import { genericRequest, handleRequestError } from '$lib/utils';
 	import { goto, invalidateAll } from '$app/navigation';
 	import { toast } from 'svelte-sonner';
+	import { SETTINGS } from '$lib/settings.js';
 
 	// State
 	let { data } = $props();
@@ -147,7 +147,7 @@
 			<img src="/logo.png" alt="Holo logo" class="relative h-30 w-30" />
 
 			<h1 class="mt-4 text-center text-lg font-black tracking-wide text-balance">
-				{PUBLIC_TITLE}
+				{SETTINGS.TITLE}
 			</h1>
 		</div>
 		{#if data.lastUser}

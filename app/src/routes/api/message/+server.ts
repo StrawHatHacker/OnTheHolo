@@ -4,15 +4,15 @@ import { Auth } from '$lib/server/auth';
 import { MessageQueries, UserQueries } from '$lib/server/db/queries';
 import { ERROR_MAP } from '$lib/errors';
 import type { AddMessagePayload, DeleteMessagePayload, EditMessagePayload, SSEMessage } from '$lib/types';
-import { PUBLIC_MAX_MESSAGE_LENGTH } from '$env/static/public';
 import { getAllSSEUsers, sendSSEToUsers, } from '$lib/server/sse';
+import { SETTINGS } from '$lib/settings.js';
 
 const validatePostBody = (body: any) => {
 	const channelIdNum = Number(body.channelId);
 
 	if (!body.channelId || Number.isNaN(channelIdNum))
 		throw new CError(400, ERROR_MAP.channelNotFound);
-	if (!body.content || !(typeof body.content === 'string') || body.content.length < 1 || body.content.length > PUBLIC_MAX_MESSAGE_LENGTH)
+	if (!body.content || !(typeof body.content === 'string') || body.content.length < 1 || body.content.length > SETTINGS.PUBLIC_MAX_MESSAGE_LENGTH)
 		throw new CError(400, ERROR_MAP.messageLengthFailure);
 
 	const data: AddMessagePayload = {
@@ -52,7 +52,7 @@ const validatePutBody = (body: any) => {
 		throw new CError(400, ERROR_MAP.channelNotFound);
 	if (Number.isNaN(messageIdNum))
 		throw new CError(400, ERROR_MAP.channelNotFound);
-	if (!body.content || !(typeof body.content === 'string') || body.content.length < 1 || body.content.length > PUBLIC_MAX_MESSAGE_LENGTH)
+	if (!body.content || !(typeof body.content === 'string') || body.content.length < 1 || body.content.length > SETTINGS.PUBLIC_MAX_MESSAGE_LENGTH)
 		throw new CError(400, ERROR_MAP.messageLengthFailure);
 
 	const data: EditMessagePayload = {

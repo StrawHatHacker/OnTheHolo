@@ -147,16 +147,7 @@
 										<TrashIcon />
 										Delete
 									</ContextMenu.Item>
-								</ContextMenu.Group>
-								<ContextMenu.Group class="flex">
-									<ContextMenu.Item
-										class="flex-1"
-										onclick={() => navigator.clipboard.writeText(String(channel.id))}
-									>
-										<CopyIcon />
-										Copy ID
-									</ContextMenu.Item>
-									<div class="mx-1 h-8 w-px bg-border"></div>
+
 									<ContextMenu.Item
 										class="flex-1"
 										onclick={() =>
@@ -175,7 +166,9 @@
 	</ScrollArea>
 
 	<UserProfileCmenu>
-		<button class="flex w-full h-14 items-center gap-2 border-t-2 border-border px-2 hover:bg-muted">
+		<button
+			class="flex h-14 w-full items-center gap-2 border-t-2 border-border px-2 hover:bg-muted"
+		>
 			{#if session?.user.profile_image}
 				<img
 					src={getProfileImageUrl(session.user.profile_image)}
