@@ -29,6 +29,16 @@ export const Users = {
 const CategoryC = $state<CategoryFull[]>([]);
 
 export const Store = {
+	users: {
+		findById(id: number) {
+			return Users.find((u) => u.id === id);
+		},
+		edit(user: User) {
+			const index = UsersC.findIndex((u) => u.id === user.id);
+			if (index === -1) return;
+			UsersC[index] = user;
+		}
+	},
 	categories: {
 		set(categories: CategoryFull[]) {
 			CategoryC.splice(
@@ -143,6 +153,9 @@ export const AppState = $state({
 	// General
 	initialized: false,
 	currentChannelId: null as number | null,
+
+	// User
+	isEditUserDialogOpen: false,
 
 	// Categoies
 	isAddCategoryDialogOpen: false,

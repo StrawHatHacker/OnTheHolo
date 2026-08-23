@@ -1,11 +1,11 @@
-import { error, redirect, type Snapshot } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 import { clsx, type ClassValue } from 'clsx';
 import { toast } from 'svelte-sonner';
 import { twMerge } from 'tailwind-merge';
-import { MEDIA_FOLDERS, TERMINAL_COLORS, type ChannelTypeValues } from '$lib/constants';
+import { MEDIA_FOLDERS, USER_ACTIVITY_STATUS, TERMINAL_COLORS, type ChannelTypeValues, type USER_ACTIVITY_STATUS_VALUES, type MediaPurposeValues } from '$lib/constants';
 import { AppState } from '$lib/stores.svelte';
 import { SETTINGS } from '$lib/settings';
-import type { CategoryFull, ChannelWithMessages } from '$lib/types';
+import type { CategoryFull, ChannelWithMessages, User } from '$lib/types';
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -110,6 +110,16 @@ export class DateHelper {
  * to eliminate references to the original object
  */
 export class AppHelper {
+	// ------ USER ------
+
+	static openEditUserDialog() {
+		AppState.isEditUserDialogOpen = true;
+	}
+
+	static closeEditUserDialog() {
+		AppState.isEditUserDialogOpen = false;
+	}
+
 	// ------ CATEGORIES ------
 
 	static openAddCategoryDialog() {
@@ -180,4 +190,33 @@ export class AppHelper {
 
 export const getProfileImageUrl = (filename: string) => {
 	return `/${MEDIA_FOLDERS.profileImages}/${filename}`;
+}
+
+export const getBannerImageUrl = (filename: string) => {
+	return `/${MEDIA_FOLDERS.bannerImages}/${filename}`;
+}
+
+/**
+ * Returns the color class for the user activity status
+ */
+export const getUserActivityColor = (status: USER_ACTIVITY_STATUS_VALUES | (number & {})) => {
+	switch (status) {
+		case USER_ACTIVITY_STATUS.Online:
+			return 'status-online';
+		case USER_ACTIVITY_STATUS.Away:
+			return 'status-away'
+		case USER_ACTIVITY_STATUS.Offline:
+			return 'status-offline'
+		case USER_ACTIVITY_STATUS.Do_Not_Disturb:
+			return 'status-dnd'
+		default:
+			return 'status-offline'
+	}
+}
+
+export const createMediaFormdata = (file: File, purpose: MediaPurposeValues) => {
+	const formData = new FormData();
+	formData.append('file', file);
+	formData.append('purpose', purpose.toString());
+	return formData;
 }

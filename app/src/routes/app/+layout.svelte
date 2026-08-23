@@ -8,8 +8,9 @@
 	import DeleteCategoryDialog from '$lib/components/dialogs/delete-category-dialog.svelte';
 	import { onMount } from 'svelte';
 	import { genericRequest } from '$lib/utils';
+	import EditUserDialog from '$lib/components/dialogs/edit-user-dialog.svelte';
 
-	let { children } = $props();
+	let { children, data } = $props();
 
 	let authTokenRefreshTimer: ReturnType<typeof setInterval>;
 
@@ -29,6 +30,8 @@
 </script>
 
 {@render children()}
+
+<EditUserDialog session={data.session} />
 
 <AddCategoryDialog />
 <EditCategoryDialog />

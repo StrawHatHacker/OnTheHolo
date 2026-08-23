@@ -13,7 +13,7 @@
 </script>
 
 <header
-	class="flex h-12 w-full shrink-0 items-center justify-between border-b-2 border-border bg-white pr-1 pl-4 dark:bg-black"
+	class="flex h-12 w-full shrink-0 items-center justify-between bg-white pr-1 pl-4 dark:bg-black"
 >
 	<div class="flex items-center gap-3">
 		<img src="/logo.png" alt="Holo logo" class="size-7" />

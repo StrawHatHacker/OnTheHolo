@@ -10,6 +10,9 @@ import { report } from '$lib/utils';
 import { existsSync } from 'fs';
 import { mkdir } from 'fs/promises';
 import { ImageGen } from '$lib/server/utils';
+import { CronJob } from 'cron';
+import fs from 'node:fs';
+import path from 'node:path';
 
 export const init: ServerInit = async () => {
 	// Check if PASETO keys are generated
@@ -18,9 +21,11 @@ export const init: ServerInit = async () => {
 		process.exit(1);
 	}
 
-	if (!existsSync(MEDIA_FOLDERS.profileImages)) {
-		await mkdir('static/' + MEDIA_FOLDERS.profileImages, { recursive: true });
-		report.success('Profile images folder created');
+	for (const folder of Object.values(MEDIA_FOLDERS)) {
+		if (!existsSync('static/' + folder)) {
+			await mkdir('static/' + folder, { recursive: true });
+			report.success(`${folder} folder created`);
+		}
 	}
 
 	// Check if the database is connected and initialize it
@@ -31,7 +36,7 @@ export const init: ServerInit = async () => {
 		report.success('Database connection successful');
 	} catch (e) {
 		report.error('Database connection failed: ' + (e instanceof Error ? e.message : JSON.stringify(e)));
-		report.error('You probably forgot to start docker or initialize the database with drizzle. Refer to README.md');
+		report.error('You probably forgot to start docker or sync the database with drizzle. Refer to README.md');
 		process.exit(1);
 	}
 
@@ -79,5 +84,37 @@ export const init: ServerInit = async () => {
 		report.success('Default channel created');
 	}
 
-	
+	const job = new CronJob(
+		'0 * * * *', // At 0 of every hour
+		async function () {
+			cleanupHangingImages();
+		},
+		null, // onComplete
+		true, // start
+	);
+
+	cleanupHangingImages();
+};
+
+const cleanupHangingImages = async () => {
+	const allUsers = await db.select().from(usersTable);
+	const allPfps = fs.readdirSync(ImageGen.profileImagePath);
+	const allBanners = fs.readdirSync(ImageGen.bannerImagePath);
+
+	const usedPfps = new Set(allUsers.map((u) => u.profile_image).filter(Boolean));
+	const usedBanners = new Set(allUsers.map((u) => u.banner_image).filter(Boolean));
+
+	const hangingPfps = allPfps.filter((filename) => !usedPfps.has(filename));
+	const hangingBanners = allBanners.filter((filename) => !usedBanners.has(filename));
+
+	await Promise.all(
+		hangingPfps.map((filename) =>
+			fs.promises.unlink(path.join(ImageGen.profileImagePath, filename))
+		),
+	);
+	await Promise.all(
+		hangingBanners.map((filename) =>
+			fs.promises.unlink(path.join(ImageGen.bannerImagePath, filename))
+		)
+	);
 };

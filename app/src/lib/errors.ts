@@ -16,4 +16,5 @@ export const ERROR_MAP = {
 	wrongCredentials: 'Incorrect email or password. Please try again',
 	accountDeleted: 'Your account has been deleted',
 	accountBanned: 'Your account has been banned by a moderator',
+	fileTooLarge: 'File is too large',
 } as const;

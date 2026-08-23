@@ -1,7 +1,16 @@
 import { AppState, Store } from "$lib/stores.svelte";
-import type { Category, CategoryFull, ChannelWithMessages, SSEChannel, SSEMessage } from "$lib/types";
+import type { Category, CategoryFull, ChannelWithMessages, SSEChannel, SSEMessage, SSEUser } from "$lib/types";
 
 export const registerSSEListeners = (source: EventSource) => {
+  // ------ USERS ------
+
+  source.addEventListener('user:edit', (event: MessageEvent) => {
+    console.info('Received SSE: user:edit');
+    const data = JSON.parse(event.data) as SSEUser;
+
+    Store.users.edit(data.user);
+  });
+
   // ------ MESSAGES ------
 
   source.addEventListener('message:create', (event: MessageEvent) => {

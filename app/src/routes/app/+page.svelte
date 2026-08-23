@@ -7,9 +7,7 @@
 	import ServerNav from '$lib/components/app/server-nav.svelte';
 	import ChatArea from '$lib/components/app/chatArea/chat-area.svelte';
 	import MemberList from '$lib/components/app/member-list.svelte';
-	import type {
-		InitialServerData,
-	} from '$lib/types.js';
+	import type { InitialServerData } from '$lib/types.js';
 	import { registerSSEListeners } from '$lib/sseListeners.js';
 
 	let { data } = $props();
@@ -69,7 +67,7 @@
 
 			<ChatArea session={data.session} />
 
-			<MemberList />
+			<MemberList session={data.session} />
 		</main>
 	</div>
 {/if}

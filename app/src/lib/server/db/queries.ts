@@ -1,5 +1,5 @@
 import { USER_PRIVILEGE_STATUS, USER_STATUS } from '$lib/constants';
-import type { AddCategoryData, AddChannelData, AddMessageData, Category, CategoryFull, Channel, DeleteCategoryData, DeleteMessageData, EditCategoryData, EditChannelData, EditMessageData, Message, NewUser } from '$lib/types';
+import type { AddCategoryData, AddChannelData, AddMessageData, Category, CategoryFull, Channel, DeleteCategoryData, DeleteMessageData, EditCategoryData, EditChannelData, EditMessageData, Message, NewUser, User, UserToEdit } from '$lib/types';
 import { db } from '$lib/server/db';
 import { categoriesTable, channelsTable, messagesTable, safeUserFields, sessionsTable, usersTable } from '$lib/server/db/schema';
 import { eq, and } from 'drizzle-orm';
@@ -33,6 +33,13 @@ export class UserQueries {
 
 	static async getUsers() {
 		return await db.select(safeUserFields).from(usersTable).where(eq(usersTable.status, USER_STATUS.ACTIVE));
+	}
+
+	static async updateUser(user: UserToEdit, userId: number) {
+		return (await db
+			.update(usersTable)
+			.set(user)
+			.where(eq(usersTable.id, userId)).returning(safeUserFields))?.[0];
 	}
 }
 

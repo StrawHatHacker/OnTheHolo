@@ -128,7 +128,7 @@
 			</div>
 		</ScrollArea>
 
-		<div class="flex min-h-14 w-full shrink-0 items-center border-t-2 border-border p-2">
+		<div class="flex min-h-14 w-full shrink-0 items-center border-t border-border p-2">
 			<form
 				onsubmit={(e) => {
 					e.preventDefault();

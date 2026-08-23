@@ -97,7 +97,7 @@
 						<h4 class="text-md font-bold">{User?.username}</h4>
 					</button>
 					{#if User?.privilege_status === USER_PRIVILEGE_STATUS.ADMIN && SETTINGS.SHOW_ADMIN_BADGE_IN_CHAT}
-						<Badge>Admin</Badge>
+						<Badge variant="secondary">Admin</Badge>
 					{/if}
 					{#if User?.status === USER_STATUS.DELETED}
 						<Badge variant="destructive">Deleted</Badge>

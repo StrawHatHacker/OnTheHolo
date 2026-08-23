@@ -7,7 +7,6 @@
 	import Volume2Icon from '@lucide/svelte/icons/volume-2';
 	import ListPlusIcon from '@lucide/svelte/icons/list-plus';
 	import TrashIcon from '@lucide/svelte/icons/trash';
-	import CopyIcon from '@lucide/svelte/icons/copy';
 	import FingerprintPatternIcon from '@lucide/svelte/icons/fingerprint-pattern';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
@@ -26,9 +25,13 @@
 		selectChannel: (channelId: number) => void;
 		session: SessionWithUser;
 	} = $props();
+
+	let currentUser = $derived.by(() => {
+		return Store.users.findById(session!.user.id);
+	});
 </script>
 
-<aside id="navogation" class="flex h-full max-w-60 min-w-60 flex-col border-r-2 border-border pt-2">
+<aside id="navogation" class="flex h-full max-w-60 min-w-60 flex-col border-r border-border pt-2">
 	<div class="px-2">
 		<Button class="w-full text-base font-bold" variant="outline" size="lg">
 			<UsersIcon />
@@ -165,28 +168,30 @@
 		</div>
 	</ScrollArea>
 
-	<UserProfileCmenu>
-		<button
-			class="flex h-14 w-full items-center gap-2 border-t-2 border-border px-2 hover:bg-muted"
-		>
-			{#if session?.user.profile_image}
-				<img
-					src={getProfileImageUrl(session.user.profile_image)}
-					alt="profile"
-					class="mb-1 size-8 shrink-0 rounded-full bg-cover"
-				/>
-			{:else}
-				<FaceSmileIcon class="size-8 shrink-0 rounded-full bg-muted"></FaceSmileIcon>
-			{/if}
-			<div class="flex flex-col items-start leading-none">
-				<h4 class="text-sm font-bold">{session?.user.username}</h4>
-				{#if session?.user.activity_name}
-					<span class="text-xs text-muted-foreground">{session?.user.activity_name}</span>
+	{#if currentUser}
+		<UserProfileCmenu user={currentUser}>
+			<button
+				class="flex h-14 w-full items-center gap-2 border-t border-border px-2 hover:bg-muted"
+			>
+				{#if currentUser.profile_image}
+					<img
+						src={getProfileImageUrl(currentUser.profile_image)}
+						alt="profile"
+						class="mb-1 size-8 shrink-0 rounded-full bg-cover"
+					/>
 				{:else}
-					<!-- svelte-ignore node_invalid_placement_ssr -->
-					<button class="text-xs text-muted-foreground hover:underline">Set status</button>
+					<FaceSmileIcon class="size-8 shrink-0 rounded-full bg-muted"></FaceSmileIcon>
 				{/if}
-			</div>
-		</button>
-	</UserProfileCmenu>
+				<div class="flex flex-col items-start leading-none">
+					<h4 class="text-sm font-bold">{currentUser.username}</h4>
+					{#if currentUser.activity_name}
+						<span class="text-xs text-muted-foreground">{currentUser.activity_name}</span>
+					{:else}
+						<!-- svelte-ignore node_invalid_placement_ssr -->
+						<button class="text-xs text-muted-foreground hover:underline">Set status</button>
+					{/if}
+				</div>
+			</button>
+		</UserProfileCmenu>
+	{/if}
 </aside>

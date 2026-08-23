@@ -1,4 +1,4 @@
-import type { ChannelTypeValues } from './constants';
+import type { ChannelTypeValues, USER_ACTIVITY_STATUS_VALUES } from './constants';
 import type { SessionQueries } from './server/db/queries';
 import type { categoriesTable, channelsTable, messagesTable, usersTable } from './server/db/schema';
 
@@ -20,6 +20,8 @@ export type ChannelWithMessages = Channel & {
 export type CategoryFull = Category & {
 	channels: ChannelWithMessages[];
 };
+
+export type UserToEdit = Omit<User, 'id' | 'privilege_status'| 'created_at'>;
 
 export type InitialServerData = {
 	categories: CategoryFull[];
@@ -137,6 +139,14 @@ export type DeleteMessageData = {
 	userId: number;
 }
 
+export type EditUserPayload = {
+	pfpFilename: string | null;
+}
+
+export type MediaUploadResponse = {
+	filename: string;
+}
+
 export type SSEMessage = {
 	message: Message;
 }
@@ -145,4 +155,8 @@ export type SSEChannel = {
 	// TODO channel already has category_id
 	categoryId: number;
 	channel: Channel;
+}
+
+export type SSEUser = {
+	user: User;
 }

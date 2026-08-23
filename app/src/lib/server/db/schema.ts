@@ -1,5 +1,5 @@
 // Relative path required here because of drizzle-orm
-import { USER_ACTIVITY_STATUS } from '../../constants';
+import { USER_ACTIVITY_STATUS, type USER_ACTIVITY_STATUS_VALUES, type USER_STATUS_VALUES } from '../../constants';
 import { getColumns } from 'drizzle-orm';
 import { boolean, index, integer, pgTable, text, timestamp, uniqueIndex, varchar } from 'drizzle-orm/pg-core';
 
@@ -12,8 +12,10 @@ export const usersTable = pgTable('users', {
 	status: integer().notNull(),
 	privilege_status: integer().notNull(),
 	profile_image: text().notNull(),
+	bio: text(),
+	banner_image: text(),
 	activity_name: varchar({ length: 255 }),
-	activity_status: integer().notNull().default(USER_ACTIVITY_STATUS.ONLINE),
+	activity_status: integer().$type<USER_ACTIVITY_STATUS_VALUES>().notNull().default(USER_ACTIVITY_STATUS.Online),
 	created_at: timestamp().notNull(),
 	updated_at: timestamp().notNull(),
 });

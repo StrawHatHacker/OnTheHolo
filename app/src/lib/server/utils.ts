@@ -19,6 +19,7 @@ export const isValidHex = (str: string) => /^#?([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/
 
 export class ImageGen {
 	static readonly profileImagePath = path.join(process.cwd(), `static/${MEDIA_FOLDERS.profileImages}/`);
+	static readonly bannerImagePath = path.join(process.cwd(), `static/${MEDIA_FOLDERS.bannerImages}/`);
 
 	static profileImage = async (hash: string) => {
 		const defaultProfileImagePng = jdenticon.toPng(hash, 128, { backColor: '#ffffff00' });
@@ -34,5 +35,9 @@ export class ImageGen {
 		await sharp(output).toFile(savePath);
 
 		return filename;
+	}
+
+	static convertToAVIF = async (input: Buffer) => {
+		return await sharp(input).avif().toBuffer();
 	}
 };

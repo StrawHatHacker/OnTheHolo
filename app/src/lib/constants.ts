@@ -11,6 +11,7 @@ export const USER_STATUS = {
   DELETED: 2,
   BANNED: 3,
 } as const;
+export type USER_STATUS_VALUES = typeof USER_STATUS[keyof typeof USER_STATUS];
 
 export const USER_PRIVILEGE_STATUS = {
   NORMAL: 1,
@@ -18,16 +19,17 @@ export const USER_PRIVILEGE_STATUS = {
 } as const;
 
 export const USER_ACTIVITY_STATUS = {
-  ONLINE: 1,
-  OFFLINE: 2,
-  AWAY: 3,
-  DO_NOT_DISTURB: 4
-}
+  Online: 1,
+  Offline: 2,
+  Away: 3,
+  Do_Not_Disturb: 4
+} as const;
+export type USER_ACTIVITY_STATUS_VALUES = typeof USER_ACTIVITY_STATUS[keyof typeof USER_ACTIVITY_STATUS];
 
 export const ENTITY_PREFIX = {
   channel: '#',
   user: '@'
-}
+} as const;
 
 export const CHANNEL_TYPE = {
   text: 1,
@@ -39,7 +41,15 @@ export type ChannelTypeValues = typeof CHANNEL_TYPE[ChannelTypeKeys];
 
 export const MEDIA_FOLDERS = {
   profileImages: 'profileImages',
+  bannerImages: 'bannerImages',
 } as const;
+
+export const MEDIA_PURPOSE = {
+  profileImage: 1,
+  bannerImage: 2,
+} as const;
+export type MediaPurposeKeys = keyof typeof MEDIA_PURPOSE;
+export type MediaPurposeValues = typeof MEDIA_PURPOSE[MediaPurposeKeys];
 
 export const MAX_TOKEN_AGE_SECONDS = SETTINGS.MAX_TOKEN_AGE_DAYS * 24 * 60 * 60;
 

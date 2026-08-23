@@ -2,6 +2,8 @@ import type { SSEMessage } from "$lib/types";
 import { report } from "$lib/utils";
 
 type SSEEvent =
+  // Users
+  'user:edit' |
   // Messages
   'message:create' |
   'message:edit' |
