@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as Popover from '$lib/components/ui/popover/index.js';
-	import type { User } from '$lib/types';
+	import type { SessionWithUser, User } from '$lib/types';
 	import {
 		AppHelper,
 		getBannerImageUrl,
@@ -18,11 +18,13 @@
 
 	let {
 		children,
+		session,
 		user,
 		align,
 		side,
 	}: {
 		children: Snippet;
+		session: SessionWithUser;
 		user: User;
 		align?: 'start' | 'center' | 'end' | undefined;
 		side?: 'top' | 'right' | 'bottom' | 'left' | undefined;
@@ -43,13 +45,13 @@
 		{#if !user.banner_image}
 			<div class="z-50 aspect-19/9 w-full bg-accent"></div>
 		{:else}
-			<img src={getBannerImageUrl(user.banner_image)} alt="" class="z-50 aspect-19/9 w-full" />
+			<img src={getBannerImageUrl(user.banner_image)} alt="" class="z-50 aspect-19/9 object-cover" />
 		{/if}
 		<div class="absolute top-18 left-2 z-50 rounded-full bg-muted">
 			<img
 				src={getProfileImageUrl(user.profile_image)}
 				alt=""
-				class="size-18 rounded-full border-2 border-muted"
+				class="size-18 rounded-full border-2 border-muted object-cover"
 			/>
 			<!-- TODO Fix this this when we have activity statuses -->
 			<div
@@ -71,17 +73,19 @@
 				</div>
 			</div>
 		{/if}
-		<Button
-			size="icon-xs"
-			variant="outline"
-			class="absolute top-1 right-1 z-60 hidden group-hover:flex"
-			onclick={() => {
-				open = false;
-				AppHelper.openEditUserDialog();
-			}}
-		>
-			<PencilIcon />
-		</Button>
+		{#if session?.user.id === user.id}
+			<Button
+				size="icon-xs"
+				variant="outline"
+				class="absolute top-1 right-1 z-60 hidden group-hover:flex"
+				onclick={() => {
+					open = false;
+					AppHelper.openEditUserDialog();
+				}}
+			>
+				<PencilIcon />
+			</Button>
+		{/if}
 		<ScrollArea class="relative z-0 min-h-0 flex-1" orientation="vertical">
 			<div class="mt-9 flex flex-col gap-2 px-2">
 				<h4 class="flex items-center gap-2 text-lg font-bold">

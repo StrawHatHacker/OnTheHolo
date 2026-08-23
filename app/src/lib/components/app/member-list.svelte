@@ -14,13 +14,13 @@
 >
 	{#if session}
 		{#each Users.getAll() as user}
-			<UserProfileCmenu {user} align="start" side="left">
+			<UserProfileCmenu {user} align="start" side="left" {session}>
 				<Button class="w-full justify-start text-sm" variant="ghost" size="xl">
 					{#if user.profile_image}
 						<img
 							src={getProfileImageUrl(user.profile_image)}
 							alt="profile"
-							class="size-8 rounded-full bg-cover"
+							class="size-8 rounded-full object-cover"
 						/>
 					{:else}
 						<div class="size-8 rounded-full bg-muted"></div>

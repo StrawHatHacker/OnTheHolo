@@ -169,7 +169,7 @@
 	</ScrollArea>
 
 	{#if currentUser}
-		<UserProfileCmenu user={currentUser}>
+		<UserProfileCmenu user={currentUser} {session}>
 			<button
 				class="flex h-14 w-full items-center gap-2 border-t border-border px-2 hover:bg-muted"
 			>
@@ -177,7 +177,7 @@
 					<img
 						src={getProfileImageUrl(currentUser.profile_image)}
 						alt="profile"
-						class="mb-1 size-8 shrink-0 rounded-full bg-cover"
+						class="mb-1 size-8 shrink-0 rounded-full object-cover"
 					/>
 				{:else}
 					<FaceSmileIcon class="size-8 shrink-0 rounded-full bg-muted"></FaceSmileIcon>

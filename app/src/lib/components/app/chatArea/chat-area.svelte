@@ -80,6 +80,7 @@
 				body: JSON.stringify(payload),
 			});
 		} catch (e) {
+			console.error(e);
 			handleRequestError(e);
 		}
 	};

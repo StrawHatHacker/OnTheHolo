@@ -44,14 +44,6 @@ export type PasetoVerifiedPayload = PasetoSignPayload & {
 	exp: number;
 };
 
-export type NewUser = {
-	username: string;
-	email: string;
-	password: string;
-	salt: string;
-	profile_image: string;
-};
-
 export type AddCategoryPayload = {
 	name: string;
 }

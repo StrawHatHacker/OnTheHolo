@@ -134,13 +134,13 @@
 								<img
 									src={URL.createObjectURL(newPfp[0])}
 									alt=""
-									class="size-22 rounded-full border border-border"
+									class="size-22 rounded-full border border-border object-cover"
 								/>
 							{:else}
 								<img
 									src={getProfileImageUrl(clonedUser.profile_image)}
 									alt=""
-									class="size-22 rounded-full border border-border"
+									class="size-22 rounded-full border border-border object-cover"
 								/>
 							{/if}
 							<Button

@@ -33,7 +33,6 @@
 	let messageMode = $state<'view' | 'edit'>('view');
 
 	// Form
-	// svelte-ignore state_referenced_locally
 	let newContent = $state('');
 
 	let User = $derived.by(() => {
@@ -83,7 +82,7 @@
 				<img
 					src={getProfileImageUrl(User.profile_image)}
 					alt="profile"
-					class="mt-1 size-10 shrink-0 rounded-full bg-cover"
+					class="mt-1 size-10 shrink-0 rounded-full object-cover"
 				/>
 			{:else}
 				<div class="size-8 shrink-0 rounded-full bg-muted"></div>
@@ -138,10 +137,12 @@
 		</div>
 	</ContextMenu.Trigger>
 	<ContextMenu.Content>
-		<ContextMenu.Item onclick={() => (messageMode = 'edit')}>
-			<SquarePenIcon />
-			Edit
-		</ContextMenu.Item>
+		{#if session?.user.id === message.user_id}
+			<ContextMenu.Item onclick={() => (messageMode = 'edit')}>
+				<SquarePenIcon />
+				Edit
+			</ContextMenu.Item>
+		{/if}
 		<div class="flex">
 			<ContextMenu.Item>
 				<MessageSquareReplyIcon />
@@ -153,9 +154,11 @@
 				Mention user
 			</ContextMenu.Item>
 		</div>
-		<ContextMenu.Item variant="destructive" onclick={() => submitDeleteMessage(message)}>
-			<TrashIcon />
-			Delete
-		</ContextMenu.Item>
+		{#if session?.user.id === message.user_id}
+			<ContextMenu.Item variant="destructive" onclick={() => submitDeleteMessage(message)}>
+				<TrashIcon />
+				Delete
+			</ContextMenu.Item>
+		{/if}
 	</ContextMenu.Content>
 </ContextMenu.Root>

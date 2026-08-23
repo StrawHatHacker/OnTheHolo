@@ -47,7 +47,7 @@ export const init: ServerInit = async () => {
 		.limit(1);
 
 	if (!adminUser) {
-		const filename = await ImageGen.profileImage(ADMIN_EMAIL);
+		const pfpFilename = await ImageGen.profileImage(ADMIN_EMAIL);
 
 		await db.insert(usersTable).values({
 			username: ADMIN_USERNAME,
@@ -56,7 +56,7 @@ export const init: ServerInit = async () => {
 			salt: ADMIN_SALT,
 			status: USER_STATUS.ACTIVE,
 			privilege_status: USER_PRIVILEGE_STATUS.ADMIN,
-			profile_image: filename,
+			profile_image: pfpFilename,
 			created_at: new Date(),
 			updated_at: new Date(),
 		});
