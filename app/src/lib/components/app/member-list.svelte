@@ -14,7 +14,7 @@
 >
 	{#if session}
 		{#each Users.getAll() as user}
-			<UserProfileCmenu user={session.user} align="start" side="left">
+			<UserProfileCmenu {user} align="start" side="left">
 				<Button class="w-full justify-start text-sm" variant="ghost" size="xl">
 					{#if user.profile_image}
 						<img

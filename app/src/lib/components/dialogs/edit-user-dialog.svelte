@@ -46,7 +46,10 @@
 	});
 
 	$effect(() => {
-		return () => AppHelper.closeEditUserDialog();
+		return () => {
+			clonedUser = null;
+			AppHelper.closeEditUserDialog();
+		};
 	});
 
 	const activityStatusStr = $derived.by(() => {
@@ -145,6 +148,7 @@
 								class="absolute top-0 right-0 hidden rounded-full group-hover:flex"
 								onclick={() => pfpInput?.click()}
 								disabled={loading}
+								type="button"
 							>
 								<UploadIcon />
 							</Button>
@@ -156,6 +160,7 @@
 									class="absolute top-0 -left-4 hidden rounded-full group-hover:flex"
 									onclick={() => (newPfp = null)}
 									disabled={loading}
+									type="button"
 								>
 									<Undo2Icon />
 								</Button>
@@ -164,7 +169,7 @@
 						<span class="text-muted-foreground">
 							Max file size: {SETTINGS.MAX_PFP_FILE_SIZE / 1024 / 1024}MBs
 						</span>
-						<Button variant="outline" size="sm" onclick={generatePfp} disabled={loading}>
+						<Button variant="outline" size="sm" onclick={generatePfp} disabled={loading} type="button">
 							Generate new pfp
 						</Button>
 					</div>
@@ -179,6 +184,7 @@
 									class="absolute -top-3 -left-3 hidden rounded-full group-hover:flex"
 									onclick={() => (newBanner = null)}
 									disabled={loading}
+									type="button"
 								>
 									<Undo2Icon />
 								</Button>
@@ -191,6 +197,7 @@
 									class="absolute -top-3 -right-3 hidden rounded-full group-hover:flex"
 									onclick={() => ((newBanner = null), (clonedUser!.banner_image = null))}
 									disabled={loading}
+									type="button"
 								>
 									<Trash2Icon />
 								</Button>
@@ -200,7 +207,7 @@
 									class="h-full w-full rounded"
 								/>
 							{:else}
-								<Button variant="outline" size="sm" onclick={() => bannerInput?.click()}>
+								<Button variant="outline" size="sm" onclick={() => bannerInput?.click()} type="button">
 									Upload banner
 								</Button>
 								<span class="block text-muted-foreground">
@@ -220,6 +227,7 @@
 								size="icon"
 								disabled={loading}
 								onclick={() => (clonedUser!.username = session?.user.username ?? '')}
+								type="button"
 							>
 								<Undo2Icon />
 							</Button>
@@ -236,6 +244,7 @@
 								size="icon"
 								disabled={loading}
 								onclick={() => (clonedUser!.bio = session?.user.bio ?? '')}
+								type="button"
 							>
 								<Undo2Icon />
 							</Button>
