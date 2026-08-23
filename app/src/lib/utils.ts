@@ -189,11 +189,11 @@ export class AppHelper {
 }
 
 export const getProfileImageUrl = (filename: string) => {
-	return `/${MEDIA_FOLDERS.profileImages}/${filename}`;
+	return `uploads/${MEDIA_FOLDERS.profileImages}/${filename}`;
 }
 
 export const getBannerImageUrl = (filename: string) => {
-	return `/${MEDIA_FOLDERS.bannerImages}/${filename}`;
+	return `uploads/${MEDIA_FOLDERS.bannerImages}/${filename}`;
 }
 
 /**

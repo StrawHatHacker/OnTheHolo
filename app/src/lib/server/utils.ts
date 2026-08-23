@@ -18,8 +18,8 @@ export const isValidEmail = (email: string) => {
 export const isValidHex = (str: string) => /^#?([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/.test(str);
 
 export class ImageGen {
-	static readonly profileImagePath = path.join(process.cwd(), `static/${MEDIA_FOLDERS.profileImages}/`);
-	static readonly bannerImagePath = path.join(process.cwd(), `static/${MEDIA_FOLDERS.bannerImages}/`);
+	static readonly profileImagePath = path.join(process.cwd(), `uploads/${MEDIA_FOLDERS.profileImages}/`);
+	static readonly bannerImagePath = path.join(process.cwd(), `uploads/${MEDIA_FOLDERS.bannerImages}/`);
 
 	static profileImage = async (hash: string) => {
 		const defaultProfileImagePng = jdenticon.toPng(hash, 128, { backColor: '#ffffff00' });

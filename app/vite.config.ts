@@ -19,7 +19,13 @@ export default defineConfig({
 				dir: '..',
 			},
 		}),
+
 	],
 	// Tell Vite to look one directory up for .env file
 	envDir: path.resolve(import.meta.dirname, '..'),
+	server: {
+		fs: {
+			allow: ['..', path.resolve('uploads')],
+		},
+	},
 });
