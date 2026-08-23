@@ -22,8 +22,8 @@ export const init: ServerInit = async () => {
 	}
 
 	for (const folder of Object.values(MEDIA_FOLDERS)) {
-		if (!existsSync('static/' + folder)) {
-			await mkdir('static/' + folder, { recursive: true });
+		if (!existsSync('uploads/' + folder)) {
+			await mkdir('uploads/' + folder, { recursive: true });
 			report.success(`${folder} folder created`);
 		}
 	}
