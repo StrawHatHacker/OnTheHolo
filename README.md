@@ -16,7 +16,7 @@
   cd app/ && node generateKeys.js
 ```
 
-3. Start docker for db and redis
+3. Start docker for postgres
 
 ```
   sudo docker compose -p holo up -d
@@ -49,6 +49,8 @@
 ```
 
 `--profile prod` will also run the sveltekit app
+
+TODO add caddy config
 
 ## After deploying (Optional)
 

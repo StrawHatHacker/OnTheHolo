@@ -99,7 +99,7 @@
 </Button>
 
 <div
-	class="absolute top-[50%] left-[50%] flex h-auto max-h-[90vh] max-w-[99vw] lg:min-w-200 -translate-x-1/2 -translate-y-1/2 flex-col gap-6 overflow-y-auto lg:h-150 lg:flex-row"
+	class="absolute top-[50%] left-[50%] flex h-auto max-h-[90vh] max-w-[99vw] -translate-x-1/2 -translate-y-1/2 flex-col gap-6 overflow-y-auto lg:h-150 lg:min-w-200 lg:flex-row"
 >
 	<!-- LEFT SIDE -->
 	<div class="flex h-full min-h-0 w-full flex-col gap-4">
@@ -140,13 +140,10 @@
 		class="flex h-full w-full flex-col justify-between rounded-lg bg-black/80 px-6 py-8 text-white shadow-lg backdrop-blur-sm"
 	>
 		<div class="relative mb-4 flex flex-col items-center">
-			<div
-				class="absolute h-30 w-30 rounded-full bg-linear-to-b from-pink-600 via-orange-400 to-white opacity-50 blur-xl"
-			></div>
 
-			<img src="/logo.png" alt="Holo logo" class="relative h-30 w-30" />
-
-			<h1 class="mt-4 text-center text-lg font-black tracking-wide text-balance">
+			<h1
+				class="logo-gradient mt-4 text-center font-heading text-8xl font-black tracking-wide"
+			>
 				{SETTINGS.TITLE}
 			</h1>
 		</div>

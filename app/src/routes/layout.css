@@ -149,3 +149,11 @@ button {
 .status-offline {
 	background-color: oklab(35.233% 0 -0.00004);
 }
+
+.logo-gradient {
+	background: -webkit-linear-gradient(#f20d69 20%, #f78967 40%, #ffe6ec 80%);
+	background-clip: text;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	line-height: 1.1;
+}

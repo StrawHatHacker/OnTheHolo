@@ -3,7 +3,7 @@
 
 export const SETTINGS = {
   /** The title of the app */
-  TITLE: "Holo",
+  TITLE: "HOlO",
 
   /** How many days should a token be valid for before needing to login again */
   MAX_TOKEN_AGE_DAYS: 7,

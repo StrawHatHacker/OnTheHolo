@@ -2,7 +2,7 @@ import { USER_PRIVILEGE_STATUS, USER_STATUS } from '$lib/constants';
 import type { AddCategoryData, AddChannelData, AddMessageData, Category, CategoryFull, Channel, DeleteCategoryData, DeleteMessageData, EditCategoryData, EditChannelData, EditMessageData, Message, UserToEdit } from '$lib/types';
 import { db } from '$lib/server/db';
 import { categoriesTable, channelsTable, messagesTable, safeUserFields, sessionsTable, usersTable } from '$lib/server/db/schema';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, sql, asc } from 'drizzle-orm';
 
 export class UserQueries {
 	static async getUserById(id: number) {
@@ -32,7 +32,11 @@ export class UserQueries {
 	}
 
 	static async getUsers() {
-		return await db.select(safeUserFields).from(usersTable).where(eq(usersTable.status, USER_STATUS.ACTIVE));
+		return await db.select(safeUserFields).from(usersTable).where(eq(usersTable.status, USER_STATUS.ACTIVE))
+			.orderBy(
+				sql`CASE WHEN ${usersTable.privilege_status} = ${USER_PRIVILEGE_STATUS.ADMIN} THEN 0 ELSE 1 END`,
+				asc(usersTable.username)
+			);
 	}
 
 	static async updateUser(user: UserToEdit, userId: number) {
