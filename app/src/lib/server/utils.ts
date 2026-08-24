@@ -38,6 +38,17 @@ export class ImageGen {
 	}
 
 	static convertToAVIF = async (input: Buffer) => {
-		return await sharp(input).avif().toBuffer();
+		return await sharp(input)
+			.avif({ quality: 30, effort: 2 })
+			.toBuffer();
+	}
+
+	static resize = async (input: Buffer, width: number, height: number) => {
+		return await sharp(input)
+			.resize(width, height, {
+				fit: 'cover',
+				withoutEnlargement: true
+			})
+			.toBuffer();
 	}
 };

@@ -12,4 +12,11 @@ export const SETTINGS = {
 
   MAX_PFP_FILE_SIZE: 10 * 1024 * 1024, // 10MB
   MAX_BANNER_FILE_SIZE: 20 * 1024 * 1024, // 20MB
+
+  /** 
+   * All images uploaded will convert to AVIF for smaller file size
+   * Converting to AVIF takes a significant amount of time especially on older machines
+   * Generated/default images will always be in AVIF formats
+   */
+  FORCE_AVIF_IMAGES: true,
 } as const;

@@ -1,15 +1,10 @@
 <script lang="ts">
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import type { SessionWithUser, User } from '$lib/types';
-	import {
-		AppHelper,
-		getBannerImageUrl,
-		getProfileImageUrl,
-		getUserActivityColor,
-	} from '$lib/utils';
+	import { AppHelper, getMediaUrl, getUserActivityColor } from '$lib/utils';
 	import type { Snippet } from 'svelte';
 	import { Badge } from '$lib/components/ui/badge/index.js';
-	import { USER_PRIVILEGE_STATUS } from '$lib/constants';
+	import { MEDIA_PURPOSE, USER_PRIVILEGE_STATUS } from '$lib/constants';
 	import { Button } from '../ui/button/index.js';
 	import PencilIcon from '@lucide/svelte/icons/pencil';
 	import MessageSquareIcon from '@lucide/svelte/icons/message-square';
@@ -45,11 +40,15 @@
 		{#if !user.banner_image}
 			<div class="z-50 aspect-19/9 w-full bg-accent"></div>
 		{:else}
-			<img src={getBannerImageUrl(user.banner_image)} alt="" class="z-50 aspect-19/9 object-cover" />
+			<img
+				src={getMediaUrl(user.banner_image, MEDIA_PURPOSE.bannerImage)}
+				alt=""
+				class="z-50 aspect-19/9 object-cover"
+			/>
 		{/if}
 		<div class="absolute top-18 left-2 z-50 rounded-full bg-muted">
 			<img
-				src={getProfileImageUrl(user.profile_image)}
+				src={getMediaUrl(user.profile_image, MEDIA_PURPOSE.profileImage)}
 				alt=""
 				class="size-18 rounded-full border-2 border-muted object-cover"
 			/>

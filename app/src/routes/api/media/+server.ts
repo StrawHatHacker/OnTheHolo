@@ -5,7 +5,8 @@ import { ERROR_MAP } from '$lib/errors';
 import { SETTINGS } from '$lib/settings.js';
 import { MEDIA_PURPOSE } from '$lib/constants.js';
 import { ImageGen } from '$lib/server/utils.js';
-import sharp from 'sharp';
+import fs from 'node:fs';
+import path from 'node:path';
 
 const validatePutBody = (data: FormData) => {
 	const file = data.get('file');
@@ -34,24 +35,28 @@ export const PUT = async ({ request, cookies }) => {
 		const session = await Auth.verifySession(cookies);
 		const data = validatePutBody(await request.formData());
 
-		const filename = Auth.generateRandom(16) + '.avif';
+		const random = Auth.generateRandom(16);
+		const fileExt = SETTINGS.FORCE_AVIF_IMAGES ? '.avif' : '.' + data.file.name.split('.').pop();
 
 		let savePath = '';
 
 		if (data.purpose === MEDIA_PURPOSE.profileImage) {
-			savePath = ImageGen.profileImagePath + filename;
+			savePath = path.join(ImageGen.profileImagePath);
 		} else if (data.purpose === MEDIA_PURPOSE.bannerImage) {
-			savePath = ImageGen.bannerImagePath + filename;
+			savePath = path.join(ImageGen.bannerImagePath);
 		} else {
 			throw new CError(400, ERROR_MAP.generalError);
 		}
 
-		const inputBuffer = Buffer.from(await data.file.arrayBuffer());
-		const avif = await ImageGen.convertToAVIF(inputBuffer);
+		let inputBuffer = Buffer.from(await data.file.arrayBuffer());
 
-		await sharp(avif).toFile(savePath);
+		if (SETTINGS.FORCE_AVIF_IMAGES) {
+			inputBuffer = await ImageGen.convertToAVIF(inputBuffer);
+		}
 
-		return json({ filename });
+		fs.promises.writeFile(savePath + random + fileExt, inputBuffer);
+
+		return json({ filename: random + fileExt });
 	} catch (e) {
 		if (e instanceof CError) throw error(e.status, e.message);
 		throw error(500, ERROR_MAP.generalError);

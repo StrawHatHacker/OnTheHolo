@@ -2,7 +2,7 @@ import { error, redirect } from '@sveltejs/kit';
 import { clsx, type ClassValue } from 'clsx';
 import { toast } from 'svelte-sonner';
 import { twMerge } from 'tailwind-merge';
-import { MEDIA_FOLDERS, USER_ACTIVITY_STATUS, TERMINAL_COLORS, type ChannelTypeValues, type USER_ACTIVITY_STATUS_VALUES, type MediaPurposeValues } from '$lib/constants';
+import { MEDIA_FOLDERS, USER_ACTIVITY_STATUS, TERMINAL_COLORS, type ChannelTypeValues, type USER_ACTIVITY_STATUS_VALUES, type MediaPurposeValues, MEDIA_PURPOSE } from '$lib/constants';
 import { AppState } from '$lib/stores.svelte';
 import { SETTINGS } from '$lib/settings';
 import type { CategoryFull, ChannelWithMessages, User } from '$lib/types';
@@ -188,14 +188,6 @@ export class AppHelper {
 	}
 }
 
-export const getProfileImageUrl = (filename: string) => {
-	return `uploads/${MEDIA_FOLDERS.profileImages}/${filename}`;
-}
-
-export const getBannerImageUrl = (filename: string) => {
-	return `uploads/${MEDIA_FOLDERS.bannerImages}/${filename}`;
-}
-
 /**
  * Returns the color class for the user activity status
  */
@@ -219,4 +211,12 @@ export const createMediaFormdata = (file: File, purpose: MediaPurposeValues) => 
 	formData.append('file', file);
 	formData.append('purpose', purpose.toString());
 	return formData;
+}
+
+export const getMediaUrl = (filename: string, purpose: MediaPurposeValues) => {
+	let folder = '';
+	if (purpose === MEDIA_PURPOSE.profileImage) folder = MEDIA_FOLDERS.profileImages;
+	else if (purpose === MEDIA_PURPOSE.bannerImage) folder = MEDIA_FOLDERS.bannerImages;
+
+	return `uploads/${folder}/${filename}`;
 }

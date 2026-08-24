@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { Users } from '$lib/stores.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { getProfileImageUrl } from '$lib/utils';
+	import { getMediaUrl } from '$lib/utils';
 	import UserProfileCmenu from '$lib/components/menus/user-profile-cmenu.svelte';
 	import type { SessionWithUser } from '$lib/types';
+	import { MEDIA_PURPOSE } from '$lib/constants';
 
 	let { session }: { session: SessionWithUser } = $props();
 </script>
@@ -18,7 +19,7 @@
 				<Button class="w-full justify-start text-sm" variant="ghost" size="xl">
 					{#if user.profile_image}
 						<img
-							src={getProfileImageUrl(user.profile_image)}
+							src={getMediaUrl(user.profile_image, MEDIA_PURPOSE.profileImage)}
 							alt="profile"
 							class="size-8 rounded-full object-cover"
 						/>

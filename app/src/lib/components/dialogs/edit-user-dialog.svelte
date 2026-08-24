@@ -15,8 +15,7 @@
 		CError,
 		createMediaFormdata,
 		genericRequest,
-		getBannerImageUrl,
-		getProfileImageUrl,
+		getMediaUrl,
 		getUserActivityColor,
 		handleRequestError,
 	} from '$lib/utils';
@@ -138,7 +137,7 @@
 								/>
 							{:else}
 								<img
-									src={getProfileImageUrl(clonedUser.profile_image)}
+									src={getMediaUrl(clonedUser.profile_image, MEDIA_PURPOSE.profileImage)}
 									alt=""
 									class="size-22 rounded-full border border-border object-cover"
 								/>
@@ -169,7 +168,13 @@
 						<span class="text-muted-foreground">
 							Max file size: {SETTINGS.MAX_PFP_FILE_SIZE / 1024 / 1024}MBs
 						</span>
-						<Button variant="outline" size="sm" onclick={generatePfp} disabled={loading} type="button">
+						<Button
+							variant="outline"
+							size="sm"
+							onclick={generatePfp}
+							disabled={loading}
+							type="button"
+						>
 							Generate new pfp
 						</Button>
 					</div>
@@ -202,12 +207,17 @@
 									<Trash2Icon />
 								</Button>
 								<img
-									src={getBannerImageUrl(clonedUser.banner_image)}
+									src={getMediaUrl(clonedUser.banner_image, MEDIA_PURPOSE.bannerImage)}
 									alt=""
-									class="h-full w-full rounded"
+									class="h-full w-full rounded object-cover"
 								/>
 							{:else}
-								<Button variant="outline" size="sm" onclick={() => bannerInput?.click()} type="button">
+								<Button
+									variant="outline"
+									size="sm"
+									onclick={() => bannerInput?.click()}
+									type="button"
+								>
 									Upload banner
 								</Button>
 								<span class="block text-muted-foreground">

@@ -13,8 +13,8 @@
 	import { AppState, Store } from '$lib/stores.svelte';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as ContextMenu from '$lib/components/ui/context-menu/index.js';
-	import { AppHelper, getProfileImageUrl } from '$lib/utils';
-	import { CHANNEL_TYPE, ENTITY_PREFIX } from '$lib/constants';
+	import { AppHelper, getMediaUrl } from '$lib/utils';
+	import { CHANNEL_TYPE, ENTITY_PREFIX, MEDIA_PURPOSE } from '$lib/constants';
 	import type { SessionWithUser } from '$lib/types';
 	import UserProfileCmenu from '$lib/components/menus/user-profile-cmenu.svelte';
 
@@ -175,7 +175,7 @@
 			>
 				{#if currentUser.profile_image}
 					<img
-						src={getProfileImageUrl(currentUser.profile_image)}
+						src={getMediaUrl(currentUser.profile_image, MEDIA_PURPOSE.profileImage)}
 						alt="profile"
 						class="mb-1 size-8 shrink-0 rounded-full object-cover"
 					/>

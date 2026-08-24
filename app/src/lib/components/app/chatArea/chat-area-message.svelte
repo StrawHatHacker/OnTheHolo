@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Badge } from '$lib/components/ui/badge/index.js';
-	import { ENTITY_PREFIX, USER_PRIVILEGE_STATUS, USER_STATUS } from '$lib/constants';
+	import { ENTITY_PREFIX, MEDIA_PURPOSE, USER_PRIVILEGE_STATUS, USER_STATUS } from '$lib/constants';
 	import { SETTINGS } from '$lib/settings';
 	import * as ButtonGroup from '$lib/components/ui/button-group/index.js';
 	import TrashIcon from '@lucide/svelte/icons/trash';
@@ -8,7 +8,7 @@
 	import AtSignIcon from '@lucide/svelte/icons/at-sign';
 	import SquarePenIcon from '@lucide/svelte/icons/square-pen';
 	import type { Message, SessionWithUser } from '$lib/types';
-	import { DateHelper, getProfileImageUrl } from '$lib/utils.js';
+	import { DateHelper, getMediaUrl } from '$lib/utils.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Users } from '$lib/stores.svelte';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
@@ -80,7 +80,7 @@
 			{/if}
 			{#if User?.profile_image}
 				<img
-					src={getProfileImageUrl(User.profile_image)}
+					src={getMediaUrl(User.profile_image, MEDIA_PURPOSE.profileImage)}
 					alt="profile"
 					class="mt-1 size-10 shrink-0 rounded-full object-cover"
 				/>
