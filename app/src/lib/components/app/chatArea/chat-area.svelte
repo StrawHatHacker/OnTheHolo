@@ -3,7 +3,7 @@
 	import { genericRequest, handleRequestError } from '$lib/utils.js';
 	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
 	import SendIcon from '@lucide/svelte/icons/send';
-	import { AppState, Store, Users } from '$lib/stores.svelte';
+	import { AppState, Store } from '$lib/stores.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import type {
 		Message,
@@ -13,11 +13,13 @@
 		EditMessagePayload,
 	} from '$lib/types';
 	import ChatAreaMessage from './chat-area-message.svelte';
+	import { tick } from 'svelte';
 
 	let { session }: { session: SessionWithUser } = $props();
 
 	// State
 	let bottomChatDiv = $state<HTMLDivElement>();
+	let textarea = $state<HTMLTextAreaElement | null>(null);
 	let loading = $state(false);
 	let contentToAdd = $state('');
 
@@ -64,6 +66,8 @@
 			handleRequestError(e);
 		} finally {
 			loading = false;
+			await tick();
+			textarea?.focus();
 		}
 	};
 
@@ -115,7 +119,7 @@
 		</div>
 	{:else}
 		<ScrollArea class="min-h-0 flex-1" orientation="vertical">
-			<div class="flex flex-col gap-2">
+			<div class="flex min-h-full flex-col justify-end gap-2">
 				{#each Store.channels.getCurrent()?.messages as message}
 					<ChatAreaMessage
 						{message}
@@ -125,6 +129,7 @@
 						{addToContent}
 					/>
 				{/each}
+
 				<div bind:this={bottomChatDiv}></div>
 			</div>
 		</ScrollArea>
@@ -140,6 +145,7 @@
 				<Textarea
 					placeholder={`Message #${Store.channels.getCurrent()?.name}`}
 					bind:value={contentToAdd}
+					bind:ref={textarea}
 					onkeydown={handleKeydown}
 					disabled={loading}
 					class="w-full flex-1"

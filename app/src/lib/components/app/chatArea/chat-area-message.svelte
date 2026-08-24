@@ -14,6 +14,7 @@
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import SendIcon from '@lucide/svelte/icons/send';
 	import * as ContextMenu from '$lib/components/ui/context-menu/index.js';
+	import UserProfileCmenu from '$lib/components/menus/user-profile-cmenu.svelte';
 
 	let {
 		message,
@@ -79,11 +80,13 @@
 				</div>
 			{/if}
 			{#if User?.profile_image}
-				<img
-					src={getMediaUrl(User.profile_image, MEDIA_PURPOSE.profileImage)}
-					alt="profile"
-					class="mt-1 size-10 shrink-0 rounded-full object-cover"
-				/>
+				<UserProfileCmenu user={User} align="center" side="bottom" {session}>
+					<img
+						src={getMediaUrl(User.profile_image, MEDIA_PURPOSE.profileImage)}
+						alt="profile"
+						class="mt-1 size-10 shrink-0 rounded-full object-cover"
+					/>
+				</UserProfileCmenu>
 			{:else}
 				<div class="size-8 shrink-0 rounded-full bg-muted"></div>
 			{/if}
