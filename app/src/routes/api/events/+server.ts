@@ -1,8 +1,11 @@
 import type { RequestHandler } from './$types';
 import { registerConnection, unregisterConnection, type Connection } from '$lib/server/sse';
 import { Auth } from '$lib/server/auth';
+import { isRateLimited } from '$lib/server/ratelimits';
 
-export const GET: RequestHandler = async ({ request, cookies }) => {
+export const GET: RequestHandler = async ({ request, cookies, getClientAddress }) => {
+  isRateLimited(Auth.getClientIp(request, getClientAddress), 'normal');
+
   const session = await Auth.verifySession(cookies);
   const userId = session.user.id;
 

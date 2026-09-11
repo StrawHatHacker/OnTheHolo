@@ -4,9 +4,11 @@ import { Auth } from '$lib/server/auth';
 import { ERROR_MAP } from '$lib/errors';
 import type { InitialServerData } from '$lib/types';
 import { ChannelQueries, UserQueries } from '$lib/server/db/queries';
+import { isRateLimited } from '$lib/server/ratelimits';
 
-export const GET = async ({ request, cookies }) => {
+export const GET = async ({ request, cookies, getClientAddress }) => {
 	try {
+		isRateLimited(Auth.getClientIp(request, getClientAddress), 'initialData');
 		await Auth.verifySession(cookies);
 
 		let initData: InitialServerData = {

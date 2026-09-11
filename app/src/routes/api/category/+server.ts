@@ -5,6 +5,7 @@ import { ChannelQueries } from '$lib/server/db/queries';
 import { ERROR_MAP } from '$lib/errors';
 import type { Category, CategoryFull, EditCategoryPayload, AddChannelPayload, DeleteCategoryPayload } from '$lib/types';
 import { getAllSSEUsers, sendSSEToUsers } from '$lib/server/sse';
+import { isRateLimited } from '$lib/server/ratelimits';
 
 const validatePostBody = (body: any) => {
 	if (!body.name || !(typeof body.name === 'string') || body.name.length < 1)
@@ -18,8 +19,10 @@ const validatePostBody = (body: any) => {
 
 	return d;
 };
-export const POST = async ({ request, cookies }) => {
+export const POST = async ({ request, cookies, getClientAddress }) => {
 	try {
+		isRateLimited(Auth.getClientIp(request, getClientAddress), 'normal');
+
 		await Auth.verifySession(cookies);
 		const body = validatePostBody(await request.json());
 
@@ -51,8 +54,9 @@ const validatePutBody = (body: any) => {
 
 	return data;
 };
-export const PUT = async ({ request, cookies }) => {
+export const PUT = async ({ request, cookies, getClientAddress }) => {
 	try {
+		isRateLimited(Auth.getClientIp(request, getClientAddress), 'normal');
 		await Auth.verifySession(cookies);
 		const data = validatePutBody(await request.json());
 
@@ -82,8 +86,9 @@ const validateDeleteBody = (body: any) => {
 
 	return data;
 };
-export const DELETE = async ({ request, cookies }) => {
+export const DELETE = async ({ request, cookies, getClientAddress }) => {
 	try {
+		isRateLimited(Auth.getClientIp(request, getClientAddress), 'normal');
 		await Auth.verifySession(cookies);
 		const data = validateDeleteBody(await request.json());
 

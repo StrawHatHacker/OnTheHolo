@@ -7,6 +7,7 @@ import { MEDIA_PURPOSE } from '$lib/constants.js';
 import { ImageGen } from '$lib/server/utils.js';
 import fs from 'node:fs';
 import path from 'node:path';
+import { isRateLimited } from '$lib/server/ratelimits';
 
 const validatePutBody = (data: FormData) => {
 	const file = data.get('file');
@@ -30,8 +31,9 @@ const validatePutBody = (data: FormData) => {
 		purpose
 	};
 };
-export const PUT = async ({ request, cookies }) => {
+export const PUT = async ({ request, cookies, getClientAddress }) => {
 	try {
+		isRateLimited(Auth.getClientIp(request, getClientAddress), 'media');
 		const session = await Auth.verifySession(cookies);
 		const data = validatePutBody(await request.formData());
 

@@ -5,6 +5,7 @@ import { COOKIE_MAP, USER_STATUS } from '$lib/constants';
 import { Auth } from '$lib/server/auth';
 import { SessionQueries, UserQueries } from '$lib/server/db/queries';
 import { ERROR_MAP } from '$lib/errors';
+import { isRateLimited } from '$lib/server/ratelimits';
 
 const validatePostBody = (body: any) => {
 	if (!body.email || !(typeof body.email === 'string') || !isValidEmail(body.email))
@@ -17,8 +18,10 @@ const validatePostBody = (body: any) => {
 		password: body.password,
 	};
 };
-export const POST = async ({ request, cookies }) => {
+export const POST = async ({ request, cookies, getClientAddress }) => {
 	try {
+		isRateLimited(Auth.getClientIp(request, getClientAddress), 'auth');
+		
 		const body = validatePostBody(await request.json());
 
 		const [user] = await UserQueries.getUserByEmail(body.email);
@@ -38,7 +41,7 @@ export const POST = async ({ request, cookies }) => {
 		cookies.set(COOKIE_MAP.SESSION, token, createCookieSettings());
 
 		await SessionQueries.createSession(user.id, token);
-		
+
 		return json({});
 	} catch (e) {
 		console.log(e);

@@ -4,9 +4,12 @@ import { COOKIE_MAP } from '$lib/constants';
 import { Auth } from '$lib/server/auth';
 import { SessionQueries } from '$lib/server/db/queries';
 import { ERROR_MAP } from '$lib/errors';
+import { isRateLimited } from '$lib/server/ratelimits';
 
-export const GET = async ({ cookies }) => {
+export const GET = async ({ cookies, request, getClientAddress }) => {
 	try {
+		isRateLimited(Auth.getClientIp(request, getClientAddress), 'auth');
+
 		const sessionToken = cookies.get(COOKIE_MAP.SESSION);
 		if (!sessionToken) throw new CError(401, '');
 

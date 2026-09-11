@@ -7,6 +7,7 @@ import { type USER_ACTIVITY_STATUS_VALUES, type USER_STATUS_VALUES } from '$lib/
 import { validateUserPayload } from '$lib/server/validations.js';
 import type { SSEMessage, SSEUser, User, UserToEdit } from '$lib/types';
 import { getAllSSEUsers, sendSSEToUsers } from '$lib/server/sse';
+import { isRateLimited } from '$lib/server/ratelimits';
 
 
 const validatePutBody = (body: any) => {
@@ -27,8 +28,9 @@ const validatePutBody = (body: any) => {
 
 	return data;
 };
-export const PUT = async ({ request, cookies }) => {
+export const PUT = async ({ request, cookies, getClientAddress }) => {
 	try {
+		isRateLimited(Auth.getClientIp(request, getClientAddress), 'normal');
 		const session = await Auth.verifySession(cookies);
 		let newUser = validatePutBody(await request.json());
 

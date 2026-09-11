@@ -17,4 +17,5 @@ export const ERROR_MAP = {
 	accountDeleted: 'Your account has been deleted',
 	accountBanned: 'Your account has been banned by a moderator',
 	fileTooLarge: 'File is too large',
+	tooManyRequests: 'Too many requests. Please try again later',
 } as const;

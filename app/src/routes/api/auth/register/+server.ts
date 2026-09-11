@@ -5,6 +5,7 @@ import { Auth } from '$lib/server/auth';
 import { UserQueries } from '$lib/server/db/queries';
 import { ERROR_MAP } from '$lib/errors';
 import { USER_PRIVILEGE_STATUS, USER_STATUS } from '$lib/constants';
+import { isRateLimited } from '$lib/server/ratelimits';
 
 const validatePostBody = (body: any) => {
   if (!body.email || !(typeof body.email === 'string') || !isValidEmail(body.email))
@@ -20,8 +21,9 @@ const validatePostBody = (body: any) => {
     password: body.password,
   };
 };
-export const POST = async ({ request }) => {
+export const POST = async ({ request, getClientAddress }) => {
   try {
+    isRateLimited(Auth.getClientIp(request, getClientAddress), 'auth');
     const body = validatePostBody(await request.json());
 
     let [user] = await UserQueries.getUserByEmail(body.email);
