@@ -174,4 +174,7 @@ export const AppState = $state({
 	channelToEdit: null as ChannelWithMessages | null,
 	isDeleteChannelDialogOpen: false,
 	channelToDelete: null as ChannelWithMessages | null,
+
+	// Other dialogs
+	isSettingsDialogOpen: false
 });

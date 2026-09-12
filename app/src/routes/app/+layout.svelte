@@ -9,6 +9,7 @@
 	import { onMount } from 'svelte';
 	import { genericRequest } from '$lib/utils';
 	import EditUserDialog from '$lib/components/dialogs/edit-user-dialog.svelte';
+	import SettingsDialog from '$lib/components/dialogs/settings/settings-dialog.svelte';
 
 	let { children, data } = $props();
 
@@ -40,3 +41,5 @@
 <AddChannelDialog />
 <EditChannelDialog />
 <DeleteChannelDialog />
+
+<SettingsDialog session={data.session} />

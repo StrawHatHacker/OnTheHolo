@@ -186,6 +186,12 @@ export class AppHelper {
 		AppState.isDeleteChannelDialogOpen = false;
 		AppState.channelToDelete = null;
 	}
+
+	// ------ OTHER ------
+
+	static openSettingsDialog() {
+		AppState.isSettingsDialogOpen = true;
+	}
 }
 
 /**

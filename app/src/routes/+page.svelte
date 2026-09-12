@@ -140,7 +140,6 @@
 		class="flex h-full w-full flex-col justify-between rounded-lg bg-black/80 px-6 py-8 text-white shadow-lg backdrop-blur-sm"
 	>
 		<div class="relative mb-4 flex flex-col items-center">
-
 			<h1
 				class="logo-gradient mt-4 text-center font-heading text-8xl font-black tracking-wide"
 			>

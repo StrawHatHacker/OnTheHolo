@@ -1,7 +1,7 @@
 // Relative path required here because of drizzle-orm
 import { USER_ACTIVITY_STATUS, type USER_ACTIVITY_STATUS_VALUES, type USER_STATUS_VALUES } from '../../constants';
 import { getColumns } from 'drizzle-orm';
-import { boolean, index, integer, pgTable, text, timestamp, uniqueIndex, varchar } from 'drizzle-orm/pg-core';
+import { boolean, index, integer, pgTable, primaryKey, text, timestamp, uniqueIndex, varchar } from 'drizzle-orm/pg-core';
 
 export const usersTable = pgTable('users', {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -74,3 +74,25 @@ export const messagesTable = pgTable('messages', {
 	// Optimizes user lookups when fetching a specific user's messages
 	index('messages_user_id_idx').on(table.user_id),
 ])
+
+export const rolesTable = pgTable('roles', {
+	id: integer().primaryKey().generatedAlwaysAsIdentity(),
+	name: varchar({ length: 255 }).notNull(),
+	color: varchar({ length: 8 }).notNull(),
+	created_at: timestamp().notNull(),
+})
+
+export const userRolesTable = pgTable('user_roles', {
+	user_id: integer()
+		.notNull()
+		.references(() => usersTable.id, { onDelete: 'cascade' }),
+	role_id: integer()
+		.notNull()
+		.references(() => rolesTable.id, { onDelete: 'cascade' }),
+}, (table) => [
+	primaryKey({
+		columns: [table.user_id, table.role_id],
+	}),
+	index('user_roles_user_id_idx').on(table.user_id),
+	index('user_roles_role_id_idx').on(table.role_id),
+]);

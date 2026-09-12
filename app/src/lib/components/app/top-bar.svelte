@@ -4,9 +4,10 @@
 	import SunIcon from '@lucide/svelte/icons/sun';
 	import MessageSquareIcon from '@lucide/svelte/icons/message-square';
 	import { toggleMode } from 'mode-watcher';
-	import { AppState, Store } from '$lib/stores.svelte';
+	import { Store } from '$lib/stores.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { SETTINGS } from '$lib/settings';
+	import { AppHelper } from '$lib/utils';
 
 	let currentChannel = $derived.by(() => {
 		return Store.channels.getCurrent();
@@ -35,7 +36,7 @@
 			<MoonIcon class="absolute scale-0 rotate-90 transition-all! dark:scale-100 dark:rotate-0" />
 			<span class="sr-only">Toggle theme</span>
 		</Button>
-		<Button variant="outline" size="icon-sm">
+		<Button variant="outline" size="icon-sm" onclick={AppHelper.openSettingsDialog}>
 			<SettingsIcon />
 			<span class="sr-only">Settings</span>
 		</Button>
