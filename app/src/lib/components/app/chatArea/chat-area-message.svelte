@@ -61,9 +61,9 @@
 
 <ContextMenu.Root>
 	<ContextMenu.Trigger>
-		<div class="group relative flex items-start gap-4 px-4 py-1 hover:bg-muted">
+		<div class="group relative flex items-start gap-4 px-4 py-1 hover:bg-foreground/5">
 			{#if message.user_id === session?.user.id}
-				<div class="absolute top-0 right-1 hidden translate-y-[-50%] group-hover:block">
+				<div class="absolute top-0 right-2 hidden translate-y-[-50%] group-hover:block">
 					<ButtonGroup.Root>
 						<Button
 							size="icon-xs"
@@ -112,7 +112,7 @@
 					</span>
 				</div>
 				{#if messageMode === 'view'}
-					<p class="">
+					<p class="whitespace-pre-wrap text-sm">
 						{message.content}
 						{#if message.edited}
 							<span class="text-xs text-muted-foreground">&ensp;(Edited)</span>
@@ -121,7 +121,7 @@
 				{:else}
 					<form class="flex w-full items-center gap-2">
 						<Textarea
-							class="flex-1 resize-none rounded border p-2 text-sm"
+							class="flex-1 resize-none rounded border p-2 text-sm max-h-full!"
 							onkeydown={handleKeydown}
 							bind:value={newContent}
 						/>

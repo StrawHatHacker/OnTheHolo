@@ -47,6 +47,8 @@
 	$effect(() => {
 		return () => {
 			clonedUser = null;
+			newPfp = null;
+			newBanner = null;
 			AppHelper.closeEditUserDialog();
 		};
 	});
@@ -194,7 +196,7 @@
 									<Undo2Icon />
 								</Button>
 
-								<img src={URL.createObjectURL(newBanner[0])} alt="" class="h-full w-full" />
+								<img src={URL.createObjectURL(newBanner[0])} alt="" class="h-full w-full object-cover" />
 							{:else if clonedUser && clonedUser.banner_image}
 								<Button
 									size="icon-sm"

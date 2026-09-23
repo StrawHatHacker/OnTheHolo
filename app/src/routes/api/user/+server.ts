@@ -5,7 +5,7 @@ import { UserQueries } from '$lib/server/db/queries';
 import { ERROR_MAP } from '$lib/errors';
 import { type USER_ACTIVITY_STATUS_VALUES, type USER_STATUS_VALUES } from '$lib/constants';
 import { validateUserPayload } from '$lib/server/validations.js';
-import type { SSEMessage, SSEUser, User, UserToEdit } from '$lib/types';
+import type { SSEUser, UserToEdit } from '$lib/types';
 import { getAllSSEUsers, sendSSEToUsers } from '$lib/server/sse';
 import { isRateLimited } from '$lib/server/ratelimits';
 

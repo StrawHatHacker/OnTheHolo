@@ -18,4 +18,5 @@ export const ERROR_MAP = {
 	accountBanned: 'Your account has been banned by a moderator',
 	fileTooLarge: 'File is too large',
 	tooManyRequests: 'Too many requests. Please try again later',
+	adminCannotChangeEmail: 'Admins cannot change their email',
 } as const;

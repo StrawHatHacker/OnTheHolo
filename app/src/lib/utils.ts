@@ -20,9 +20,8 @@ export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & { ref?:
 
 /**
  * Helper class for throwing custom errors.
- * That way we can distinguish between our error and random errors.
- * We show these errors to the client.
- * We don't want to return DB `Error`s to the client.
+ * That way we can distinguish between our errors and runtime errors thrown by libraries or by bugs. That way DB errors are not shown to the user.
+ * We are safe showing CErrors on the client UI.
  */
 export class CError {
 	status: number;

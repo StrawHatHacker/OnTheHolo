@@ -32,7 +32,10 @@ export class UserQueries {
 	}
 
 	static async getUsers() {
-		return await db.select(safeUserFields).from(usersTable).where(eq(usersTable.status, USER_STATUS.ACTIVE))
+		return await db
+			.select(safeUserFields)
+			.from(usersTable)
+			.where(eq(usersTable.status, USER_STATUS.ACTIVE))
 			.orderBy(
 				sql`CASE WHEN ${usersTable.privilege_status} = ${USER_PRIVILEGE_STATUS.ADMIN} THEN 0 ELSE 1 END`,
 				asc(usersTable.username)
@@ -73,7 +76,10 @@ export class SessionQueries {
 							id: sessionsTable.id,
 							createdAt: sessionsTable.created_at,
 						},
-						user: safeUserFields,
+						user: {
+							...safeUserFields,
+							email: usersTable.email
+						},
 					})
 					.from(sessionsTable)
 					.innerJoin(

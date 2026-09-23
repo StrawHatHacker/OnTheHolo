@@ -2,7 +2,13 @@ import type { ChannelTypeValues, USER_ACTIVITY_STATUS_VALUES } from './constants
 import type { SessionQueries } from './server/db/queries';
 import type { categoriesTable, channelsTable, messagesTable, usersTable } from './server/db/schema';
 
-export type User = Omit<typeof usersTable.$inferSelect, 'password' | 'salt'>;
+export type User = Omit<typeof usersTable.$inferSelect, 'password' | 'salt' | 'email'>;
+
+export type SessionWithUser = Awaited<ReturnType<typeof SessionQueries.getSessionByToken>>;
+
+export type UserSelf = NonNullable<SessionWithUser>['user'];
+
+export type UserToEdit = Omit<typeof usersTable.$inferSelect, 'id' | 'password' | 'salt' | 'privilege_status' | 'created_at'>;
 
 export type Message = typeof messagesTable.$inferSelect;
 
@@ -10,7 +16,6 @@ export type Channel = typeof channelsTable.$inferSelect;
 
 export type Category = typeof categoriesTable.$inferSelect;
 
-export type SessionWithUser = Awaited<ReturnType<typeof SessionQueries.getSessionByToken>>;
 
 export type ChannelWithMessages = Channel & {
 	messages: Message[];
@@ -21,7 +26,7 @@ export type CategoryFull = Category & {
 	channels: ChannelWithMessages[];
 };
 
-export type UserToEdit = Omit<User, 'id' | 'privilege_status'| 'created_at'>;
+
 
 export type InitialServerData = {
 	categories: CategoryFull[];

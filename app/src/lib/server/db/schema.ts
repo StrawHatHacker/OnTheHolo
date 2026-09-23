@@ -19,7 +19,7 @@ export const usersTable = pgTable('users', {
 	created_at: timestamp().notNull(),
 	updated_at: timestamp().notNull(),
 });
-export const { password: _1, salt: _2, ...safeUserFields } = getColumns(usersTable);
+export const { password: _1, salt: _2, email: _3, ...safeUserFields } = getColumns(usersTable);
 
 export const sessionsTable = pgTable('sessions', {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
