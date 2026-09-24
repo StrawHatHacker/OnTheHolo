@@ -9,12 +9,11 @@ import type { SSEUser, UserToEdit } from '$lib/types';
 import { getAllSSEUsers, sendSSEToUsers } from '$lib/server/sse';
 import { isRateLimited } from '$lib/server/ratelimits';
 
-
 const validatePutBody = (body: any) => {
 	const result = validateUserPayload(body);
 	if (!result.success) throw new CError(400, result.error.issues[0].message);
 
-	const data: UserToEdit = {
+	const data: Partial<UserToEdit> = {
 		username: result.data.username,
 		email: result.data.email.toLocaleLowerCase(),
 		status: Number(result.data.status) as USER_STATUS_VALUES,

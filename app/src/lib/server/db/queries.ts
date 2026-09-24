@@ -42,7 +42,7 @@ export class UserQueries {
 			);
 	}
 
-	static async updateUser(user: UserToEdit, userId: number) {
+	static async updateUser(user: Partial<UserToEdit>, userId: number) {
 		return (await db
 			.update(usersTable)
 			.set(user)
@@ -63,6 +63,12 @@ export class SessionQueries {
 		return await db
 			.delete(sessionsTable)
 			.where(and(eq(sessionsTable.user_id, userId), eq(sessionsTable.token, token)));
+	}
+
+	static async deleteUserSessions(userId: number) {
+		return await db
+			.delete(sessionsTable)
+			.where(eq(sessionsTable.user_id, userId));
 	}
 
 	static async getSessionByToken(token?: string) {

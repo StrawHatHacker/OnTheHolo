@@ -29,7 +29,8 @@ export class Auth {
 	}
 
 	/**
-	 * First verify the cookie, then check the db
+	 * First verify the cookie, then check the db.
+	 * Throws CError if the session is invalid.
 	 */
 	static async verifySession(cookies: Cookies) {
 		const sessionCookie = cookies.get(COOKIE_MAP.SESSION);

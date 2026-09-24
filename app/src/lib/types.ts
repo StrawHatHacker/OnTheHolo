@@ -8,7 +8,7 @@ export type SessionWithUser = Awaited<ReturnType<typeof SessionQueries.getSessio
 
 export type UserSelf = NonNullable<SessionWithUser>['user'];
 
-export type UserToEdit = Omit<typeof usersTable.$inferSelect, 'id' | 'password' | 'salt' | 'privilege_status' | 'created_at'>;
+export type UserToEdit = Omit<typeof usersTable.$inferSelect, 'id' | 'salt' | 'privilege_status' | 'created_at'>;
 
 export type Message = typeof messagesTable.$inferSelect;
 

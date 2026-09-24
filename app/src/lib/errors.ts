@@ -5,7 +5,7 @@ export const ERROR_MAP = {
 	invalidSession: 'Invalid session. Please log in again',
 	invalidEmail: 'Please enter a valid email address',
 	invalidPassword:
-		'Password must be at least 16 characters and include a number and a special character',
+		'Password must be between 16 and 128 characters',
 	invalidUsername: 'Username must be at least 3 characters',
 	invalidChannelType: 'Invalid channel type',
 	channelNotFound: 'Channel not found',
@@ -19,4 +19,5 @@ export const ERROR_MAP = {
 	fileTooLarge: 'File is too large',
 	tooManyRequests: 'Too many requests. Please try again later',
 	adminCannotChangeEmail: 'Admins cannot change their email',
+	adminCannotChangePassword: 'Admins cannot change their password',
 } as const;
