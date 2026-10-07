@@ -48,6 +48,14 @@ export class UserQueries {
 			.set(user)
 			.where(eq(usersTable.id, userId)).returning(safeUserFields))?.[0];
 	}
+
+	static async deleteAllUserMessages(userId: number) {
+		await db.delete(messagesTable).where(eq(messagesTable.user_id, userId));
+	}
+
+	static async deleteUser(userId: number) {
+		await db.delete(usersTable).where(eq(usersTable.id, userId));
+	}
 }
 
 export class SessionQueries {
@@ -115,7 +123,11 @@ export class ChannelQueries {
 			.leftJoin(
 				messagesTable,
 				eq(channelsTable.id, messagesTable.channel_id)
-			);
+			).orderBy(
+        asc(categoriesTable.id),
+        asc(channelsTable.id),
+        asc(messagesTable.created_at)
+      );
 
 		const categories = new Map<number, CategoryFull>();
 
@@ -154,7 +166,7 @@ export class ChannelQueries {
 			}
 		}
 
-		return [...categories.values()];
+		return categories.values().toArray();
 	}
 
 	static async getCategoryByChannelId(channelId: number) {

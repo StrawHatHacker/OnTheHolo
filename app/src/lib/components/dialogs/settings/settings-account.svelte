@@ -3,10 +3,12 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { genericRequest, handleRequestError } from '$lib/utils';
+	import { CError, genericRequest, handleRequestError } from '$lib/utils';
 	import { invalidateAll } from '$app/navigation';
 	import { toast } from 'svelte-sonner';
 	import { Separator } from '$lib/components/ui/separator/index.js';
+	import { VerifyHuman } from '$lib/components/ui/verify-human/index.js';
+	import { Switch } from '$lib/components/ui/switch/index.js';
 
 	let { session }: { session: SessionWithUser } = $props();
 
@@ -21,12 +23,20 @@
 	let newPassword = $state(''),
 		passwordDisabled = $state(true);
 
+	// Delete account state
+	let deleteAccountStep = $state<1 | 2>(1),
+		isDeleteAccountCaptchaVerified = $state(false),
+		reEnteredPassword = $state(''),
+		deleteAllTraces = $state(false);
+
 	$effect(() => {
 		newEmail = session?.user.email || '';
 
 		return () => {
 			newEmail = '';
 			newPassword = '';
+			deleteAccountStep = 1;
+			isDeleteAccountCaptchaVerified = false;
 		};
 	});
 
@@ -73,6 +83,40 @@
 		} finally {
 			loading = false;
 		}
+	};
+
+	const onDeleteAccount = async () => {
+		try {
+			if (!isDeleteAccountCaptchaVerified) throw new CError(400, 'Captcha not verified');
+
+			loading = true;
+
+			await genericRequest('/api/user/account', {
+				method: 'DELETE',
+				body: JSON.stringify({
+					password: reEnteredPassword,
+					deleteAllTraces,
+				}),
+			});
+
+			toast.success('Account deleted successfully');
+
+			// InvalidateAll reruns the load function,
+			// The load function will fail because the session token is invalid
+			// And the user will be redirected to the login page
+			invalidateAll();
+		} catch (e) {
+			handleRequestError(e);
+		} finally {
+			loading = false;
+		}
+	};
+
+	const resetDeleteAccountForm = () => {
+		deleteAccountStep = 1;
+		isDeleteAccountCaptchaVerified = false;
+		reEnteredPassword = '';
+		deleteAllTraces = false;
 	};
 </script>
 
@@ -136,7 +180,48 @@
 		</div>
 		<Separator class="my-2" />
 		<div>
-			<Button variant="destructive">Delete account</Button>
+			{#if deleteAccountStep === 1}
+				<Button variant="destructive" onclick={() => (deleteAccountStep = 2)}>
+					Delete account
+				</Button>
+			{:else if deleteAccountStep === 2}
+				<div class="flex flex-col gap-4">
+					<h4 class="text-lg font-bold">Are you sure you want to delete your account?</h4>
+					<div class="flex flex-col gap-1">
+						<Label for="reenter-password">Re-enter your password</Label>
+						<Input
+							id="reenter-password"
+							class="w-full"
+							type="password"
+							bind:value={reEnteredPassword}
+							disabled={loading}
+						/>
+					</div>
+					<div class="flex items-center gap-2">
+						<Label for="delete-all-traces">Delete all traces</Label>
+						<Switch id="delete-all-traces" bind:checked={deleteAllTraces} disabled={loading} />
+					</div>
+					<VerifyHuman bind:verified={isDeleteAccountCaptchaVerified} />
+					<div class="flex gap-2">
+						<Button
+							variant="destructive"
+							class="w-fit"
+							onclick={onDeleteAccount}
+							disabled={loading || !isDeleteAccountCaptchaVerified}
+						>
+							Delete account
+						</Button>
+						<Button
+							variant="outline"
+							class="w-fit"
+							onclick={resetDeleteAccountForm}
+							disabled={loading}
+						>
+							Cancel
+						</Button>
+					</div>
+				</div>
+			{/if}
 		</div>
 	</div>
 </section>

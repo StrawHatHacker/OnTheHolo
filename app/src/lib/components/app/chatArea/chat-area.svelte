@@ -18,7 +18,6 @@
 	let { session }: { session: SessionWithUser } = $props();
 
 	// State
-	let bottomChatDiv = $state<HTMLDivElement>();
 	let textarea = $state<HTMLTextAreaElement | null>(null);
 	let loading = $state(false);
 	let contentToAdd = $state('');
@@ -31,7 +30,7 @@
 	});
 
 	const scrollDown = () => {
-		bottomChatDiv?.scrollIntoView({
+		AppState.bottomChatDiv?.scrollIntoView({
 			behavior: 'instant',
 		});
 	};
@@ -130,7 +129,7 @@
 					/>
 				{/each}
 
-				<div bind:this={bottomChatDiv}></div>
+				<div bind:this={AppState.bottomChatDiv}></div>
 			</div>
 		</ScrollArea>
 

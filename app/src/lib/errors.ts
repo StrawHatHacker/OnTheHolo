@@ -20,4 +20,5 @@ export const ERROR_MAP = {
 	tooManyRequests: 'Too many requests. Please try again later',
 	adminCannotChangeEmail: 'Admins cannot change their email',
 	adminCannotChangePassword: 'Admins cannot change their password',
+	adminCannotDeleteSelfAccount: 'Admins cannot delete their account',
 } as const;

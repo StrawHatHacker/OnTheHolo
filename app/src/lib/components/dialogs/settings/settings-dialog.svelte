@@ -6,16 +6,14 @@
 	import LockIcon from '@lucide/svelte/icons/lock';
 	import ShieldCogCornerIcon from '@lucide/svelte/icons/shield-cog-corner';
 	import { AppState } from '$lib/stores.svelte';
-	import { Input } from '$lib/components/ui/input/index.js';
-	import { Label } from '$lib/components/ui/label/index.js';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import { AppHelper, genericRequest, getMediaUrl, handleRequestError } from '$lib/utils';
-	import { toast } from 'svelte-sonner';
+	import { getMediaUrl } from '$lib/utils';
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import type { SessionWithUser } from '$lib/types';
 	import { MEDIA_PURPOSE } from '$lib/constants';
 	import FaceSmileIcon from '@lucide/svelte/icons/face-slightly-smiling';
 	import SettingsAccount from './settings-account.svelte';
+	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
 
 	let { session }: { session: SessionWithUser } = $props();
 
@@ -27,7 +25,7 @@
 </script>
 
 <Dialog.Root bind:open={AppState.isSettingsDialogOpen}>
-	<Dialog.Content class="flex max-h-[70vh] min-h-[70vh] w-full gap-4 sm:max-w-4xl">
+	<Dialog.Content class="flex max-h-[70vh] min-h-[70vh] w-full gap-4 sm:max-w-4xl pr-0">
 		<ul class="flex w-fit max-w-min flex-col border-r border-muted pr-4">
 			<li class="mb-6 ml-2 flex items-center gap-2">
 				{#if session?.user.profile_image}
@@ -98,8 +96,10 @@
 				</Button>
 			</li>
 		</ul>
-		{#if selectedTab === 'account'}
-			<SettingsAccount {session} />
-		{/if}
+		<ScrollArea class="w-full pr-4">
+			{#if selectedTab === 'account'}
+				<SettingsAccount {session} />
+			{/if}
+		</ScrollArea>
 	</Dialog.Content>
 </Dialog.Root>

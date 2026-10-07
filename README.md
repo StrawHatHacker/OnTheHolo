@@ -78,3 +78,4 @@ Options coming soon
 - Add ratelimits
 - Add admin only actions
 - Set NODE_ENV=production in app/Dockerfile
+- Set ulimits, check nginx / caddy open connection limits

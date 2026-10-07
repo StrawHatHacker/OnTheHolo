@@ -9,7 +9,7 @@ type RateLimitEntry = {
 // Define specific limits and windows for each level
 const RATE_LIMIT_CONFIG = {
   normal: { limit: 30, windowMs: 30_000 },   // 50 requests per 30 seconds
-  auth: { limit: 5, windowMs: 30_000 },  // 5 requests per 30 seconds
+  auth: { limit: 7, windowMs: 30_000 },  // 7 requests per 30 seconds
   initialData: { limit: 5, windowMs: 60_000 },    // 5 requests per 60 seconds
   media: { limit: 5, windowMs: 20_000 }    // 5 requests per 20 seconds
 };

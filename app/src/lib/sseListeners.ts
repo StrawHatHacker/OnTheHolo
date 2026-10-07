@@ -1,5 +1,6 @@
 import { AppState, Store } from "$lib/stores.svelte";
-import type { Category, CategoryFull, ChannelWithMessages, SSEChannel, SSEMessage, SSEUser } from "$lib/types";
+import type { Category, CategoryFull, ChannelWithMessages, SSEChannel, SSEMessage, SSEUser, SSEUserDeleted } from "$lib/types";
+import { tick } from "svelte";
 
 export const registerSSEListeners = (source: EventSource) => {
   // ------ USERS ------
@@ -11,6 +12,14 @@ export const registerSSEListeners = (source: EventSource) => {
     Store.users.edit(data.user);
   });
 
+  source.addEventListener('user:delete', (event: MessageEvent) => {
+    console.info('Received SSE: user:delete');
+    const data = JSON.parse(event.data) as SSEUserDeleted;
+
+    Store.users.delete(data.userId);
+    if (data.deleteAllTraces) Store.users.deleteAllMessages(data.userId);
+  });
+
   // ------ MESSAGES ------
 
   source.addEventListener('message:create', (event: MessageEvent) => {
@@ -18,6 +27,9 @@ export const registerSSEListeners = (source: EventSource) => {
     const data = JSON.parse(event.data) as SSEMessage;
 
     Store.channels.sendMessage(data.message);
+    tick().then(() =>
+      AppState.bottomChatDiv?.scrollIntoView({ behavior: 'smooth' })
+    );
   });
 
   source.addEventListener('message:edit', (event: MessageEvent) => {

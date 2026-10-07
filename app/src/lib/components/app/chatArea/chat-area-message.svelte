@@ -84,11 +84,11 @@
 					<img
 						src={getMediaUrl(User.profile_image, MEDIA_PURPOSE.profileImage)}
 						alt="profile"
-						class="mt-1 size-10 shrink-0 rounded-full object-cover"
+						class="mt-1 size-10 shrink-0! rounded-full object-cover"
 					/>
 				</UserProfileCmenu>
 			{:else}
-				<div class="size-8 shrink-0 rounded-full bg-muted"></div>
+				<div class="size-10 shrink-0 rounded-full bg-muted"></div>
 			{/if}
 			<div class="flex w-full flex-col">
 				<div class="flex w-full items-center gap-2">
@@ -96,7 +96,7 @@
 						onclick={() => addToContent(`${ENTITY_PREFIX.user}${User?.username}`)}
 						class="hover:underline"
 					>
-						<h4 class="text-md font-bold">{User?.username}</h4>
+						<h4 class="text-md font-bold">{User?.username ?? 'Unknown'}</h4>
 					</button>
 					{#if User?.privilege_status === USER_PRIVILEGE_STATUS.ADMIN && SETTINGS.SHOW_ADMIN_BADGE_IN_CHAT}
 						<Badge variant="secondary">Admin</Badge>

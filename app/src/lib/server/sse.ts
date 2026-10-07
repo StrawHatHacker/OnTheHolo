@@ -4,6 +4,7 @@ import { report } from "$lib/utils";
 type SSEEvent =
   // Users
   'user:edit' |
+  'user:delete' |
   // Messages
   'message:create' |
   'message:edit' |
@@ -18,6 +19,7 @@ type SSEEvent =
   'channel:delete';
 
 export type Connection = {
+  // TODO add metadata, ip, user agent, etc
   send: (event: SSEEvent, data: unknown) => void;
 };
 
@@ -44,6 +46,12 @@ export const unregisterConnection = (userId: number, conn: Connection) => {
     connections.delete(uid);
     process.env.NODE_ENV !== 'production' && report.info(`Unregistered connection for user ${userId}`);
   }
+}
+
+export const unregisterUserConnections = (userId: number) => {
+  const uid = userId + '';
+  connections.delete(uid);
+  process.env.NODE_ENV !== 'production' && report.info(`Unregistered connections for user ${userId}`);
 }
 
 export const sendSSEToUsers = <T>(userIds: number[], event: SSEEvent, data: T) => {

@@ -29,11 +29,11 @@
 </script>
 
 <Popover.Root bind:open>
-	<Popover.Trigger>
+	<Popover.Trigger class="flex">
 		{@render children?.()}
 	</Popover.Trigger>
 	<Popover.Content
-		class="group relative h-94 w-64 gap-0 overflow-clip border border-border bg-background p-0 shadow ring-0"
+		class="group relative h-94 w-64 gap-0 overflow-clip border border-border bg-background p-0 shadow ring-0 "
 		{align}
 		{side}
 	>

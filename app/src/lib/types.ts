@@ -157,3 +157,8 @@ export type SSEChannel = {
 export type SSEUser = {
 	user: User;
 }
+
+export type SSEUserDeleted = {
+	userId: number;
+	deleteAllTraces: boolean;
+}

@@ -63,8 +63,7 @@ export const messagesTable = pgTable('messages', {
 		.notNull()
 		.references(() => channelsTable.id),
 	user_id: integer()
-		.notNull()
-		.references(() => usersTable.id),
+		.references(() => usersTable.id, { onDelete: 'set null' }),
 	content: text().notNull(),
 	edited: boolean().notNull().default(false),
 	created_at: timestamp().notNull(),

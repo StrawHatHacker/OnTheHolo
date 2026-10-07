@@ -37,6 +37,18 @@ export const Store = {
 			const index = UsersC.findIndex((u) => u.id === user.id);
 			if (index === -1) return;
 			UsersC[index] = user;
+		},
+		delete(id: number) {
+			const index = UsersC.findIndex((u) => u.id === id);
+			if (index === -1) return;
+			UsersC.splice(index, 1);
+		},
+		deleteAllMessages(id: number) {
+			for (const category of CategoryC) {
+				for (const channel of category.channels) {
+					channel.messages = channel.messages.filter((m) => m.user_id !== id);
+				}
+			}
 		}
 	},
 	categories: {
@@ -153,6 +165,7 @@ export const AppState = $state({
 	// General
 	initialized: false,
 	currentChannelId: null as number | null,
+	bottomChatDiv: null as HTMLDivElement | null,
 
 	// User
 	isEditUserDialogOpen: false,
@@ -178,3 +191,4 @@ export const AppState = $state({
 	// Other dialogs
 	isSettingsDialogOpen: false
 });
+
