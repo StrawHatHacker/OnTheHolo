@@ -67,10 +67,10 @@ export class SessionQueries {
 		});
 	}
 
-	static async deleteSession(userId: number, token: string) {
+	static async deleteSessionById(id: number) {
 		return await db
 			.delete(sessionsTable)
-			.where(and(eq(sessionsTable.user_id, userId), eq(sessionsTable.token, token)));
+			.where(eq(sessionsTable.id, id));
 	}
 
 	static async deleteUserSessions(userId: number) {

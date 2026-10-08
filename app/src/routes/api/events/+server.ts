@@ -28,7 +28,23 @@ export const GET: RequestHandler = async ({ request, cookies, getClientAddress }
         }
       };
 
-      conn = { send };
+      const cleanup = () => {
+        if (closed) return;
+        closed = true;
+        clearInterval(heartbeat);
+        unregisterConnection(userId, conn);
+        try {
+          controller.close();
+        } catch {
+          // already closed, ignore
+        }
+      };
+
+      conn = {
+        sessionId: session.session.id,
+        send,
+        close: cleanup
+      };
       registerConnection(userId, conn);
 
       controller.enqueue(`retry: 3000\n\n`);
@@ -42,18 +58,6 @@ export const GET: RequestHandler = async ({ request, cookies, getClientAddress }
           closed = true;
         }
       }, 30000);
-
-      const cleanup = () => {
-        if (closed) return;
-        closed = true;
-        clearInterval(heartbeat);
-        unregisterConnection(userId, conn);
-        try {
-          controller.close();
-        } catch {
-          // already closed, ignore
-        }
-      };
 
       request.signal.addEventListener('abort', cleanup);
     },

@@ -26,7 +26,7 @@ export const GET = async ({ cookies, request, getClientAddress }) => {
 
 		cookies.set(COOKIE_MAP.SESSION, token, createCookieSettings());
 
-		await SessionQueries.deleteSession(session.user.id, sessionToken);
+		await SessionQueries.deleteSessionById(session.session.id);
 		await SessionQueries.createSession(session.user.id, token);
 
 		return json({});

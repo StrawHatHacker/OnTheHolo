@@ -2,7 +2,22 @@ import { AppState, Store } from "$lib/stores.svelte";
 import type { Category, CategoryFull, ChannelWithMessages, SSEChannel, SSEMessage, SSEUser, SSEUserDeleted } from "$lib/types";
 import { tick } from "svelte";
 
-export const registerSSEListeners = (source: EventSource) => {
+let source: EventSource | null = null;
+
+export const connectSSE = () => {
+  disconnectSSE(); // never hold two connections
+  source = new EventSource('/api/events');
+  registerSSEListeners();
+};
+
+export const disconnectSSE = () => {
+  source?.close();
+  source = null;
+};
+
+const registerSSEListeners = () => {
+  if (!source) return;
+
   // ------ USERS ------
 
   source.addEventListener('user:edit', (event: MessageEvent) => {

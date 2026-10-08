@@ -20,7 +20,9 @@ type SSEEvent =
 
 export type Connection = {
   // TODO add metadata, ip, user agent, etc
+  sessionId: number;
   send: (event: SSEEvent, data: unknown) => void;
+  close: () => void;
 };
 
 // userId -> set of active connections (user might have multiple tabs)
@@ -44,9 +46,18 @@ export const unregisterConnection = (userId: number, conn: Connection) => {
   connections.get(uid)?.delete(conn);
   if (connections.get(uid)?.size === 0) {
     connections.delete(uid);
-    process.env.NODE_ENV !== 'production' && report.info(`Unregistered connection for user ${userId}`);
   }
+  process.env.NODE_ENV !== 'production' && report.info(`Unregistered connection for user ${userId}`);
 }
+
+export const unregisterUserConnection = (userId: number, sessionId: number) => {
+  const conns = connections.get(String(userId));
+  if (!conns) return;
+  for (const conn of [...conns]) {
+    if (conn.sessionId !== sessionId) continue;
+    conn.close(); // -> cleanup -> unregisterConnection
+  }
+};
 
 export const unregisterUserConnections = (userId: number) => {
   const uid = userId + '';

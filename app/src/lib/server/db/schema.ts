@@ -29,9 +29,9 @@ export const sessionsTable = pgTable('sessions', {
 	token: text().notNull(),
 	created_at: timestamp().notNull(),
 }, (table) => [
-	// Used in `getSessionByToken` and `deleteSession`
+	// Used in `getSessionByToken`
 	uniqueIndex('sessions_token_idx').on(table.token),
-	// Foreign key index for the join in `getSessionByToken` and `deleteSession`
+	// Foreign key index for the join in `getSessionByToken`
 	index('sessions_user_id_idx').on(table.user_id),
 ]);
 

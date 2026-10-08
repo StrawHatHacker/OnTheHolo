@@ -29,8 +29,6 @@ export const DELETE = async ({ request, cookies, getClientAddress }) => {
     const u = await UserQueries.getUserById(session.user.id);
     if (!u) throw new CError(400, ERROR_MAP.generalError);
 
-    console.log(v.data);
-
     if (v.data.deleteAllTraces) {
       await UserQueries.deleteAllUserMessages(session.user.id);
     }
