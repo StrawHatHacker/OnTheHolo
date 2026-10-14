@@ -99,7 +99,7 @@ export const Store = {
 
 	channels: {
 		find(
-			callback: (channel: Channel) => boolean
+			callback: (channel: ChannelWithMessages) => boolean
 		) {
 			for (const category of CategoryC) {
 				const channel = category.channels.find(callback);
@@ -136,11 +136,31 @@ export const Store = {
 				channel => channel.id === AppState.currentChannelId
 			);
 		},
+		prependMessages(channelId: number, messages: Message[]) {
+			const channel = this.findById(channelId);
+			if (!channel) return;
+			channel.messages.unshift(...messages);
+		},
 		sendMessage(message: Message) {
 			const channel = this.findById(message.channel_id);
 			if (!channel) return;
 			channel.messages.push(message);
-		}
+		},
+		incrementPage(channelId: number) {
+			const channel = this.findById(channelId);
+			if (!channel) return;
+			channel.page++;
+		},
+		setHasMore(channelId: number, hasMore: boolean) {
+			const channel = this.findById(channelId);
+			if (!channel) return;
+			channel.hasMore = hasMore;
+		},
+		setPxFromBottom(channelId: number, pxFromBottom: number) {
+			const channel = this.findById(channelId);
+			if (!channel) return;
+			channel.pxFromBottom = pxFromBottom;
+		},
 	},
 	messages: {
 		edit(message: Message) {

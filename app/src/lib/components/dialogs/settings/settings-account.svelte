@@ -3,7 +3,7 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { CError, genericRequest, handleRequestError } from '$lib/utils';
+	import { CError, DateHelper, genericRequest, handleRequestError } from '$lib/utils';
 	import { invalidateAll } from '$app/navigation';
 	import { toast } from 'svelte-sonner';
 	import { Separator } from '$lib/components/ui/separator/index.js';
@@ -124,6 +124,21 @@
 	<h2 id="account-settings" class="text-lg font-bold">Account</h2>
 
 	<div class="mt-8 flex flex-col gap-4">
+		{#if session?.user}
+			<div>
+				<p>
+					Account ID:
+					<span class="text-muted-foreground">{session.user.id}</span>
+				</p>
+				<p>
+					Account created on:
+					<span class="text-muted-foreground">
+						{DateHelper.toReadable(new Date(session.user.created_at))}
+					</span>
+				</p>
+			</div>
+		{/if}
+
 		<div class="flex flex-col gap-1">
 			<div class="flex items-center justify-between">
 				<Label for="email">Email</Label>

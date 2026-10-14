@@ -1,8 +1,8 @@
-import { USER_PRIVILEGE_STATUS, USER_STATUS } from '$lib/constants';
+import { CHANNEL_MESSAGES_PER_PAGE, USER_PRIVILEGE_STATUS, USER_STATUS } from '$lib/constants';
 import type { AddCategoryData, AddChannelData, AddMessageData, Category, CategoryFull, Channel, DeleteCategoryData, DeleteMessageData, EditCategoryData, EditChannelData, EditMessageData, Message, UserToEdit } from '$lib/types';
 import { db } from '$lib/server/db';
 import { categoriesTable, channelsTable, messagesTable, safeUserFields, sessionsTable, usersTable } from '$lib/server/db/schema';
-import { eq, and, sql, asc } from 'drizzle-orm';
+import { eq, and, sql, asc, getTableColumns, getColumns, lte, desc } from 'drizzle-orm';
 
 export class UserQueries {
 	static async getUserById(id: number) {
@@ -108,26 +108,53 @@ export class SessionQueries {
 }
 
 export class ChannelQueries {
+	static async getChannelMessages(channelId: number, messagePage: number) {
+		const rows = await db
+			.select()
+			.from(messagesTable)
+			.where(eq(messagesTable.channel_id, channelId))
+			.orderBy(desc(messagesTable.created_at), desc(messagesTable.id))
+			.limit(CHANNEL_MESSAGES_PER_PAGE + 1) // one extra row to detect more pages
+			.offset((messagePage - 1) * CHANNEL_MESSAGES_PER_PAGE);
+
+		const hasMore = rows.length > CHANNEL_MESSAGES_PER_PAGE;
+		const messages = rows.slice(0, CHANNEL_MESSAGES_PER_PAGE).reverse();
+
+		return { messages, hasMore };
+	}
+
 	static async getCategoryFull(): Promise<CategoryFull[]> {
+		const rankedMessages = db
+			.select({
+				...getColumns(messagesTable),
+				rn: sql<number>`row_number() over (
+			partition by ${messagesTable.channel_id}
+			order by ${messagesTable.created_at} desc, ${messagesTable.id} desc
+		)`.as('rn'),
+			})
+			.from(messagesTable)
+			.as('ranked_messages');
+
 		const rows = await db
 			.select({
 				category: categoriesTable,
 				channel: channelsTable,
-				message: messagesTable,
+				message: getColumns(rankedMessages),
 			})
 			.from(categoriesTable)
+			.leftJoin(channelsTable, eq(categoriesTable.id, channelsTable.category_id))
 			.leftJoin(
-				channelsTable,
-				eq(categoriesTable.id, channelsTable.category_id)
+				rankedMessages,
+				and(
+					eq(channelsTable.id, rankedMessages.channel_id),
+					lte(rankedMessages.rn, CHANNEL_MESSAGES_PER_PAGE)
+				)
 			)
-			.leftJoin(
-				messagesTable,
-				eq(channelsTable.id, messagesTable.channel_id)
-			).orderBy(
-        asc(categoriesTable.id),
-        asc(channelsTable.id),
-        asc(messagesTable.created_at)
-      );
+			.orderBy(
+				asc(categoriesTable.id),
+				asc(channelsTable.id),
+				asc(rankedMessages.created_at)
+			);
 
 		const categories = new Map<number, CategoryFull>();
 
@@ -156,6 +183,9 @@ export class ChannelQueries {
 					...row.channel,
 					messages: [],
 					typedMessage: '',
+					page: 1,
+					hasMore: true,
+					pxFromBottom: null,
 				};
 
 				category.channels.push(channel);

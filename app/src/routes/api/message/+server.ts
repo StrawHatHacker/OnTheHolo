@@ -1,12 +1,38 @@
 import { CError } from '$lib/utils';
 import { error, json } from '@sveltejs/kit';
 import { Auth } from '$lib/server/auth';
-import { MessageQueries, UserQueries } from '$lib/server/db/queries';
+import { ChannelQueries, MessageQueries } from '$lib/server/db/queries';
 import { ERROR_MAP } from '$lib/errors';
 import type { AddMessagePayload, DeleteMessagePayload, EditMessagePayload, SSEMessage } from '$lib/types';
 import { getAllSSEUsers, sendSSEToUsers, } from '$lib/server/sse';
 import { SETTINGS } from '$lib/settings.js';
 import { isRateLimited } from '$lib/server/ratelimits';
+
+export const GET = async ({ request, url, cookies, getClientAddress }) => {
+	try {
+		isRateLimited(Auth.getClientIp(request, getClientAddress), 'normal');
+		const session = await Auth.verifySession(cookies);
+
+		const pageQueryParam = url.searchParams.get('page');
+		const page = Number.parseInt(pageQueryParam ?? '');
+		if (Number.isNaN(page) || page < 1) {
+			throw new CError(400, ERROR_MAP.generalError);
+		}
+
+		const channelIdParam = url.searchParams.get('channelId');
+		const channelId = Number.parseInt(channelIdParam ?? '');
+		if (Number.isNaN(channelId)) {
+			throw new CError(400, ERROR_MAP.generalError);
+		}
+
+		const { messages, hasMore } = await ChannelQueries.getChannelMessages(channelId, page);
+
+		return json({ messages, hasMore });
+	} catch (e) {
+		if (e instanceof CError) throw error(e.status, e.message);
+		throw error(500, ERROR_MAP.generalError);
+	}
+};
 
 const validatePostBody = (body: any) => {
 	const channelIdNum = Number(body.channelId);

@@ -66,3 +66,6 @@ export const TERMINAL_COLORS = {
   bold: "\x1b[1m",
   dim: "\x1b[2m",
 } as const;
+
+/** The number of initial messages to load per page, and for all subsequent pagination requests */
+export const CHANNEL_MESSAGES_PER_PAGE = 100;

@@ -108,6 +108,9 @@ const registerSSEListeners = () => {
       ...data.channel,
       messages: [],
       typedMessage: '',
+      page: 1,
+      hasMore: true,
+      pxFromBottom: null,
     };
 
     // If this is the first channel created, set it as the current channel
@@ -129,6 +132,9 @@ const registerSSEListeners = () => {
       ...data.channel,
       messages: channel.messages,
       typedMessage: channel.typedMessage,
+      page: channel.page,
+      hasMore: channel.hasMore,
+      pxFromBottom: channel.pxFromBottom,
     };
 
     Store.channels.replace(data.categoryId, newChan);

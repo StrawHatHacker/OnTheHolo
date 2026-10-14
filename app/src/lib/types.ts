@@ -20,6 +20,11 @@ export type Category = typeof categoriesTable.$inferSelect;
 export type ChannelWithMessages = Channel & {
 	messages: Message[];
 	typedMessage: string;
+	page: number;
+	/** True if there are older messages that can be fetched on scroll up */
+	hasMore: boolean;
+	/** px between the viewport bottom and the end of the list. null = never visited */
+	pxFromBottom: number | null;
 };
 
 export type CategoryFull = Category & {
