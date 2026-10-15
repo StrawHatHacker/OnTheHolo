@@ -19,12 +19,14 @@
 	let {
 		message,
 		session,
+		isGroupStart,
 		submitEditMessage,
 		submitDeleteMessage,
 		addToContent,
 	}: {
 		message: Message;
 		session: SessionWithUser;
+		isGroupStart: boolean;
 		submitEditMessage: (message: Message, newContent: string) => void;
 		submitDeleteMessage: (message: Message) => void;
 		addToContent: (content: string) => void;
@@ -61,7 +63,10 @@
 
 <ContextMenu.Root>
 	<ContextMenu.Trigger>
-		<div class="group relative flex items-start gap-4 px-4 py-1 hover:bg-foreground/5">
+		<div
+			class="group relative flex items-start gap-4 px-4 py-0.5 hover:bg-foreground/5"
+			class:mt-2={isGroupStart}
+		>
 			{#if message.user_id === session?.user.id}
 				<div class="absolute top-0 right-2 hidden translate-y-[-50%] group-hover:block">
 					<ButtonGroup.Root>
@@ -79,40 +84,46 @@
 					</ButtonGroup.Root>
 				</div>
 			{/if}
-			{#if User?.profile_image}
-				<UserProfileCmenu user={User} align="center" side="bottom" {session}>
-					<img
-						src={getMediaUrl(User.profile_image, MEDIA_PURPOSE.profileImage)}
-						alt="profile"
-						class="mt-1 size-10 shrink-0! rounded-full object-cover"
-					/>
-				</UserProfileCmenu>
+			{#if isGroupStart}
+				{#if User?.profile_image}
+					<UserProfileCmenu user={User} align="center" side="bottom" {session}>
+						<img
+							src={getMediaUrl(User.profile_image, MEDIA_PURPOSE.profileImage)}
+							alt="profile"
+							class="mt-1 size-10 shrink-0! rounded-full object-cover"
+						/>
+					</UserProfileCmenu>
+				{:else}
+					<div class="size-10 shrink-0 rounded-full bg-muted"></div>
+				{/if}
 			{:else}
-				<div class="size-10 shrink-0 rounded-full bg-muted"></div>
+				<div class="w-10 shrink-0"></div>
 			{/if}
 			<div class="flex w-full flex-col">
-				<div class="flex w-full items-center gap-2">
-					<button
-						onclick={() => addToContent(`${ENTITY_PREFIX.user}${User?.username}`)}
-						class="hover:underline"
-					>
-						<h4 class="text-md font-bold">{User?.username ?? 'Unknown'}</h4>
-					</button>
-					{#if User?.privilege_status === USER_PRIVILEGE_STATUS.ADMIN && SETTINGS.SHOW_ADMIN_BADGE_IN_CHAT}
-						<Badge variant="secondary">Admin</Badge>
-					{/if}
-					{#if User?.status === USER_STATUS.DELETED}
-						<Badge variant="destructive">Deleted</Badge>
-					{/if}
-					{#if User?.status === USER_STATUS.BANNED}
-						<Badge variant="destructive">Banned</Badge>
-					{/if}
-					<span class="text-xs text-muted-foreground">
-						{DateHelper.toReadable(message.created_at)}
-					</span>
-				</div>
+				{#if isGroupStart}
+					<div class="flex w-full items-center gap-2">
+						<button
+							onclick={() => addToContent(`${ENTITY_PREFIX.user}${User?.username}`)}
+							class="hover:underline"
+						>
+							<h4 class="text-md font-bold">{User?.username ?? 'Unknown'}</h4>
+						</button>
+						{#if User?.privilege_status === USER_PRIVILEGE_STATUS.ADMIN && SETTINGS.SHOW_ADMIN_BADGE_IN_CHAT}
+							<Badge variant="secondary">Admin</Badge>
+						{/if}
+						{#if User?.status === USER_STATUS.DELETED}
+							<Badge variant="destructive">Deleted</Badge>
+						{/if}
+						{#if User?.status === USER_STATUS.BANNED}
+							<Badge variant="destructive">Banned</Badge>
+						{/if}
+						<span class="text-xs text-muted-foreground">
+							{DateHelper.toReadable(message.created_at)}
+						</span>
+					</div>
+				{/if}
 				{#if messageMode === 'view'}
-					<p class="whitespace-pre-wrap text-sm">
+					<p class="text-sm whitespace-pre-wrap">
 						{message.content}
 						{#if message.edited}
 							<span class="text-xs text-muted-foreground">&ensp;(Edited)</span>
@@ -121,7 +132,7 @@
 				{:else}
 					<form class="flex w-full items-center gap-2">
 						<Textarea
-							class="flex-1 resize-none rounded border p-2 text-sm max-h-full!"
+							class="max-h-full! flex-1 resize-none rounded border p-2 text-sm"
 							onkeydown={handleKeydown}
 							bind:value={newContent}
 						/>

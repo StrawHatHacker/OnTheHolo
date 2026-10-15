@@ -212,6 +212,14 @@
 			);
 		};
 	});
+
+	let messages = $derived(Store.channels.getCurrent()?.messages ?? []);
+	const GROUP_WINDOW_MS = 5 * 60 * 1000; // 5 minutes
+	const isGroupStart = (i: number) =>
+		i === 0 ||
+		messages[i - 1].user_id !== messages[i].user_id ||
+		new Date(messages[i].created_at).getTime() - new Date(messages[i - 1].created_at).getTime() >
+			GROUP_WINDOW_MS;
 </script>
 
 <section aria-label="chat-area" class="flex h-full min-w-0 flex-1 flex-col pt-2">
@@ -223,11 +231,12 @@
 		</div>
 	{:else}
 		<ScrollArea class="min-h-0 flex-1" orientation="vertical" bind:viewportRef={viewport}>
-			<div class="flex min-h-full flex-col justify-end gap-2">
-				{#each Store.channels.getCurrent()?.messages as message (message.id)}
+			<div class="flex min-h-full flex-col justify-end pb-2">
+				{#each messages as message, i (message.id)}
 					<ChatAreaMessage
 						{message}
 						{session}
+						isGroupStart={isGroupStart(i)}
 						{submitDeleteMessage}
 						{submitEditMessage}
 						{addToContent}
