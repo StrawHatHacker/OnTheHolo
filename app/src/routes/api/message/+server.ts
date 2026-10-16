@@ -41,10 +41,16 @@ const validatePostBody = (body: any) => {
 		throw new CError(400, ERROR_MAP.channelNotFound);
 	if (!body.content || !(typeof body.content === 'string') || body.content.length < 1 || body.content.length > SETTINGS.PUBLIC_MAX_MESSAGE_LENGTH)
 		throw new CError(400, ERROR_MAP.messageLengthFailure);
+	if (!!body.replyToMessageId) {
+		if (Number.isNaN(Number(body.replyToMessageId))) {
+			throw new CError(400, ERROR_MAP.invalidReplyMessage);
+		}
+	}
 
 	const data: AddMessagePayload = {
 		channelId: channelIdNum,
-		content: body.content
+		content: body.content,
+		replyToMessageId: body.replyToMessageId ?? null
 	};
 
 	return data;
@@ -59,6 +65,7 @@ export const POST = async ({ request, cookies, getClientAddress }) => {
 			channelId: data.channelId,
 			content: data.content,
 			userId: session.user.id,
+			replyToMessageId: data.replyToMessageId
 		});
 
 		sendSSEToUsers<SSEMessage>(getAllSSEUsers(), 'message:create', {

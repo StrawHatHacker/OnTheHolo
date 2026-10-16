@@ -21,4 +21,5 @@ export const ERROR_MAP = {
 	adminCannotChangeEmail: 'Admins cannot change their email',
 	adminCannotChangePassword: 'Admins cannot change their password',
 	adminCannotDeleteSelfAccount: 'Admins cannot delete their account',
+	invalidReplyMessage: 'The message you are replying to does not exist',
 } as const;

@@ -1,7 +1,7 @@
 // Relative path required here because of drizzle-orm
 import { USER_ACTIVITY_STATUS, type USER_ACTIVITY_STATUS_VALUES, type USER_STATUS_VALUES } from '../../constants';
 import { getColumns } from 'drizzle-orm';
-import { boolean, index, integer, pgTable, primaryKey, text, timestamp, uniqueIndex, varchar } from 'drizzle-orm/pg-core';
+import { boolean, index, integer, pgTable, primaryKey, text, timestamp, uniqueIndex, varchar, type AnyPgColumn } from 'drizzle-orm/pg-core';
 
 export const usersTable = pgTable('users', {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -61,17 +61,23 @@ export const messagesTable = pgTable('messages', {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
 	channel_id: integer()
 		.notNull()
-		.references(() => channelsTable.id),
+		.references(() => channelsTable.id, { onDelete: 'cascade' }),
 	user_id: integer()
 		.references(() => usersTable.id, { onDelete: 'set null' }),
 	content: text().notNull(),
 	edited: boolean().notNull().default(false),
+	reply_to_message_id: integer()
+		.references((): AnyPgColumn => messagesTable.id, { onDelete: 'set null' }),
 	created_at: timestamp().notNull(),
 }, (table) => [
 	// Crucial for the join in `getCategoryFull` and the bulk deletion in `deleteChannel`
 	index('messages_channel_id_idx').on(table.channel_id),
 	// Optimizes user lookups when fetching a specific user's messages
 	index('messages_user_id_idx').on(table.user_id),
+	// Optimizes lookups for the onDelete
+	index('messages_reply_to_idx').on(table.reply_to_message_id),
+	// Optimizes lookups for the `getChannelMessages` query
+	index('messages_channel_created_idx').on(table.channel_id, table.created_at),
 ])
 
 export const rolesTable = pgTable('roles', {

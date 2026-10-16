@@ -109,12 +109,14 @@ export type DeleteChannelPayload = {
 export type AddMessagePayload = {
 	channelId: number;
 	content: string;
+	replyToMessageId: number | null;
 }
 
 export type AddMessageData = {
 	channelId: number;
 	content: string;
 	userId: number;
+	replyToMessageId: number | null;
 }
 
 export type EditMessagePayload = {

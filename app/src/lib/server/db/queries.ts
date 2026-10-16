@@ -297,6 +297,7 @@ export class MessageQueries {
 			channel_id: data.channelId,
 			user_id: data.userId,
 			content: data.content,
+			reply_to_message_id: data.replyToMessageId,
 			edited: false,
 			created_at: new Date(),
 		}).returning())?.[0];
