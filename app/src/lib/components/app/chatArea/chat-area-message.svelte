@@ -76,7 +76,7 @@
 	<ContextMenu.Trigger>
 		<div
 			class="group relative flex flex-col items-start px-4 py-0.5 hover:bg-foreground/5"
-			class:mt-2={isGroupStart || replyMessage}
+			class:message-is-reply={isGroupStart || replyMessage}
 		>
 			{#if replyMessage && isGroupStart}
 				<div class="ml-5 flex min-w-0 items-center gap-2 text-xs text-muted-foreground">
