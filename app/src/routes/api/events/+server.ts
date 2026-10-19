@@ -4,7 +4,7 @@ import { Auth } from '$lib/server/auth';
 import { isRateLimited } from '$lib/server/ratelimits';
 
 export const GET: RequestHandler = async ({ request, cookies, getClientAddress }) => {
-  isRateLimited(Auth.getClientIp(request, getClientAddress), 'normal');
+  isRateLimited(Auth.getClientIp(request, getClientAddress), 'initialData');
 
   const session = await Auth.verifySession(cookies);
   const userId = session.user.id;

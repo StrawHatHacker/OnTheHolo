@@ -14,7 +14,12 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as ContextMenu from '$lib/components/ui/context-menu/index.js';
 	import { AppHelper, getMediaUrl } from '$lib/utils';
-	import { CHANNEL_TYPE, ENTITY_PREFIX, MEDIA_PURPOSE } from '$lib/constants';
+	import {
+		CHANNEL_TYPE,
+		ENTITY_PREFIX,
+		MEDIA_PURPOSE,
+		USER_PRIVILEGE_STATUS,
+	} from '$lib/constants';
 	import type { SessionWithUser } from '$lib/types';
 	import UserProfileCmenu from '$lib/components/menus/user-profile-cmenu.svelte';
 
@@ -26,6 +31,8 @@
 		session: SessionWithUser;
 	} = $props();
 
+	// Getting the current user from store because their details can change and the UI needs to update.
+	// We use session.user for properties that don't change like privilege status and id.
 	let currentUser = $derived.by(() => {
 		return Store.users.findById(session!.user.id);
 	});
@@ -54,7 +61,13 @@
 						<div class="flex items-center gap-1">
 							<DropdownMenu.Root>
 								<DropdownMenu.Trigger class="m-0! p-0!">
-									<Button size="icon-xs" variant="outline" class="hidden group-hover:flex">
+									<Button
+										size="icon-xs"
+										variant="outline"
+										class="hidden {session?.user.privilege_status === USER_PRIVILEGE_STATUS.ADMIN
+											? 'group-hover:flex'
+											: ''}"
+									>
 										<SquarePenIcon />
 									</Button>
 								</DropdownMenu.Trigger>
@@ -137,20 +150,21 @@
 									{channel.name}
 								</ContextMenu.Label>
 								<ContextMenu.Group>
-									<ContextMenu.Item
-										onclick={() => AppHelper.openEditChannelDialog($state.snapshot(channel))}
-									>
-										<SquarePenIcon />
-										Edit
-									</ContextMenu.Item>
-									<ContextMenu.Item
-										variant="destructive"
-										onclick={() => AppHelper.openDeleteChannelDialog($state.snapshot(channel))}
-									>
-										<TrashIcon />
-										Delete
-									</ContextMenu.Item>
-
+									{#if session?.user.privilege_status === USER_PRIVILEGE_STATUS.ADMIN}
+										<ContextMenu.Item
+											onclick={() => AppHelper.openEditChannelDialog($state.snapshot(channel))}
+										>
+											<SquarePenIcon />
+											Edit
+										</ContextMenu.Item>
+										<ContextMenu.Item
+											variant="destructive"
+											onclick={() => AppHelper.openDeleteChannelDialog($state.snapshot(channel))}
+										>
+											<TrashIcon />
+											Delete
+										</ContextMenu.Item>
+									{/if}
 									<ContextMenu.Item
 										class="flex-1"
 										onclick={() =>

@@ -4,7 +4,7 @@ import { PUBLIC_PASETO_KEY } from '$env/static/public';
 import crypto from 'node:crypto';
 import { V4 } from 'paseto';
 import type { Cookies } from '@sveltejs/kit';
-import { COOKIE_MAP } from '$lib/constants';
+import { COOKIE_MAP, USER_PRIVILEGE_STATUS } from '$lib/constants';
 import { CError } from '$lib/utils';
 import { ERROR_MAP } from '$lib/errors';
 import { SessionQueries } from '$lib/server/db/queries';
@@ -32,7 +32,7 @@ export class Auth {
 	 * First verify the cookie, then check the db.
 	 * Throws CError if the session is invalid.
 	 */
-	static async verifySession(cookies: Cookies) {
+	static async verifySession(cookies: Cookies, requireAdmin = false) {
 		const sessionCookie = cookies.get(COOKIE_MAP.SESSION);
 		if (!sessionCookie) throw new CError(401, ERROR_MAP.invalidSession);
 
@@ -40,6 +40,9 @@ export class Auth {
 
 		const session = await SessionQueries.getSessionByToken(sessionCookie);
 		if (!session) throw new CError(401, ERROR_MAP.invalidSession);
+
+		if (requireAdmin && session.user.privilege_status !== USER_PRIVILEGE_STATUS.ADMIN)
+			throw new CError(403, ERROR_MAP.generalError);
 
 		return session;
 	}

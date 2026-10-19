@@ -30,7 +30,8 @@ const validatePostBody = (body: any) => {
 export const POST = async ({ request, cookies, getClientAddress }) => {
 	try {
 		isRateLimited(Auth.getClientIp(request, getClientAddress), 'normal');
-		const session = await Auth.verifySession(cookies);
+		await Auth.verifySession(cookies, true);
+		
 		const body = validatePostBody(await request.json());
 
 		const channel = await ChannelQueries.addChannel({
@@ -69,7 +70,8 @@ const validatePutBody = (body: any) => {
 export const PUT = async ({ request, cookies, getClientAddress }) => {
 	try {
 		isRateLimited(Auth.getClientIp(request, getClientAddress), 'normal');
-		const session = await Auth.verifySession(cookies);
+		await Auth.verifySession(cookies, true);
+
 		const body = validatePutBody(await request.json());
 
 		const category = await ChannelQueries.getCategoryByChannelId(body.channelId);
@@ -87,7 +89,6 @@ export const PUT = async ({ request, cookies, getClientAddress }) => {
 
 		return json({});
 	} catch (e) {
-		console.log(e);
 		if (e instanceof CError) throw error(e.status, e.message);
 		throw error(500, ERROR_MAP.generalError);
 	}
@@ -108,7 +109,7 @@ const validateDeleteBody = (body: any) => {
 export const DELETE = async ({ request, cookies, getClientAddress }) => {
 	try {
 		isRateLimited(Auth.getClientIp(request, getClientAddress), 'normal');
-		const session = await Auth.verifySession(cookies);
+		await Auth.verifySession(cookies, true);
 		const body = validateDeleteBody(await request.json());
 
 		const category = await ChannelQueries.getCategoryByChannelId(body.channelId);

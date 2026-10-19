@@ -22,8 +22,8 @@ const validatePostBody = (body: any) => {
 export const POST = async ({ request, cookies, getClientAddress }) => {
 	try {
 		isRateLimited(Auth.getClientIp(request, getClientAddress), 'normal');
+		await Auth.verifySession(cookies, true);
 
-		await Auth.verifySession(cookies);
 		const body = validatePostBody(await request.json());
 
 		const category = await ChannelQueries.addCategory({
@@ -57,7 +57,8 @@ const validatePutBody = (body: any) => {
 export const PUT = async ({ request, cookies, getClientAddress }) => {
 	try {
 		isRateLimited(Auth.getClientIp(request, getClientAddress), 'normal');
-		await Auth.verifySession(cookies);
+		await Auth.verifySession(cookies, true);
+
 		const data = validatePutBody(await request.json());
 
 		const category = await ChannelQueries.editCategory({
@@ -89,7 +90,8 @@ const validateDeleteBody = (body: any) => {
 export const DELETE = async ({ request, cookies, getClientAddress }) => {
 	try {
 		isRateLimited(Auth.getClientIp(request, getClientAddress), 'normal');
-		await Auth.verifySession(cookies);
+		await Auth.verifySession(cookies, true);
+
 		const data = validateDeleteBody(await request.json());
 
 		const category = await ChannelQueries.deleteCategory({
