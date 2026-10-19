@@ -70,15 +70,17 @@
 		messageMode = 'view';
 		submitEditMessage(message, newContent);
 	};
+
+	let isReplyToSelf = $derived(isGroupStart && replyMessage?.user_id === session?.user.id);
 </script>
 
 <ContextMenu.Root>
 	<ContextMenu.Trigger>
 		<div
 			class="group relative flex flex-col items-start px-4 py-0.5 hover:bg-foreground/5"
-			class:message-is-reply={isGroupStart || replyMessage}
+			class:message-is-reply={isReplyToSelf}
 		>
-			{#if replyMessage && isGroupStart}
+			{#if replyMessage}
 				<div class="ml-5 flex min-w-0 items-center gap-2 text-xs text-muted-foreground">
 					<div
 						class="mt-2 h-3 w-7 shrink-0 rounded-tl-sm border-t-2 border-l-2 border-muted-foreground/40"
@@ -141,7 +143,7 @@
 							{#if User?.status === USER_STATUS.BANNED}
 								<Badge variant="destructive">Banned</Badge>
 							{/if}
-							<span class="text-xs text-muted-foreground">
+							<span class="text-xs text-muted-foreground hidden group-hover:block">
 								{DateHelper.toReadable(message.created_at)}
 							</span>
 						</div>

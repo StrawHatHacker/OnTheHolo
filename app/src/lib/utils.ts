@@ -96,7 +96,7 @@ export class DateHelper {
 
 		return new Date(d).toLocaleString(undefined, {
 			year: 'numeric',
-			month: 'long',
+			month: 'short',
 			day: 'numeric',
 			hour: 'numeric',
 			minute: 'numeric',
