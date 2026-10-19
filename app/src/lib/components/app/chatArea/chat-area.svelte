@@ -75,6 +75,10 @@
 
 	const onReplyClick = (message: Message) => {
 		messageToReplyTo = message;
+
+		tick().then(() => {
+			textarea?.focus();
+		});
 	};
 
 	const submitSendMessage = async () => {
@@ -148,7 +152,7 @@
 
 	const loadMoreMessages = async (page: number) => {
 		try {
-			const chId = $state.snapshot(AppState.currentChannelId);
+			const chId = AppState.currentChannelId;
 			if (!chId) return false;
 
 			loadingMore = true;
@@ -167,7 +171,7 @@
 		} finally {
 			loadingMore = false;
 		}
-		return true;
+		return false;
 	};
 
 	const handleScroll = async () => {
@@ -176,7 +180,6 @@
 		// Check if we're at the top
 		if (viewport.scrollTop > TOP_THRESHOLD) return;
 
-		loadingMore = true;
 		const prevHeight = viewport.scrollHeight;
 		const prevTop = viewport.scrollTop;
 
@@ -199,7 +202,6 @@
 		} catch (e) {
 			handleRequestError(e);
 		} finally {
-			loadingMore = false;
 		}
 	};
 
