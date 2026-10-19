@@ -95,7 +95,9 @@
 
 							<DropdownMenu.Root>
 								<DropdownMenu.Trigger class="m-0! p-0!">
-									<Button size="icon-xs" variant="outline" class="hidden group-hover:flex">
+									<Button size="icon-xs" variant="outline" class="hidden {session?.user.privilege_status === USER_PRIVILEGE_STATUS.ADMIN
+											? 'group-hover:flex'
+											: ''}">
 										<PlusIcon />
 									</Button>
 								</DropdownMenu.Trigger>
