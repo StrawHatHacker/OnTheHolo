@@ -15,7 +15,7 @@
 	import SendIcon from '@lucide/svelte/icons/send';
 	import * as ContextMenu from '$lib/components/ui/context-menu/index.js';
 	import UserProfileCmenu from '$lib/components/menus/user-profile-cmenu.svelte';
-	import { untrack } from 'svelte';
+	import { tick, untrack } from 'svelte';
 
 	let {
 		message,
@@ -39,6 +39,7 @@
 
 	// State
 	let messageMode = $state<'view' | 'edit'>('view');
+	let editTextArea = $state<HTMLTextAreaElement | null>(null);
 
 	// Form
 	let newContent = $state('');
@@ -71,6 +72,11 @@
 		submitEditMessage(message, newContent);
 	};
 
+	const goToEditMode = () => {
+		messageMode = 'edit';
+		tick().then(() => editTextArea?.focus());
+	};
+
 	let isReplyToSelf = $derived(isGroupStart && replyMessage?.user_id === session?.user.id);
 </script>
 
@@ -90,15 +96,14 @@
 				</div>
 			{/if}
 
-			<div class="flex items-start gap-4 w-full">
+			<div class="flex w-full items-start gap-4">
 				<div class="absolute top-0 right-2 hidden translate-y-[-50%] group-hover:block">
 					<ButtonGroup.Root>
 						{#if message.user_id === session?.user.id}
 							<Button
 								size="icon-xs"
 								variant="outline"
-								onclick={() =>
-									messageMode === 'view' ? (messageMode = 'edit') : (messageMode = 'view')}
+								onclick={() => (messageMode === 'view' ? goToEditMode() : (messageMode = 'view'))}
 							>
 								<SquarePenIcon />
 							</Button>
@@ -163,6 +168,7 @@
 								class="max-h-full! w-full! flex-1 resize-none rounded border p-2 text-sm"
 								onkeydown={handleKeydown}
 								bind:value={newContent}
+								bind:ref={editTextArea}
 							/>
 							<Button
 								size="icon"
@@ -181,7 +187,7 @@
 	</ContextMenu.Trigger>
 	<ContextMenu.Content>
 		{#if session?.user.id === message.user_id}
-			<ContextMenu.Item onclick={() => (messageMode = 'edit')}>
+			<ContextMenu.Item onclick={() => goToEditMode()}>
 				<SquarePenIcon />
 				Edit
 			</ContextMenu.Item>
