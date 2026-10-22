@@ -7,6 +7,7 @@ import type { AddMessagePayload, DeleteMessagePayload, EditMessagePayload, SSEMe
 import { getAllSSEUsers, sendSSEToUsers, } from '$lib/server/sse';
 import { SETTINGS } from '$lib/settings.js';
 import { isRateLimited } from '$lib/server/ratelimits';
+import { USER_PRIVILEGE_STATUS } from '$lib/constants';
 
 export const GET = async ({ request, url, cookies, getClientAddress }) => {
 	try {
@@ -154,13 +155,13 @@ export const DELETE = async ({ request, cookies, getClientAddress }) => {
 		const messageFull = await MessageQueries.getFullMessageById(data.channelId, data.messageId);
 		if (!messageFull)
 			throw new CError(400, ERROR_MAP.messageNotFound);
-		if (messageFull.message.user_id !== session.user.id)
+		if (messageFull.message.user_id !== session.user.id && session.user.privilege_status !== USER_PRIVILEGE_STATUS.ADMIN)
 			throw new CError(400, ERROR_MAP.generalError);
 
 		await MessageQueries.deleteMessage({
 			messageId: messageFull.message.id,
 			channelId: messageFull.message.channel_id,
-			userId: session.user.id,
+			userId: messageFull.message.user_id,
 		});
 
 		sendSSEToUsers<SSEMessage>(getAllSSEUsers(), 'message:delete', {

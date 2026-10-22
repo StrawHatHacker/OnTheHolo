@@ -140,7 +140,7 @@ export type DeleteMessagePayload = {
 export type DeleteMessageData = {
 	messageId: number;
 	channelId: number;
-	userId: number;
+	userId: number | null;
 }
 
 export type EditUserPayload = {

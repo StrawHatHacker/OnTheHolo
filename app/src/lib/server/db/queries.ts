@@ -315,11 +315,14 @@ export class MessageQueries {
 	}
 
 	static async deleteMessage(data: DeleteMessageData) {
-		return (await db.delete(messagesTable).where(
+		const result = await db.delete(messagesTable).where(
 			and(
 				eq(messagesTable.id, data.messageId),
 				eq(messagesTable.channel_id, data.channelId),
-				eq(messagesTable.user_id, data.userId))
-		).returning())?.[0];
+				data.userId ? eq(messagesTable.user_id, data.userId) : undefined
+			)
+		).returning();
+
+		return result[0];
 	}
 }

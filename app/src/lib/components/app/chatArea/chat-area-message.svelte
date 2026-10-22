@@ -90,10 +90,10 @@
 				</div>
 			{/if}
 
-			<div class="flex items-start gap-4">
-				{#if message.user_id === session?.user.id}
-					<div class="absolute top-0 right-2 hidden translate-y-[-50%] group-hover:block">
-						<ButtonGroup.Root>
+			<div class="flex items-start gap-4 w-full">
+				<div class="absolute top-0 right-2 hidden translate-y-[-50%] group-hover:block">
+					<ButtonGroup.Root>
+						{#if message.user_id === session?.user.id}
 							<Button
 								size="icon-xs"
 								variant="outline"
@@ -102,12 +102,14 @@
 							>
 								<SquarePenIcon />
 							</Button>
+						{/if}
+						{#if message.user_id === session?.user.id || session?.user.privilege_status === USER_PRIVILEGE_STATUS.ADMIN}
 							<Button size="icon-xs" variant="outline" onclick={() => submitDeleteMessage(message)}>
 								<TrashIcon class="text-destructive" />
 							</Button>
-						</ButtonGroup.Root>
-					</div>
-				{/if}
+						{/if}
+					</ButtonGroup.Root>
+				</div>
 
 				{#if isGroupStart}
 					{#if User?.profile_image}
@@ -143,7 +145,7 @@
 							{#if User?.status === USER_STATUS.BANNED}
 								<Badge variant="destructive">Banned</Badge>
 							{/if}
-							<span class="text-xs text-muted-foreground hidden group-hover:block">
+							<span class="hidden text-xs text-muted-foreground group-hover:block">
 								{DateHelper.toReadable(message.created_at)}
 							</span>
 						</div>
@@ -158,7 +160,7 @@
 					{:else}
 						<form class="flex w-full items-center gap-2">
 							<Textarea
-								class="max-h-full! flex-1 resize-none rounded border p-2 text-sm"
+								class="max-h-full! w-full! flex-1 resize-none rounded border p-2 text-sm"
 								onkeydown={handleKeydown}
 								bind:value={newContent}
 							/>
@@ -195,7 +197,7 @@
 				Mention user
 			</ContextMenu.Item>
 		</div>
-		{#if session?.user.id === message.user_id}
+		{#if session?.user.id === message.user_id || session?.user.privilege_status === USER_PRIVILEGE_STATUS.ADMIN}
 			<ContextMenu.Item variant="destructive" onclick={() => submitDeleteMessage(message)}>
 				<TrashIcon />
 				Delete
