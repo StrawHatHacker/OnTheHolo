@@ -1,13 +1,13 @@
 # syntax=docker/dockerfile:1
 
 # ---- deps ----
-FROM node:22-alpine AS deps
+FROM node:24-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 
 # ---- build ----
-FROM node:22-alpine AS build
+FROM node:24-alpine AS build
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -16,7 +16,7 @@ RUN --mount=type=secret,id=env_file,target=/app/.env \
 RUN npm prune --omit=dev
 
 # ---- run ----
-FROM node:22-alpine AS run
+FROM node:24-alpine AS run
 WORKDIR /app
 
 ENV NODE_ENV=production
